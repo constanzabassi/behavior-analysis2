@@ -3,6 +3,7 @@
 %1) plot example trial first
 ex_trial = 100;
 data = imaging(ex_trial).z_dff;
+
 min_max = [-0.5 2];
 sorting_type = 1; %1 by time, any other number by max value
 figure(1);clf;
@@ -13,4 +14,7 @@ hold off
 
 %% 2) divide data into four trial conditions left/right/correct/incorrect
 [all_conditions, condition_array_trials] = divide_trials (imaging);
+
+%make plots based on conditions align based on onset first 
+
 
