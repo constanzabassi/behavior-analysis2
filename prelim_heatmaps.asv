@@ -22,12 +22,6 @@ hold off
 [aligned_reward,imaging_array,align_info] = align_behavior_data (imaging,'z_dff','reward');
 
 figure(2);clf;
-tiledlayout(1,3,"TileSpacing",'compact')
-nexttile
 make_heatmap(squeeze(mean(aligned_stimulus,1)),min_max,sorting_type);
-nexttile
-make_heatmap(squeeze(mean(aligned_turn,1)),min_max,sorting_type);
-nexttile
-make_heatmap(squeeze(mean(aligned_reward,1)),min_max,sorting_type);
 
 
