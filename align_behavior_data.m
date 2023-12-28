@@ -39,8 +39,8 @@ if strcmp(alignment_type,'stimulus' )
     end
 elseif strcmp(alignment_type,'turn')
 % 2) align data based on maze offset/turn (1 sec pre and post)
-    for vr_trials = 1:length(reward_trial)
-            t = good_trials(reward_trial);
+    for vr_trials = 1:length(good_trials) 
+            t = vr_trials;
             frames_to_include = imaging_array(t).turn_frame-30:imaging_array(t).turn_frame+30; %turn onset is frame 31
             if strcmp(data_type,'dff')
                 aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(:,frames_to_include);
@@ -54,15 +54,15 @@ elseif strcmp(alignment_type,'turn')
 
 % 3) align data based on reward (include only reward period?)
 elseif strcmp(alignment_type ,'reward')
-        for vr_trials = 1:length(good_trials) %incorrect ones are empty for reward
-            t = good_trials(vr_trials);
-            frames_to_include = reward_onset(t)-min_length_reward:reward_onset(t)+max_length_reward-min_length_reward; %reward onset at min_length_reward+1
+        for vr_trials = 1:length(reward_trial) %incorrect ones are empty for reward
+            t = reward_trial(vr_trials);
+            frames_to_include = reward_onset{1,t}-min_length_reward:reward_onset{1,t}+max_length_reward-min_length_reward; %reward onset at min_length_reward+1
             if strcmp(data_type,'dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).dff(:,frames_to_include);
             elseif strcmp(data_type,'z_dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).z_dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).z_dff(:,frames_to_include);
             else
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).deconv(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).deconv(:,frames_to_include);
             end
            
     end
