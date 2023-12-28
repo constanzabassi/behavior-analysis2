@@ -1,5 +1,8 @@
 %% make preliminary plots of data!
-
+% put code into path
+selected_folder = uigetdir;
+addpath(genpath(selected_folder))
+%%
 %1) plot example trial first
 ex_trial = 100;
 data = imaging(ex_trial).z_dff;
