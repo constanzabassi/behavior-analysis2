@@ -15,14 +15,7 @@ reward_trial = cellfun(@(x) ~isempty(x),reward_onset,'UniformOutput',false);
 reward_trial = find([reward_trial{1,:}] == 1); %of good trials which ones have reward
 min_length_reward = min([[reward_onset{1,:}] - cellfun(@min,{imaging_array(reward_trial).reward_frames})]); %min number of frames in front of reward before the end of maze
 
-align_info.stim_onset = stim_onset;
-align_info.maze_length = maze_length;
-align_info.min_length = min_length;
-
-align_info.reward_onset = reward_onset;
-align_info.max_length_reward = max_length_reward;
-align_info.min_length_reward = min_length_reward;
-
+align_info.
 if alignment_type == 'stimulus' 
 % 1) align data based on stimulus onset (include prededing maze? couple frames)
     for vr_trials = 1:length(good_trials)
