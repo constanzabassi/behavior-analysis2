@@ -1,4 +1,4 @@
-function make_condition_heatmaps (data,min_max,sorting_type,all_conditions)
+function make_condition_heatmaps (data,min_max,sorting_type,all_conditions,alignment_type)
 figure(4);clf;
 
 % find empty arrays and don't count them as condition
@@ -17,7 +17,16 @@ for c = 1:length(all_conditions)
         hold on
         data_to_plot = squeeze(mean(data{1,c},1));%finds mean across trials
         title(all_conditions{c,3})
-        make_heatmap(data_to_plot,min_max,sorting_type); 
+
+        %find alignment event
+        align_info = data{2,c};
+        align_fieldnames = fieldnames(align_info);
+        alignment_event_index = find(strcmp(fieldnames(align_info),strcat(alignment_type,'_onset')));
+        alignment_event_onset = align_info.(align_fieldnames{alignment_event_index});
+
+        %make heatmap of specific condition with alignment event onset
+        %based on alignment type
+        make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset); 
         hold off
     end
 end

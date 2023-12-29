@@ -49,8 +49,9 @@ title('stimulus and turn onsets')
 make_heatmap([squeeze(mean(aligned_stimulus,1)),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.stim_onset,align_info.min_length+align_info.reward_onset);
 hold off
 
-%% 3) divide data into correct/incorrect, left/right, stim/no stim
+%% 3) divide data into correct/incorrect, left/right, stim/no stim and plot the mean
 [all_conditions, condition_array_trials] = divide_trials (imaging);
-imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff','reward');
-make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions); %plot mean for each condition
+alignment_type = 'stimulus'; %'reward','turn','stimulus'
+imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type);
+make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type); %plot mean for each condition
 

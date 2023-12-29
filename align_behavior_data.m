@@ -24,10 +24,10 @@ min_length_reward = min([[reward_onset{1,:}] - cellfun(@min,{imaging_array(rewar
 %for turns using 30 frames before and after
 frames_around = 30;
 align_info.turn_onset = frames_around+1;
-align_info.stim_onsets = [stim_onset{1,:}];
+align_info.stimulus_onsets = [stim_onset{1,:}];
 align_info.maze_length = maze_length;
 align_info.min_length = shortest_maze_length;
-align_info.stim_onset = min_length_stim+1;
+align_info.stimulus_onset = min_length_stim+1;
 
 align_info.reward_onsets = [reward_onset{1,:}];
 align_info.max_length_reward = max_length_reward;
