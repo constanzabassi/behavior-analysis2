@@ -29,7 +29,7 @@ tiledlayout(1,4,"TileSpacing",'compact')
 nexttile
 hold on
 title('stimulus')
-make_heatmap(squeeze(mean(aligned_stimulus,1)),min_max,sorting_type,align_info.min_length_stim+1);
+make_heatmap(squeeze(mean(aligned_stimulus,1)),min_max,sorting_type,align_info.stim_onset);
 hold off
 
 nexttile
@@ -41,15 +41,14 @@ hold off
 nexttile
 hold on
 title('reward')
-make_heatmap(squeeze(mean(aligned_reward,1)),min_max,sorting_type,align_info.min_length+align_info.min_length_reward+1);
+make_heatmap(squeeze(mean(aligned_reward,1)),min_max,sorting_type,align_info.min_length+align_info.reward_onset);
 hold off
 
 nexttile
 hold on
 title('stimulus and turn')
-make_heatmap([squeeze(mean(aligned_stimulus,1)),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.min_length+align_info.min_length_reward+1);
+make_heatmap([squeeze(mean(aligned_stimulus,1)),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.min_length+align_info.reward_onset);
 hold off
 
-%% 3) divide data into four trial conditions left/right/correct/incorrect
 
 
