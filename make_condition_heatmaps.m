@@ -26,7 +26,7 @@ for c = 1:length(all_conditions)
 
         %make heatmap of specific condition with alignment event onset
         %based on alignment type
-        make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset); 
+        make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset,alignment_event_onset); 
         hold off
     end
 end
