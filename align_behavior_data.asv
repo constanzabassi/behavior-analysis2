@@ -9,6 +9,7 @@ maze_length= cellfun(@length,{imaging_array.maze_frames});
 stim_onset = cellfun(@(x) find(x,1, 'first'),{imaging_array.stimulus},'UniformOutput',false); %find first one in stimulus
 min_length = min(maze_length - [stim_onset{1,:}]);
 
+
 max_length_reward = min(cellfun(@length,{imaging_array.reward_frames})); %24/25 or 30 frames between maze and ITI
 reward_onset = cellfun(@(x) find(x == 1),{imaging_array.is_reward},'UniformOutput',false); %reward onset based on all frames in trial
 reward_trial = cellfun(@(x) ~isempty(x),reward_onset,'UniformOutput',false);
@@ -38,10 +39,12 @@ if strcmp(alignment_type,'stimulus' )
        
     end
 elseif strcmp(alignment_type,'turn')
+    frames_around = 30;
+    align_info.turn_onset = frames_around+1;
 % 2) align data based on maze offset/turn (1 sec pre and post)
     for vr_trials = 1:length(good_trials) 
             t = vr_trials;
-            frames_to_include = imaging_array(t).turn_frame-30:imaging_array(t).turn_frame+30; %turn onset is frame 31
+            frames_to_include = imaging_array(t).turn_frame-frames_around :imaging_array(t).turn_frame+frames_around ; %turn onset is frame 31
             if strcmp(data_type,'dff')
                 aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(:,frames_to_include);
             elseif strcmp(data_type,'z_dff')
@@ -56,16 +59,13 @@ elseif strcmp(alignment_type,'turn')
 elseif strcmp(alignment_type ,'reward')
         for vr_trials = 1:length(reward_trial) %incorrect ones are empty for reward
             t = reward_trial(vr_trials);
-            if t == 10
-            t
-        end
             frames_to_include = reward_onset{1,t}-min_length_reward:reward_onset{1,t}+max_length_reward-min_length_reward; %reward onset at min_length_reward+1
             if strcmp(data_type,'dff')
-                aligned_imaging(vr_trials,:,:) = imaging(reward_trial(vr_trials)).dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).dff(:,frames_to_include);
             elseif strcmp(data_type,'z_dff')
-                aligned_imaging(vr_trials,:,:) = imaging(reward_trial(vr_trials)+good_trials(1)-1).z_dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).z_dff(:,frames_to_include);
             else
-                aligned_imaging(vr_trials,:,:) = imaging(reward_trial(vr_trials)+good_trials(1)-1).deconv(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).deconv(:,frames_to_include);
             end
            
     end
