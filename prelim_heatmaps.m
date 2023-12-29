@@ -25,12 +25,30 @@ hold off
 [aligned_reward,imaging_array,align_info] = align_behavior_data (imaging,'z_dff','reward');
 
 figure(2);clf;
-tiledlayout(1,3,"TileSpacing",'compact')
+tiledlayout(1,4,"TileSpacing",'compact')
 nexttile
-make_heatmap(squeeze(mean(aligned_stimulus,1)),min_max,sorting_type);
+hold on
+title('stimulus')
+make_heatmap(squeeze(mean(aligned_stimulus,1)),min_max,sorting_type,1);
+hold off
+
 nexttile
-make_heatmap(squeeze(mean(aligned_turn,1)),min_max,sorting_type);
+hold on
+title('turn')
+make_heatmap(squeeze(mean(aligned_turn,1)),min_max,sorting_type,31);
+hold off
+
 nexttile
-make_heatmap(squeeze(mean(aligned_reward,1)),min_max,sorting_type);
+hold on
+title('reward')
+make_heatmap(squeeze(mean(aligned_reward,1)),min_max,sorting_type,align_info.min_length+align_info.min_length_reward+1);
+hold off
+
+nexttile
+hold on
+title('stimulus and turn')
+make_heatmap([squeeze(mean(aligned_stimulus,1)),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.min_length+align_info.min_length_reward+1);
+hold off
+
 
 
