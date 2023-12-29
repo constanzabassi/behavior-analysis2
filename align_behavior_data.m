@@ -2,7 +2,7 @@ function [aligned_imaging,imaging_array,align_info] = align_behavior_data (imagi
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
 imaging_array = [imaging(good_trials).movement_in_imaging_time]; %convert to array for easier indexing
-
+aligned_imaging =[]; %this is needed so there is an output if there are zero trials in the condition (happens w reward)
 
 %find the trial with the smallest amount of frames
 maze_length= cellfun(@length,{imaging_array.maze_frames});
@@ -78,4 +78,5 @@ elseif strcmp(alignment_type ,'reward')
            
     end
 end
+
 
