@@ -1,4 +1,4 @@
-function make_heatmap(data,min_max,sorting_type,event_frame)
+function make_heatmap(data,min_max,sorting_type,varargin)
 
 data1= squeeze(data);
 
@@ -9,8 +9,10 @@ if sorting_type == 1
     r(value) = r;
     r=r';
     imagesc(data1(value,:)); %by time
-    if ~isempty(event_frame)
-        xline(event_frame,'-w')
+    if nargin > 3
+        for i = 1:length(varargin)
+            xline(varargin{i},'-w')
+        end
     end
 else
     [y_axis,inds] = max(data1,[],2);
@@ -19,8 +21,10 @@ else
     r(value) = r;
     r=r';
     imagesc(data1(value,:)); %by max val
-    if ~isempty(event_frame)
-        xline(event_frame,'-w')
+    if nargin > 3
+        for i = 1:length(varargin)
+            xline(varargin{i},'-w')
+        end
     end
 end
 caxis([min_max]);
