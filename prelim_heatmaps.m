@@ -51,7 +51,6 @@ hold off
 
 %% 3) divide data into correct/incorrect, left/right, stim/no stim
 [all_conditions, condition_array_trials] = divide_trials (imaging);
-aligned_conditions = align_data_per_condition(imaging,all_conditions,'z_dff','stimulus');
-[aligned_stimulus,imaging_array,align_info] = align_behavior_data (imaging,'z_dff','stimulus');
-
+imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff','stimulus');
+make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions); %plot mean for each condition
 
