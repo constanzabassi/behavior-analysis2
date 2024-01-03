@@ -4,15 +4,20 @@ selected_folder = uigetdir;
 addpath(genpath(selected_folder))
 %%
 %1) plot example trial first
-ex_trial = 66;
+ex_trial = 3;
 data = imaging(ex_trial).z_dff;
 
 min_max = [-0.5 2];
 sorting_type = 1; %1 by time, any other number by max value
 figure(1);clf;
 hold on
-make_heatmap(data,min_max,sorting_type);
+title(['Example trial: ' num2str(ex_trial)])
+make_heatmap(data,min_max,sorting_type,1);
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.stimulus,0,size(data,1)),'-w');
+plot(rescale(imaging(ex_trial).movement_in_imaging_time.is_reward,0,size(data,1)),'-r');
+plot(rescale(imaging(ex_trial).movement_in_imaging_time.in_ITI,0,size(data,1)),'-g');
+ylabel('Neurons')
+xlabel('Frames')
 hold off
 
 %% 2) make avg plots of all data aligned to specific events (stimulus, turn,reward)
@@ -51,7 +56,7 @@ hold off
 
 %% 3) divide data into correct/incorrect, left/right, stim/no stim and plot the mean
 [all_conditions, condition_array_trials] = divide_trials (imaging);
-alignment_type = 'stimulus'; %'reward','turn','stimulus'
+alignment_type = 'turn'; %'reward','turn','stimulus'
 imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type);
 make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type); %plot mean for each condition
 
