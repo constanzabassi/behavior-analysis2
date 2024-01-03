@@ -4,7 +4,7 @@ selected_folder = uigetdir;
 addpath(genpath(selected_folder))
 %%
 %1) plot example trial first
-ex_trial = 3;
+ex_trial = 107;
 data = imaging(ex_trial).z_dff;
 
 min_max = [-0.5 2];
@@ -16,6 +16,7 @@ make_heatmap(data,min_max,sorting_type,1);
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.stimulus,0,size(data,1)),'-w');
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.is_reward,0,size(data,1)),'-r');
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.in_ITI,0,size(data,1)),'-g');
+plot(rescale(imaging(ex_trial).movement_in_imaging_time.y_position,0,size(data,1)),'-m');
 ylabel('Neurons')
 xlabel('Frames')
 hold off
@@ -51,12 +52,12 @@ hold off
 nexttile
 hold on
 title('stimulus and turn onsets')
-make_heatmap([squeeze(mean(aligned_stimulus,1)),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.stimulus_onset,align_info.stimulus_onset,align_info.min_length+align_info.reward_onset);
+make_heatmap([squeeze(mean(aligned_stimulus,1)),NaN(size(aligned_stimulus,2),3),squeeze(mean(aligned_turn,1))],min_max,sorting_type,align_info.stimulus_onset,align_info.stimulus_onset,align_info.min_length+align_info.turn_onset+3); %+ length of maze and +3 for NaN
 hold off
 
 %% 3) divide data into correct/incorrect, left/right, stim/no stim and plot the mean
 [all_conditions, condition_array_trials] = divide_trials (imaging);
-alignment_type = 'turn'; %'reward','turn','stimulus'
+alignment_type = 'stimulus'; %'reward','turn','stimulus'
 imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type);
 make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type); %plot mean for each condition
 
