@@ -1,4 +1,4 @@
-function [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,data_type,alignment_type)
+function [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,data_type,alignment_type,varargin)
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
 imaging_array = [imaging(good_trials).movement_in_imaging_time]; %convert to array for easier indexing
@@ -33,6 +33,11 @@ align_info.stimulus_onset = min_length_stim+1;
 align_info.reward_onsets = [reward_onset{1,:}];
 align_info.max_length_reward = max_length_reward;
 align_info.reward_onset = min_length_reward+1;
+if nargin > 3
+    cell_ids = varargin;
+else
+    cell_ids = 1:size(imaging(good_trials(1)).dff,1);
+end
 
 if strcmp(alignment_type,'stimulus' )
 % 1) align data based on stimulus onset (include preceding maze- couple frames)
@@ -40,11 +45,11 @@ if strcmp(alignment_type,'stimulus' )
         t = good_trials(vr_trials);
         frames_to_include = stim_onset{1,vr_trials}-min_length_stim:stim_onset{1,vr_trials}+shortest_maze_length-min_length_stim; %currently stim onset is frame 1
         if strcmp(data_type,'dff')
-            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(:,frames_to_include);
+            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(cell_ids,frames_to_include);
         elseif strcmp(data_type,'z_dff')
-            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).z_dff(:,frames_to_include);
+            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).z_dff(cell_ids,frames_to_include);
         else
-            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).deconv(:,frames_to_include);
+            aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).deconv(cell_ids,frames_to_include);
         end
        
     end
@@ -55,11 +60,11 @@ elseif strcmp(alignment_type,'turn')
             t = vr_trials;
             frames_to_include = imaging_array(t).turn_frame-frames_around :imaging_array(t).turn_frame+frames_around ; %turn onset is frame 31
             if strcmp(data_type,'dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(cell_ids,frames_to_include);
             elseif strcmp(data_type,'z_dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).z_dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).z_dff(cell_ids,frames_to_include);
             else
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).deconv(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).deconv(cell_ids,frames_to_include);
             end
            
     end
@@ -70,11 +75,11 @@ elseif strcmp(alignment_type ,'reward')
             t = reward_trial(vr_trials);
             frames_to_include = reward_onset{1,t}-min_length_reward:reward_onset{1,t}+max_length_reward-min_length_reward; %reward onset at min_length_reward+1
             if strcmp(data_type,'dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).dff(cell_ids,frames_to_include);
             elseif strcmp(data_type,'z_dff')
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).z_dff(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).z_dff(cell_ids,frames_to_include);
             else
-                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).deconv(:,frames_to_include);
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(reward_trial(vr_trials))).deconv(cell_ids,frames_to_include);
             end
            
     end
