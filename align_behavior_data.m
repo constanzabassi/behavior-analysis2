@@ -10,7 +10,8 @@ temp_reward = cellfun(@(x) find(x==1),{imaging_array.stimulus},'UniformOutput',f
 stim_onset = cellfun(@min,temp_reward,'UniformOutput',false); %find first one in stimulus to determine stimulus onset
 shortest_maze_length = min(maze_length - [stim_onset{1,:}]);
 min_length_stim = min([stim_onset{1,:}])-1; %min number of frames in front of stimulus onset during maze
-if min_length_stim == 0
+if min_length_stim == 0 %sometimes weird trial not found bc it is the first of the file
+    min_length_stim = min(setdiff([stim_onset{1,:}],min([stim_onset{1,:}])))-1;
     keyboard %probably some weird trial where sound is playing during iti
 end
 
