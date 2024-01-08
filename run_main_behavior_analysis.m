@@ -7,6 +7,18 @@ info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetin
 
 %% 2)pool imaging data structure from multiple datasets and organize it
 [all_celltypes,imaging_st,mouse] = pool_imaging(info.mouse_date,info.server);
-
+ 
 %organize so that all mice are within one variable  
-[num_cells,sorted_cells] = organize_pooled_celltypes(imaging_st,all_celltypes);
+[num_cells,sorted_cells] = organize_pooled_celltypes(mouse,all_celltypes);
+
+%% 3) make heatmaps across conditions across celltypes per dataset!
+
+min_max = [-0.5 2];
+sorting_type = 1; % 1 by time, any other number by max value
+data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment_type = 'stimulus'; %'reward','turn','stimulus'
+cell_type = 'pv';
+
+make_conditionheatmaps_celltypes(imaging_st,alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
+
+%% 4) same as 3 but put them together into single plots for each dataset
