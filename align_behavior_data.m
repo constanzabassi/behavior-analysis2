@@ -34,7 +34,7 @@ align_info.reward_onsets = [reward_onset{1,:}];
 align_info.max_length_reward = max_length_reward;
 align_info.reward_onset = min_length_reward+1;
 if nargin > 3
-    cell_ids = varargin;
+    cell_ids = varargin{1,1};
 else
     cell_ids = 1:size(imaging(good_trials(1)).dff,1);
 end
