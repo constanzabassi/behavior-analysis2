@@ -1,5 +1,6 @@
-function [all_celltypes,imaging_st,mouse] = pool_imaging(mouse_date,server)
+function [all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(mouse_date,server)
 imaging_st = {};
+cat_imaging = [];
 
 for m = 1:length(mouse_date)
     mm = mouse_date(m)
@@ -19,6 +20,14 @@ for m = 1:length(mouse_date)
 
     %save imaging strucutre for each mouse
     imaging_st{m} = imaging;
+
+    %add info about which mouse it is for big matrix to keep track
+    for t = 1:length(imaging)
+        imaging(t).mouse = m;
+    end
+
+    %save concatenated version (massive matrix)
+    cat_imaging = cat(2,cat_imaging,imaging);
 
 end
 %load red cells
