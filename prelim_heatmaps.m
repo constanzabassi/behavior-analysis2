@@ -4,7 +4,7 @@ selected_folder = uigetdir;
 addpath(genpath(selected_folder))
 %%
 %1) plot example trial first
-ex_trial = 107;
+ex_trial = 50;
 data = imaging(ex_trial).z_dff;
 
 min_max = [-0.5 2];
@@ -59,5 +59,7 @@ hold off
 [all_conditions, condition_array_trials] = divide_trials (imaging);
 alignment_type = 'stimulus'; %'reward','turn','stimulus'
 imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type);
+
+figure(4);clf;
 make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type); %plot mean for each condition
 
