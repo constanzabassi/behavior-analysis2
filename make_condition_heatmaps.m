@@ -1,5 +1,4 @@
 function make_condition_heatmaps (data,min_max,sorting_type,all_conditions,alignment_type)
-figure(4);clf;
 
 % find empty arrays and don't count them as condition
 empty_array = cellfun(@isempty,data);
