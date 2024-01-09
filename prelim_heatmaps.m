@@ -62,5 +62,5 @@ alignment_type = 'stimulus'; %'reward','turn','stimulus'
 imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type,[]);
 
 figure(4);clf;
-make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type); %plot mean for each condition
+make_condition_heatmaps (imaging_conditions,min_max,sorting_type,all_conditions,alignment_type,[]); %plot mean for each condition
 

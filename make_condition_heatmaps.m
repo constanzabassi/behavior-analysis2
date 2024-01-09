@@ -1,4 +1,4 @@
-function make_condition_heatmaps (data,min_max,sorting_type,all_conditions,alignment_type)
+function make_condition_heatmaps (data,min_max,sorting_type,all_conditions,alignment_type,sorting_id)
 
 % find empty arrays and don't count them as condition
 empty_array = cellfun(@isempty,data);
@@ -25,7 +25,11 @@ for c = 1:length(all_conditions)
 
         %make heatmap of specific condition with alignment event onset
         %based on alignment type
-        make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset,alignment_event_onset); 
+        if isempty(sorting_id)
+            make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset,alignment_event_onset); 
+        else
+            make_heatmap_sorted(data_to_plot,min_max,sorting_id,alignment_event_onset);
+        end
         hold off
     end
 end

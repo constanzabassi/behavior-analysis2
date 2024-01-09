@@ -21,15 +21,12 @@ cell_type = 'pyr';
 
 make_conditionheatmaps_celltypes(imaging_st,[],alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
 
-%% 4) same as 3 but put them together into single plots for each dataset
+%% 4) heatmaps of average across all datasets! also plots sorted values based on last condition (correct/left/stim)
 
-min_max = [-0.5 2];
+min_max = [-0.5 1];
 sorting_type = 1; % 1 by time, any other number by max value
 data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment_type = 'stimulus'; %'reward','turn','stimulus'
-cell_type = 'som';
+cell_type = 'pyr';
 
 make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
-
-%% 5) make heatmaps per condition but sort them using particular condition
-
