@@ -1,9 +1,25 @@
-function [aligned_imaging,imaging_array] = align_behavior_data (imaging,align_info,data_type,alignment_type,varargin)
+function [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,data_type,alignment_type,varargin)
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
 imaging_array = [imaging(good_trials).movement_in_imaging_time]; %convert to array for easier indexing
 aligned_imaging =[]; %this is needed so there is an output if there are zero trials in the condition (happens w reward)
 
+% get stimulus onsets 
+temp_stim = cellfun(@(x) find(x==1),{imaging_array.stimulus},'UniformOutput',false);
+stim_onset = cellfun(@min,temp_stim,'UniformOutput',false); %find first one in stimulus to determine stimulus onset
+%save into align_info
+align_info.stimulus_onsets = [stim_onset{1,:}];
+
+% reward onsets and trials with reward
+reward_onset = cellfun(@(x) find(x == 1),{imaging_array.is_reward},'UniformOutput',false); %reward onset based on all frames in trial
+reward_trial = cellfun(@(x) ~isempty(x),reward_onset,'UniformOutput',false);
+reward_trial = find([reward_trial{1,:}] == 1); %of good trials which ones have reward
+%save into align_info
+align_info.reward_onsets = [reward_onset{1,:}];
+align_info.reward_trials = reward_trial;
+
+%save good trials
+align_info.good_trials = good_trials;
 if nargin > 4
     cell_ids = varargin{1,1};
 else

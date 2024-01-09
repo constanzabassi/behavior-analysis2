@@ -6,8 +6,8 @@ aligned_imaging =[]; %this is needed so there is an output if there are zero tri
 
 %find the trial with the smallest amount of frames
 maze_length= cellfun(@length,{imaging_array.maze_frames});
-temp_reward = cellfun(@(x) find(x==1),{imaging_array.stimulus},'UniformOutput',false);
-stim_onset = cellfun(@min,temp_reward,'UniformOutput',false); %find first one in stimulus to determine stimulus onset
+temp_stim = cellfun(@(x) find(x==1),{imaging_array.stimulus},'UniformOutput',false);
+stim_onset = cellfun(@min,temp_stim,'UniformOutput',false); %find first one in stimulus to determine stimulus onset
 shortest_maze_length = min(maze_length - [stim_onset{1,:}]);
 min_length_stim = min([stim_onset{1,:}])-1; %min number of frames in front of stimulus onset during maze
 if min_length_stim == 0 %sometimes weird trial not found bc it is the first of the file
@@ -25,12 +25,12 @@ min_length_reward = min([[reward_onset{1,:}] - cellfun(@min,{imaging_array(rewar
 %for turns using 30 frames before and after
 frames_around = turn_frames;
 align_info.turn_onset = frames_around+1;
-align_info.stimulus_onsets = [stim_onset{1,:}];
+% align_info.stimulus_onsets = [stim_onset{1,:}];
 align_info.maze_length = maze_length;
 align_info.min_length = shortest_maze_length;
 align_info.stimulus_onset = min_length_stim+1;
 
-align_info.reward_onsets = [reward_onset{1,:}];
+% align_info.reward_onsets = [reward_onset{1,:}];
 align_info.max_length_reward = max_length_reward;
 align_info.reward_onset = min_length_reward+1;
-align_info.reward_trials = reward_trial;
+% align_info.reward_trials = reward_trial;

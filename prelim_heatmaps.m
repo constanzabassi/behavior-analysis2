@@ -26,9 +26,9 @@ hold off
 %make plots based on conditions align based on onset first 
 %1) align data (trials,cells,frames)
 align_info = find_align_info(imaging,30); %find min # of frames per event
-[aligned_stimulus,imaging_array] = align_behavior_data (imaging,align_info,'z_dff','stimulus');
-[aligned_turn,imaging_array] = align_behavior_data (imaging,align_info,'z_dff','turn');
-[aligned_reward,imaging_array] = align_behavior_data (imaging,align_info,'z_dff','reward');
+[aligned_stimulus,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','stimulus');
+[aligned_turn,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','turn');
+[aligned_reward,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','reward');
 
 figure(2);clf;
 tiledlayout(1,4,"TileSpacing",'compact')
@@ -58,7 +58,7 @@ hold off
 
 %% 3) divide data into correct/incorrect, left/right, stim/no stim and plot the mean
 [all_conditions, condition_array_trials] = divide_trials (imaging);
-alignment_type = 'stimulus'; %'reward','turn','stimulus'
+alignment_type = 'reward'; %'reward','turn','stimulus'
 imaging_conditions = align_data_per_condition(imaging,all_conditions,'z_dff',alignment_type);
 
 figure(4);clf;
