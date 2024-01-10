@@ -18,7 +18,7 @@ info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetin
 min_max = [-0.5 2];
 sorting_type = 1; % 1 by time, any other number by max value
 data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
-alignment_type = 'turn'; %'reward','turn','stimulus'
+alignment_type = 'reward'; %'reward','turn','stimulus'
 cell_type = 'pv';
 
 make_conditionheatmaps_celltypes(imaging_st,[],alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
@@ -28,11 +28,17 @@ make_conditionheatmaps_celltypes(imaging_st,[],alignment_type,data_type,sorting_
 min_max = [-0.25 1];
 sorting_type = 1; % 1 by time, any other number by max value
 data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
-alignment_type = 'turn'; %'reward','turn','stimulus'
+alignment_type = 'stimulus'; %'reward','turn','stimulus'
 cell_type = 'som';
 
 make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
 
 
-%% 5) plot specified conditions next to one another
+%% 5) plot invididual mice average across conditions with concatenated alignment
+ex_imaging = imaging_st{1,4};
+[align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+[aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,data_type,'all');
+event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+[all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+make_heatmap(squeeze(mean(aligned_imaging)),[-.25 1],1,event_onsets(1),event_onsets);
 
