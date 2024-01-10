@@ -4,18 +4,18 @@ for c = 1:length(all_conditions)
     if ~isempty(align_info_input) %given align info using all other trials
         if nargin > 5
             align_info = align_info_input;
-            [aligned_stimulus,imaging_array,align_info] = align_behavior_data(condition_data_matrix,align_info,data_type,alignment_type,varagin);
+            [aligned_stimulus,imaging_array,align_info] = align_behavior_data_prelim(condition_data_matrix,align_info,data_type,alignment_type,varagin);
         else
             align_info = align_info_input;
-            [aligned_stimulus,imaging_array,align_info] = align_behavior_data(condition_data_matrix,align_info,data_type,alignment_type);
+            [aligned_stimulus,imaging_array,align_info] = align_behavior_data_prelim(condition_data_matrix,align_info,data_type,alignment_type);
         end
     else %calculate align info for each condition separately
         if nargin > 5
             align_info = find_align_info(condition_data_matrix,30);
-            [aligned_stimulus,imaging_array,align_info] = align_behavior_data(condition_data_matrix,align_info,data_type,alignment_type,varagin);
+            [aligned_stimulus,imaging_array,align_info] = align_behavior_data_prelim(condition_data_matrix,align_info,data_type,alignment_type,varagin);
         else
             align_info = find_align_info(condition_data_matrix,30);
-            [aligned_stimulus,imaging_array,align_info] = align_behavior_data(condition_data_matrix,align_info,data_type,alignment_type);
+            [aligned_stimulus,imaging_array,align_info] = align_behavior_data_prelim(condition_data_matrix,align_info,data_type,alignment_type);
         end
     end
     aligned_conditions{1,c} = aligned_stimulus;
