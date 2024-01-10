@@ -26,14 +26,21 @@ function make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,
         end
         [mean_conditions,imaging_conditions_updated] = find_mean_imaging_conditions(imaging_conditions);
         figure(101);clf;
+        hold on
+        title('Average across all sorted individually')
         make_condition_heatmaps (imaging_conditions_updated,min_max,sorting_type,all_conditions,alignment_type,[]); %plot mean for each condition
-    
-        figure(102);clf;
+        hold off
+
         %find alignment event
         align_fieldnames = fieldnames(align_info);
         alignment_event_index = find(strcmp(fieldnames(align_info),strcat(alignment_type,'_onset')));
         alignment_event_onset = align_info.(align_fieldnames{alignment_event_index});
         sorted_values = sort_values (mean_conditions(end,:,:),sorting_type, alignment_event_onset);
+
+        figure(102);clf; 
+        hold on
+        title('Average across all sorted individually')
         make_condition_heatmaps (imaging_conditions_updated,min_max,sorting_type,all_conditions,alignment_type,sorted_values); %plot mean for each condition
+        hold off
 end
 

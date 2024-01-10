@@ -4,7 +4,7 @@ selected_folder = uigetdir;
 addpath(genpath(selected_folder))
 %%
 %1) plot example trial first
-ex_trial = 50;
+ex_trial = 231;
 data = imaging(ex_trial).z_dff;
 
 min_max = [-0.5 2];

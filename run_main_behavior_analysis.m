@@ -1,4 +1,6 @@
 %% behavior analysis of datasets
+addpath(genpath('C:\Code\Github\behavior-analysis'))
+
 %1) choose datasets
 info.mouse_date={'HA11-1R/2023-05-05','HA11-1R/2023-04-13','HA10-1L/2023-04-10','HA10-1L/2023-04-17','HA2-1L/2023-04-12','HA2-1L/2023-05-05'}; %mice with behavioral responses ,'GS9-1L/2023-01-16','GS8-00/2022-12-20','HA13-1L/2023-02-24','GE3-00/2022-10-20','HA10-1L/2023-03-27-session2'
 
@@ -16,17 +18,21 @@ info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetin
 min_max = [-0.5 2];
 sorting_type = 1; % 1 by time, any other number by max value
 data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
-alignment_type = 'stimulus'; %'reward','turn','stimulus'
-cell_type = 'pyr';
+alignment_type = 'turn'; %'reward','turn','stimulus'
+cell_type = 'pv';
 
 make_conditionheatmaps_celltypes(imaging_st,[],alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
 
 %% 4) heatmaps of average across all datasets! also plots sorted values based on last condition (correct/left/stim)
 
-min_max = [-0.5 1];
+min_max = [-0.25 1];
 sorting_type = 1; % 1 by time, any other number by max value
 data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
-alignment_type = 'stimulus'; %'reward','turn','stimulus'
-cell_type = 'pyr';
+alignment_type = 'turn'; %'reward','turn','stimulus'
+cell_type = 'som';
 
 make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
+
+
+%% 5) plot specified conditions next to one another
+
