@@ -26,9 +26,9 @@ hold off
 %make plots based on conditions align based on onset first 
 %1) align data (trials,cells,frames)
 align_info = find_align_info(imaging,30); %find min # of frames per event
-[aligned_stimulus,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','stimulus');
-[aligned_turn,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','turn');
-[aligned_reward,imaging_array,align_info] = align_behavior_data (imaging,align_info,'z_dff','reward');
+[aligned_stimulus,imaging_array,align_info] = align_behavior_data_prelim (imaging,align_info,'z_dff','stimulus');
+[aligned_turn,imaging_array,align_info] = align_behavior_data_prelim (imaging,align_info,'z_dff','turn');
+[aligned_reward,imaging_array,align_info] = align_behavior_data_prelim (imaging,align_info,'z_dff','reward');
 
 figure(2);clf;
 tiledlayout(1,4,"TileSpacing",'compact')
