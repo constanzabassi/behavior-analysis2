@@ -5,11 +5,17 @@ imaging_array = [imaging(good_trials).movement_in_imaging_time]; %convert to arr
 aligned_imaging =[]; %this is needed so there is an output if there are zero trials in the condition (happens w reward)
 
 %find the trial with the smallest amount of frames
-maze_length= cellfun(@length,{imaging_array.maze_frames});
+maze_length= cellfun(@length,{imaging_array.maze_frames}); %frame length of every trial
 temp_stim = cellfun(@(x) find(x==1),{imaging_array.stimulus},'UniformOutput',false);
-stim_onset = cellfun(@min,temp_stim,'UniformOutput',false); %find first one in stimulus to determine stimulus onset
-shortest_maze_length = min(maze_length - [stim_onset{1,:}]);
+stim_onset = cellfun(@min,temp_stim,'UniformOutput',false); %find first one in stimulus to determine stimulus onset #1
+shortest_maze_length = min(maze_length - [stim_onset{1,:}]); %smallest distance in front of stimulus during trial
 min_length_stim = min([stim_onset{1,:}])-1; %min number of frames in front of stimulus onset during maze
+
+%find second stimulus onset
+temp_stim2 = cellfun(@(x) find(diff(x)>4),temp_stim,'UniformOutput',false);
+stim_onset2 = cellfun(@min,temp_stim2,'UniformOutput',false);
+
+
 if min_length_stim == 0 %sometimes weird trial not found bc it is the first of the file
     min_length_stim = min(setdiff([stim_onset{1,:}],min([stim_onset{1,:}])))-1;
     keyboard %probably some weird trial where sound is playing during iti
@@ -28,9 +34,9 @@ align_info.turn_onset = frames_around+1;
 % align_info.stimulus_onsets = [stim_onset{1,:}];
 align_info.maze_length = maze_length;
 align_info.min_length = shortest_maze_length;
-align_info.stimulus_onset = min_length_stim+1;
+align_info.stimulus_onset = min_length_stim+1; %across trials
 
 % align_info.reward_onsets = [reward_onset{1,:}];
 align_info.max_length_reward = max_length_reward;
-align_info.reward_onset = min_length_reward+1;
-% align_info.reward_trials = reward_trial;
+align_info.reward_onset = min_length_reward+1; %across trials
+% align_info.reward_trials = reward_trial; 
