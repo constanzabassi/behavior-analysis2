@@ -90,8 +90,8 @@ end
 
 event = 6; %ITI time
 alignment_frames(event,:) = cellfun(@(x) x(1), {imaging_array.iti_frames});
-left_padding(event) = 10;
-right_padding(event) = 85;
+left_padding(event) = 1;
+right_padding(event) = 80;
 
 
 

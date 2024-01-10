@@ -35,10 +35,11 @@ make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,data_type
 
 
 %% 5) plot invididual mice average across conditions with concatenated alignment
-ex_imaging = imaging_st{1,4};
+ex_imaging = imaging_st{1,6};
 [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
 [aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,data_type,'all');
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+figure(88);clf;
 make_heatmap(squeeze(mean(aligned_imaging)),[-.25 1],1,event_onsets(1),event_onsets);
 

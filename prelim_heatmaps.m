@@ -4,7 +4,7 @@ selected_folder = uigetdir;
 addpath(genpath(selected_folder))
 %%
 %1) plot example trial first
-ex_trial = 231;
+ex_trial = 197;
 data = imaging(ex_trial).z_dff;
 
 min_max = [-0.5 2];
@@ -16,6 +16,7 @@ make_heatmap(data,min_max,sorting_type,1);
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.stimulus,0,size(data,1)),'-w');
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.is_reward,0,size(data,1)),'-r');
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.in_ITI,0,size(data,1)),'-g');
+plot(rescale(imaging(ex_trial).movement_in_imaging_time.pure_tones,0,size(data,1)),'-g');
 plot(rescale(imaging(ex_trial).movement_in_imaging_time.y_position,0,size(data,1)),'-m');
 ylabel('Neurons')
 xlabel('Frames')
