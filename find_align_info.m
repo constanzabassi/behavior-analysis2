@@ -50,6 +50,7 @@ align_info.reward_onset = min_length_reward+1; %across trials
 % align_info.reward_trials = reward_trial; 
 align_info.pure_onsets = pure_onsets;
 
+align_info.good_trials = good_trials;
 %% align similar to Caroline
 %event 1-3 are stimulus onsets
 %event 4 is turn
@@ -77,13 +78,13 @@ right_padding(event) = 30;
 
 event = 5; 
 if all(cellfun(@isempty, reward_onset)) %use ITI tone for incorrect trials
-    alignment_frames(event,:) = cellfun(@min,{imaging_array.reward_frames})+3;%[pure_onsets{1,incorrect_trials}];
+    alignment_frames(event,:) = [pure_onsets{1,:}];
     left_padding(event) = 3; %smallest # frames in front during reward period
     right_padding(event) = max_length_reward-3; %larger # frames after reward during reward period
 else
     alignment_frames(event,reward_trial) = [reward_onset{1,:}];
     incorrect_trials = setdiff(1:length(good_trials),reward_trial);
-    alignment_frames(event,incorrect_trials) = cellfun(@min,{imaging_array(incorrect_trials).reward_frames})+3;%[pure_onsets{1,incorrect_trials}];
+    alignment_frames(event,incorrect_trials) = [pure_onsets{1,incorrect_trials}];
     left_padding(event) = min_length_reward; %smallest # frames in front during reward period
     right_padding(event) = max_length_reward-min_length_reward; %larger # frames after reward during reward period
 end
