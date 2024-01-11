@@ -15,14 +15,17 @@ info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetin
 
 %% 3) heatmaps of average across all datasets! also plots sorted values based on last condition (correct/left/stim)
 
-min_max = [-0.25 1];
-sorting_type = 1; % 1 by time, any other number by max value
-data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
-alignment_type = 'stimulus'; %'reward','turn','stimulus'
-cell_type = 'som';
+plot_info.min_max = [-0.25 1];
+plot_info.sorting_type = 1; % 1 by time, any other number by max value
+plot_info.xlabel = 'Frames';
+plot_info.ylabel = 'Neurons';
 
-make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type);
-%make_conditionheatmaps_celltypes(imaging_st,[],alignment_type,data_type,sorting_type,min_max,all_celltypes,cell_type); %plots invidual datasets!
+alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'stimulus'; %'reward','turn','stimulus', 'ITI'
+alignment.cell_type = 'pyr';
+
+make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment,plot_info,all_celltypes);
+%make_conditionheatmaps_celltypes(imaging_st,[],alignment,plot_info,all_celltypes); %plots invidual datasets!
 
 
 %% 4) plot invididual mice average across conditions with concatenated alignment
@@ -32,15 +35,15 @@ ex_imaging = imaging_st{1,7};
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
 figure(88);clf;
-make_heatmap(squeeze(mean(aligned_imaging)),[-.25 1],1,event_onsets(1),event_onsets);
+make_heatmap(squeeze(mean(aligned_imaging)),plot_info,event_onsets(1),event_onsets);
 
 %% 5) plot heatmap averaged across datasets/ index into specific conditions
-conditions = [6,8];
+alignment.conditions = [1,8];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 alignment.number = [1:6]; %'reward','turn','stimulus'
-cell_type = cellfun(@(x) x.som_cells,all_celltypes,'UniformOutput',false);
+alignment.cells = cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false);
 figure(89);clf;
-heatmaps_across_mice (imaging_st,min_max,sorting_type,conditions,alignment,cell_type,[]);
+heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
 
 
