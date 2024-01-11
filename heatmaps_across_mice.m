@@ -1,6 +1,14 @@
 function mouse_data_conditions = heatmaps_across_mice (imaging_st,min_max,sorting_type,conditions,alignment,celltype,sorting_id)
+% Number of things to plot
+num_plots = length(conditions);  % Change this value based on your requirement
 
-tiledlayout(ceil(sqrt(length(conditions))),ceil(sqrt(length(conditions))));
+% Calculate the number of rows and columns for the tiled layout
+rows = ceil(sqrt(num_plots));
+columns = ceil(num_plots / rows);
+
+% Create a tiled layout
+tiledlayout(rows, columns);
+
 for c = conditions
         %find infor for each mouse and combine it
         for m = 1:length(celltype)
