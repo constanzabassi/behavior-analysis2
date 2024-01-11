@@ -38,12 +38,38 @@ figure(88);clf;
 make_heatmap(squeeze(mean(aligned_imaging)),plot_info,event_onsets(1),event_onsets);
 
 %% 5) plot heatmap averaged across datasets/ index into specific conditions
-alignment.conditions = [1,8];
+alignment.conditions = [5,7];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
+plot_info.min_max = [-0.5 2];
 alignment.number = [1:6]; %'reward','turn','stimulus'
 alignment.cells = cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false);
 figure(89);clf;
 heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
+
+%% 6) trying spatial binning
+alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.fields = [1:5,12];
+alignment.spatial_percent = 2.5;
+figure(90);clf;
+tiledlayout(2,4)
+hold on
+for m = 1:length(imaging_st)
+ex_imaging = imaging_st{1,m};
+alignment.cell_ids = 1:num_cells(m);
+
+[spatially_aligned_data,mean_data,trial_indices] = spatial_alignment(ex_imaging,alignment);
+
+plot_info.min_max = [-0.01 0.01];
+plot_info.sorting_type = 1; % 1 by time, any other number by max value
+plot_info.xlabel = 'Position bin';
+plot_info.ylabel = 'Neurons';
+
+nexttile
+make_heatmap(squeeze(nanmean(spatially_aligned_data)),plot_info,1);
+spatially_aligned_data =[];
+end
+hold off
+
 
 
