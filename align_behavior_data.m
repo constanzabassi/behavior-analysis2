@@ -16,7 +16,7 @@ if strcmp(alignment_type,'stimulus' )
 % 1) align data based on stimulus onset (include preceding maze- couple frames)
     frames = find_alignment_frames (alignment_frames,[1:3],left_padding,right_padding);
     for vr_trials = 1:length(good_trials)
-        t = good_trials(vr_trials);
+        t = vr_trials;
         frames_to_include = frames(t,:);%align_info.stimulus_onsets(vr_trials)-align_info.stimulus_onset+1:align_info.stimulus_onsets(vr_trials)+align_info.min_length-align_info.stimulus_onset+1; %currently stim onset is frame 1
         if strcmp(data_type,'dff')
             aligned_imaging(vr_trials,:,:) = imaging(good_trials(vr_trials)).dff(cell_ids,frames_to_include);
