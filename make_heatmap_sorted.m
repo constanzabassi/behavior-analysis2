@@ -1,4 +1,4 @@
-function make_heatmap_sorted(data,min_max,sorting_ids,varargin)
+function make_heatmap_sorted(data,plot_info,sorting_ids,varargin)
 
 data1= squeeze(data);
 
@@ -9,7 +9,9 @@ if nargin > 3
     end
 end
 
-caxis([min_max]);
+caxis([plot_info.min_max]);
 colorbar;
 xlim([0 size(data,2)]);
 ylim([0 size(data,1)]);
+xlabel(plot_info.xlabel);
+ylabel(plot_info.ylabel);

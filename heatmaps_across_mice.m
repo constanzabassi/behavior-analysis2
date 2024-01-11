@@ -1,6 +1,6 @@
-function mouse_data_conditions = heatmaps_across_mice (imaging_st,min_max,sorting_type,conditions,alignment,celltype,sorting_id)
+function mouse_data_conditions = heatmaps_across_mice (imaging_st,plot_info,alignment,sorting_id)
 % Number of things to plot
-num_plots = length(conditions);  % Change this value based on your requirement
+num_plots = length(alignment.conditions);  % Change this value based on your requirement
 
 % Calculate the number of rows and columns for the tiled layout
 rows = ceil(sqrt(num_plots));
@@ -9,7 +9,10 @@ columns = ceil(num_plots / rows);
 % Create a tiled layout
 tiledlayout(rows, columns);
 
-for c = conditions
+%Initialize variables
+celltype = alignment.cells;
+
+for c = alignment.conditions
         %find infor for each mouse and combine it
         for m = 1:length(celltype)
             imaging = imaging_st{1,m};
@@ -34,9 +37,9 @@ for c = conditions
         %make heatmap of specific condition with alignment event onset
         %based on alignment type
         if isempty(sorting_id)
-            make_heatmap(data_to_plot,min_max,sorting_type,alignment_event_onset,event_onsets); 
+            make_heatmap(data_to_plot,plot_info,alignment_event_onset,event_onsets); 
         else
-            make_heatmap_sorted(data_to_plot,min_max,sorting_id,alignment_event_onset);
+            make_heatmap_sorted(data_to_plot,plot_info,sorting_id,alignment_event_onset);
         end
         hold off
     end
