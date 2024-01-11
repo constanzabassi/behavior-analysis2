@@ -58,7 +58,7 @@ align_info.good_trials = good_trials;
 %event 6 is ITI
 event = 1;
 alignment_frames = cellfun(@(x) x(event),stimulus_repeats_onsets);
-left_padding(event) = min_length_stim; %smallest # frames in front
+left_padding(event) = 6;%min_length_stim; %smallest # frames in front
 right_padding(event) = 33;
 
 event = 2;
@@ -79,14 +79,14 @@ right_padding(event) = 30;
 event = 5; 
 if all(cellfun(@isempty, reward_onset)) %use ITI tone for incorrect trials
     alignment_frames(event,:) = [pure_onsets{1,:}];
-    left_padding(event) = 3; %smallest # frames in front during reward period
-    right_padding(event) = max_length_reward-3; %larger # frames after reward during reward period
+    left_padding(event) = 4; %smallest # frames in front during reward period
+    right_padding(event) = max_length_reward-4; %larger # frames after reward during reward period
 else
     alignment_frames(event,reward_trial) = [reward_onset{1,:}];
     incorrect_trials = setdiff(1:length(good_trials),reward_trial);
     alignment_frames(event,incorrect_trials) = [pure_onsets{1,incorrect_trials}];
-    left_padding(event) = min_length_reward; %smallest # frames in front during reward period
-    right_padding(event) = max_length_reward-min_length_reward; %larger # frames after reward during reward period
+    left_padding(event) = 4;%min_length_reward; %smallest # frames in front during reward period
+    right_padding(event) = 23;%max_length_reward-min_length_reward; %larger # frames after reward during reward period
 end
 
 event = 6; %ITI time
