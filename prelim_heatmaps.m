@@ -9,6 +9,9 @@ data = imaging(ex_trial).z_dff;
 
 plot_info.min_max = [-0.5 2];
 plot_info.sorting_type = 1; %1 by time, any other number by max value
+plot_info.xlabel = 'Frames';
+plot_info.ylabel = 'Neurons';
+
 figure(1);clf;
 hold on
 title(['Example trial: ' num2str(ex_trial)])
