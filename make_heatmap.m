@@ -12,7 +12,7 @@ if plot_info.sorting_type == 1
     imagesc(data1(value,:)); %by time
     if nargin > 3
         for i = 1:length(varargin)
-            xline(varargin{i},'-w')
+            xline(varargin{i},'-w','LineWidth',1.5)
         end
     end
 else
@@ -24,7 +24,7 @@ else
     imagesc(data1(value,:)); %by max val
     if nargin > 3
         for i = 1:length(varargin)
-            xline(varargin{i},'-w')
+            xline(varargin{i},'-w','LineWidth',1.5)
         end
     end
 end
