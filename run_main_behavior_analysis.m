@@ -47,6 +47,36 @@ alignment.cells = cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false);
 figure(89);clf;
 heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
 
+%% 5.5)figures for mellon fellowship
+
+figure(90);clf;
+colormap viridis
+alignment.conditions = [7];
+alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'all'; %'reward','turn','stimulus','ITI'
+plot_info.min_max = [-0.25 1.5];
+alignment.number = [1:6]; %'reward','turn','stimulus'
+alignment.cells = [cellfun(@(x) x.pyr_cells,all_celltypes,'UniformOutput',false);cellfun(@(x) x.som_cells,all_celltypes,'UniformOutput',false);cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false)];
+alignment.title = {'PYR','SOM','PV'};
+plot_info.xlabel = [];
+
+heatmaps_across_mice_mellon (imaging_st,plot_info,alignment,[]);
+
+save_data_directory = [];%'W:\Connie\results\context_stim\spike_rates';%[];
+if ~isempty(save_data_directory)
+    mkdir(save_data_directory)
+    cd(save_data_directory)
+
+    image_string = strcat('heatmaps_8datasets_condition-v2',num2str(alignment.conditions,3));
+    saveas(90,[image_string '_datasets.svg']);
+    saveas(90,[image_string '_datasets.fig']);
+    saveas(90,[image_string '_datasets.pdf']);
+end
+
+
+
+
+
 %% 6) trying spatial binning
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.fields = [1:5,12];
