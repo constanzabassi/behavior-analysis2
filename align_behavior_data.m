@@ -6,7 +6,7 @@ aligned_imaging =[]; %this is needed so there is an output if there are zero tri
 
 %save good trials
 align_info.good_trials = good_trials;
-if nargin > 7
+if nargin > 6
     cell_ids = varargin{1,1};
 else
     cell_ids = 1:size(imaging(good_trials(1)).dff,1);
