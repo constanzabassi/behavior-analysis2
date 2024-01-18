@@ -80,6 +80,8 @@ end
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.fields = [1:5,12];
 alignment.spatial_percent = 2.5;
+alignment.conditions = [5,7];
+
 figure(90);clf;
 tiledlayout(2,4)
 hold on
@@ -89,7 +91,7 @@ alignment.cell_ids = 1:num_cells(m);
 
 [spatially_aligned_data,mean_data,trial_indices] = spatial_alignment(ex_imaging,alignment);
 
-plot_info.min_max = [-0.01 0.01];
+plot_info.min_max = [-0.1 1];
 plot_info.sorting_type = 1; % 1 by time, any other number by max value
 plot_info.xlabel = 'Position bin';
 plot_info.ylabel = 'Neurons';
@@ -101,7 +103,10 @@ end
 hold off
 
 figure(91);clf;
-heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+%% plot average traces of individual cells
+
+
 %% SVM predict choice using cell type activity
 ex_mouse = 1;
 ex_imaging = imaging_st{1,ex_mouse};
@@ -130,7 +135,7 @@ hold on
 plot(sv(:,1),sv(:,2),'ko','MarkerSize',10)
 hold off
 
-%% predict data
+%predict data
 for time = 1:size(aligned_imaging,3)
     X = squeeze(aligned_imaging(:,mdl_cells,time));
     [label,score] = predict(all_SVM{1,time},X);
