@@ -22,9 +22,9 @@ for vr_trial = 1:length(good_trials)
     %interpolate NaNs in y_position
     non_nan_indices = find(~isnan(imaging_array(vr_trial).y_position));
     y_position_current = interp1(non_nan_indices, imaging_array(vr_trial).y_position(non_nan_indices),1:numel(imaging_array(vr_trial).y_position),'linear');
-    bin_edges = start_trial:bin_width:end_trial;
+    bin_edges = start_trial:bin_width:maze_length;%end_trial;
     y_position_current = y_position_current(1:imaging_array(vr_trial).turn_frame);
-
+    
     %perform spatial binning
     [bin_counts,bin_centers] = histcounts(y_position_current, bin_edges);
     % only use good bins
@@ -33,8 +33,7 @@ for vr_trial = 1:length(good_trials)
 %     bin_centers(bad_bins) = [];
 %     bin_edges(bad_bins) = [];
     %calculate the mean data for each bin
-    mean_data = zeros(length(good_trials),length(alignment.fields),numel(bin_centers));
-    spatially_aligned_data = zeros(length(good_trials),length(alignment.cell_ids),numel(bin_centers));
+    
     
     for bin = 1:numel(length(alignment.fields),bin_centers)
             if bin <numel(bin_centers)
@@ -58,10 +57,8 @@ for vr_trial = 1:length(good_trials)
                 end
             end
     end
-
     %Continue alignment in time! from turn onset
 end
-
 end
 
 
