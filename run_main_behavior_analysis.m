@@ -46,7 +46,7 @@ alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.5 2];
 alignment.number = [1:6]; %'reward','turn','stimulus'
-alignment.cells = cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false);
+alignment.cells = cellfun(@(x) x.pyr_cells,all_celltypes,'UniformOutput',false);
 figure(89);clf;
 heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
 
@@ -99,6 +99,54 @@ make_heatmap(squeeze(nanmean(spatially_aligned_data)),plot_info,1);
 spatially_aligned_data =[];
 end
 hold off
+
+figure(91);clf;
+heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+%% SVM predict choice using cell type activity
+ex_mouse = 1;
+ex_imaging = imaging_st{1,ex_mouse};
+alignment.data_type = 'deconv';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'all'; %'reward','turn','stimulus','ITI'
+
+[align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+[aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+[all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+%  condition_array_trials (trial_ids, correct or not, left or not, stim or not)
+
+Y = condition_array_trials(:,2);%create labels for choice for each trial
+mdl_cells = all_celltypes{1,ex_mouse}.pyr_cells; %choose cells
+
+for time = 1:size(aligned_imaging,3)
+    X = squeeze(aligned_imaging(:,mdl_cells,time));
+    SVMModel = fitcsvm(X,Y,'Standardize',true,'KFold',10); % 'ClassNames',{'Correct','Incorrect'}
+    all_SVM{time} = SVMModel;
+end
+%
+sv = all_SVM{1,150}.Trained{1,1}.SupportVectors;%all_SVM{1,150}.SupportVectors;%all_SVM{1,150}.Trained{1,1}.SupportVectors;
+figure
+gscatter(X(:,1),X(:,2),Y)
+hold on
+plot(sv(:,1),sv(:,2),'ko','MarkerSize',10)
+hold off
+
+%% predict data
+for time = 1:size(aligned_imaging,3)
+    X = squeeze(aligned_imaging(:,mdl_cells,time));
+    [label,score] = predict(all_SVM{1,time},X);
+    accuracy(time) = mean(label == Y)*100;
+end
+
+
+
+
+
+
+
+
+
+
+
 
 
 
