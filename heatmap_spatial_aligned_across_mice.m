@@ -1,4 +1,4 @@
-function heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+function mouse_data_conditions = heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
 % Create a tiled layout
 tiledlayout(size(alignment.cells,1), 1,"TileSpacing","compact");
 
@@ -17,9 +17,6 @@ for ce = 1:3
             mouse_data{m} = spatially_aligned_data(all_conditions{c,1},:,:); %use specified trials in the condition array
             mouse_data_conditions{m,c} = mouse_data{m};
         end
-        
-        
-        
             
             mean_mouse_data = cellfun(@(x) squeeze(nanmean(x,1)),mouse_data,'UniformOutput',false);
     
