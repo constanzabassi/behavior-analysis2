@@ -29,9 +29,9 @@ for vr_trial = 1:length(good_trials)
     [bin_counts,bin_centers] = histcounts(y_position_current, bin_edges);
     % only use good bins
     bad_bins = find(bin_counts == 0);
-    bin_counts(bad_bins) = [];
-    bin_centers(bad_bins) = [];
-    bin_edges(bad_bins) = [];
+    bin_counts(bad_bins) = nan;
+%     bin_centers(bad_bins) = [];
+%     bin_edges(bad_bins) = [];
     %calculate the mean data for each bin
     mean_data = zeros(length(good_trials),length(alignment.fields),numel(bin_centers));
     spatially_aligned_data = zeros(length(good_trials),length(alignment.cell_ids),numel(bin_centers));
