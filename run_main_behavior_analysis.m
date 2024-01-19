@@ -79,7 +79,7 @@ end
 %% 6) trying spatial binning
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.fields = [1:5,12];
-alignment.spatial_percent = 2.5;
+alignment.spatial_percent = 2;
 alignment.conditions = [5,7];
 
 figure(90);clf;
@@ -103,10 +103,29 @@ end
 hold off
 
 figure(91);clf;
-mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info);
+
+%%
+figure(92);clf;
+mouse_data_conditions2 = heatmaps_across_mice_celltypes (imaging_st,plot_info,alignment);
 %% plot average traces of individual cells
+ex_imaging = imaging_st{1,8};
 
+alignment.conditions = [5,7];
+alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'all'; %'reward','turn','stimulus','ITI'
+alignment.number = [1:6]; %'reward','turn','stimulus'
 
+[align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+[aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+[all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+
+for c = 61:79
+    cel_id = c;
+    figure(c);clf;
+    individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets)
+end
 %% SVM predict choice using cell type activity
 ex_mouse = 1;
 ex_imaging = imaging_st{1,ex_mouse};
