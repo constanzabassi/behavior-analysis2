@@ -2,7 +2,7 @@
 addpath(genpath('C:\Code\Github\behavior-analysis'))
 
 %1) choose datasets
-info.mouse_date={'HA11-1R/2023-05-05','HA11-1R/2023-04-13','HA2-1L/2023-04-12','HA2-1L/2023-05-05','HA1-00/2023-06-29','HA1-00/2023-08-28','HE4-1L1R\2023-08-21','HE4-1L1R\2023-08-24'}; %mice with behavioral responses ,'GS9-1L/2023-01-16','GS8-00/2022-12-20','HA13-1L/2023-02-24','GE3-00/2022-10-20','HA10-1L/2023-03-27-session2'
+info.mouse_date={'HA11-1R/2023-05-05','HA11-1R/2023-04-13','HA2-1L/2023-04-12','HA2-1L/2023-05-05','HA1-00/2023-06-29','HA1-00/2023-08-28','HE4-1L1R/2023-08-21','HE4-1L1R/2023-08-24'}; %mice with behavioral responses ,'GS9-1L/2023-01-16','GS8-00/2022-12-20','HA13-1L/2023-02-24','GE3-00/2022-10-20','HA10-1L/2023-03-27-session2'
 
 info.server = {'V:','V:','V:','V:','V:','W:','W:','W:'};%\\runyan-fs-01\Runyan2';
 info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetingmay2023'; %'Y:\Connie\results\opto_figs_sfn'
