@@ -7,11 +7,11 @@ count = 0;
 for t = 1:length(good_trials)
     count = count+1;
     condition_array(count,1) = good_trials(t); 
-    condition_array(count,2) = imaging(t).virmen_trial_info.correct;
-    condition_array(count,3) = imaging(t).virmen_trial_info.left_turn;
+    condition_array(count,2) = imaging(good_trials(t)).virmen_trial_info.correct;
+    condition_array(count,3) = imaging(good_trials(t)).virmen_trial_info.left_turn;
 
     if isfield(imaging(t).virmen_trial_info,'is_stim_trial')
-        condition_array(count,4) = imaging(t).virmen_trial_info.is_stim_trial;
+        condition_array(count,4) = imaging(good_trials(t)).virmen_trial_info.is_stim_trial;
     end
     
 end
