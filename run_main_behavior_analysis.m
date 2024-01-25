@@ -29,7 +29,7 @@ make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment,plot_info,all_
 
 
 %% 4) plot invididual mice average across conditions with concatenated alignment
-ex_imaging = imaging_st{1,8};
+ex_imaging = imaging_st{1,7};
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
@@ -54,7 +54,7 @@ heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
 
 figure(90);clf;
 colormap viridis
-alignment.conditions = [7];
+alignment.conditions = [5];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.25 1.5];
@@ -138,6 +138,9 @@ event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
 %  condition_array_trials (trial_ids, correct or not, left or not, stim or not)
 
+[train_imaging, test_imaging,all_trials] = split_imaging_train_test_cb(ex_imaging,condition_array_trials,0.7,0,0);
+
+%%
 Y = condition_array_trials(:,2);%create labels for choice for each trial
 mdl_cells = all_celltypes{1,ex_mouse}.pyr_cells; %choose cells
 
@@ -163,7 +166,47 @@ end
 
 
 
+%%
+ex_mouse = 2;
+ex_imaging = imaging_st{1,ex_mouse};
+alignment.data_type = 'deconv';%'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
+[align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+[aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+[all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+%  condition_array_trials (trial_ids, correct or not, left or not, stim or not)
+
+[train_imaging, test_imaging,all_trials] = split_imaging_train_test_cb(ex_imaging,condition_array_trials,0.7,0,0);
+
+
+
+mdl_param.mdl_cells = all_celltypes{1,ex_mouse}.pyr_cells; %choose cells; %which cell type to use
+mdl_param.event_onset = 141; %relative to aligned data
+mdl_param.frames_around = -140:90; %frames around onset 
+mdl_param.bin = 3; %bin size in terms of frames
+mdl_param.data_type = 'deconv';%alignment.data_type;
+
+%use training data
+[align_info,alignment_frames,left_padding,right_padding] = find_align_info (train_imaging,30);
+[aligned_imaging,imaging_array,align_info] = align_behavior_data (train_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+[all_conditions_t, condition_array_trials_t] = divide_trials (train_imaging); %divide trials into all possible conditions
+
+%selected_trials = subsample_trials_to_decorrelate_choice_and_category(condition_array_trials_t);
+
+%get X and Y ready for classifier
+mdl_Y = condition_array_trials_t(find(selected_trials),2); %get trained Y labels
+mdl_X = aligned_imaging(find(selected_trials),:,:);
+
+fprintf(['size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
+output3_deconv3 = classify_over_time(mdl_X,mdl_Y, mdl_param);
+
+figure(5);clf;hold on; plot(output3_deconv3.accuracy);plot(output3_deconv3.shuff_accuracy);hold off
+figure(4);clf;hold on; plot(output3_zdff3.accuracy);plot(output3_zdff3.shuff_accuracy);hold off
+figure(3);clf;hold on; plot(output3_zdff.accuracy);plot(output3_zdff.shuff_accuracy);hold off
+figure(2);clf;hold on; plot(output.accuracy);plot(output.shuff_accuracy);hold off
+figure(1);clf;hold on; plot(output2_normr.accuracy);plot(output2_normr.shuff_accuracy);hold off
 
 
 
