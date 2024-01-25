@@ -14,5 +14,6 @@ if strcmp(mdl_param.data_type,'dff')
 elseif strcmp(mdl_param.data_type,'deconv')
     X = sum(squeeze(aligned_data(:,cells_ids,event_onset+current_frame:event_onset+current_frame+bin)),3); %sum across frames
 end
-X = normc(X); %normalize columns (features/neurons)
+% X = normc(X); %normalize columns (features/neurons)
+X = zscore(X);
 
