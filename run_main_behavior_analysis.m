@@ -5,11 +5,12 @@ addpath(genpath('C:\Code\Github\behavior-analysis'))
 info.mouse_date={'HA11-1R/2023-05-05','HA11-1R/2023-04-13','HA2-1L/2023-04-12','HA2-1L/2023-05-05','HA1-00/2023-06-29','HA1-00/2023-08-28','HE4-1L1R/2023-08-21','HE4-1L1R/2023-08-24'}; %mice with behavioral responses ,'GS9-1L/2023-01-16','GS8-00/2022-12-20','HA13-1L/2023-02-24','GE3-00/2022-10-20','HA10-1L/2023-03-27-session2'
 
 info.server = {'V:','V:','V:','V:','V:','W:','W:','W:'};%\\runyan-fs-01\Runyan2';
-info.savepath = 'V:/Connie/results/VR';%'Y:\Connie\results\PVSOM_opto\lab_meetingmay2023'; %'Y:\Connie\results\opto_figs_sfn'
+info.savepath = 'V:/Connie/results/behavior';%'Y:\Connie\results\PVSOM_opto\lab_meetingmay2023'; %'Y:\Connie\results\opto_figs_sfn'
+save_info(info,info.savepath);
 
 %% 2)pool imaging data structure from multiple datasets and organize it
 [all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(info.mouse_date,info.server);
- 
+  
 %organize so that all mice are within one variable  
 [num_cells,sorted_cells] = organize_pooled_celltypes(mouse,all_celltypes);
 
@@ -109,7 +110,7 @@ mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,
 figure(92);clf;
 mouse_data_conditions2 = heatmaps_across_mice_celltypes (imaging_st,plot_info,alignment);
 %% plot average traces of individual cells
-ex_imaging = imaging_st{1,8};
+ex_imaging = imaging_st{1,2};
 
 alignment.conditions = [5,7];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
@@ -121,14 +122,23 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
 
-for c = 61:79
+for c = 287
     cel_id = c;
     figure(c);clf;
     individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets)
 end
 
 
-
+%%
+figure(122);clf;
+tiledlayout(3,3)
+hold on
+for m = 1:8
+    nexttile
+    imaging = imaging_st{1,m}
+    plot_xy_position(imaging);
+end
+hold off
 
 
 
