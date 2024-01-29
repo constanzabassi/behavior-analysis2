@@ -9,11 +9,12 @@ mdl_param.bin = 3; %bin size in terms of frames
 
 mdl_param.data_type = alignment.data_type;
 
-num_iterations = 5; %number of times to subsample
+mdl_param.num_iterations = 5; %number of times to subsample
 
 plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
                             0.82 0.04 0.04]; % red  
 
+info.savestr = 'attempt_1'; %how to save current run
 %% RUN CLASSIFIER
-output = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info)
+[svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info);
