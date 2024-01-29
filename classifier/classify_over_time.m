@@ -5,7 +5,7 @@ bin = mdl_param.bin;
 ends=zeros(1,length(selected_frames))+bin;
 timepoints=[selected_frames;ends];
 for t = 1:length(timepoints)
-    t
+    %t
     X = get_X (aligned_data, mdl_param,selected_frames(t));
 
     %call classifier model

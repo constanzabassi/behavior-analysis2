@@ -3,6 +3,7 @@ function [output, output_mat] = run_classifier(imaging_st,all_celltypes,mdl_para
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 for it = 1:mdl_param.num_iterations
+    it
     for m = 1:8
         count = 0;
         m
