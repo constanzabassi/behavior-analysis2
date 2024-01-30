@@ -9,7 +9,7 @@ function X = get_X_nooverlap (aligned_data, mdl_param,current_frame)
 cells_ids = mdl_param.mdl_cells; %which cell type to use
 event_onset =  mdl_param.event_onset; %starting point
 bin = mdl_param.bin-1; %bin size in terms of frames (-1 so it doesn't count current)
-current_frame = current_frame+bin+1;
+current_frame = current_frame;%+bin+1;
 
 
 if strcmp(mdl_param.data_type,'dff')

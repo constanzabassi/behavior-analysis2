@@ -1,10 +1,12 @@
 function output = classify_over_time(aligned_data,Y,mdl_param)
 
-selected_frames = mdl_param.frames_around;
+%selected_frames = mdl_param.frames_around;
+selected_frames = mdl_param.binns;
+
 bin = mdl_param.bin;
 ends=zeros(1,length(selected_frames))+bin;
 timepoints=[selected_frames;ends];
-for t = 1:length(timepoints)
+for t = 1:length(mdl_param.binns)%(timepoints)
     %t
     %X = get_X (aligned_data, mdl_param,selected_frames(t));
     X = get_X_nooverlap (aligned_data, mdl_param,selected_frames(t));
