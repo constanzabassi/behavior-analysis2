@@ -5,7 +5,7 @@ alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 mdl_param.event_onset = 141; %relative to aligned data
 mdl_param.frames_around = -140:90; %frames around onset 
-mdl_param.bin = 1; %bin size in terms of frames
+mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
 
 mdl_param.data_type = alignment.data_type;
