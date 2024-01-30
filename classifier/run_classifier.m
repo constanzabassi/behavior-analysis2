@@ -113,7 +113,7 @@ cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 save('output','output');
 save('output_mat','output_mat');
 %save_figs
-for m = 71:length(imaging_st)
+for m = 1:length(imaging_st)
     str = info.mouse_date{1,m} ;
     if ismember('/',info.mouse_date{1,m})
         str = erase(info.mouse_date{1,m},'/');
