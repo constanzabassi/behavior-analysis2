@@ -15,6 +15,6 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
                             0.82 0.04 0.04]; % red  
 
-info.savestr = 'attempt_1'; %how to save current run
+info.savestr = 'attempt_2'; %how to save current run
 %% RUN CLASSIFIER
 [svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info);
