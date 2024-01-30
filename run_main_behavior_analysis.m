@@ -122,7 +122,7 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
 
-for c = 287
+for c = 114 %[a,b] =max(output{1,1,2}.mdl{140}.Beta); 
     cel_id = c;
     figure(c);clf;
     individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets)
@@ -135,12 +135,12 @@ tiledlayout(3,3)
 hold on
 for m = 1:8
     nexttile
-    imaging = imaging_st{1,m}
+    imaging = imaging_st{1,m};
     plot_xy_position(imaging);
 end
 hold off
 
-
+%% dynamics characterization, determine the peak activity across datasets across all trial types
 
 
 
