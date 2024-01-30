@@ -4,10 +4,10 @@ possible_celltypes = fieldnames(all_celltypes{1,1});
 
 for it = 1:mdl_param.num_iterations
     it
-    for m = 1:8
+    for m = 1:length(imaging_st)
         count = 0;
         m
-        for ce = 1:3
+        for ce = 1:4 %4th will be all cells together no subsamples!
             count = count+1;
             mdl_param.mouse = m;
             ex_imaging = imaging_st{1,m};
@@ -23,9 +23,13 @@ for it = 1:mdl_param.num_iterations
 %             mdl_param.mdl_cells = all_celltypes{1,m}.(possible_celltypes{ce}); %which cell type to use
 
             %subsample cells!
-            num_observations_needed = min(cellfun(@length,struct2cell(all_celltypes{1,m}))); %min number of cells 
-            sub_data = subsample_fun(all_celltypes{1,m}.(possible_celltypes{ce}),num_observations_needed);
-            mdl_param.mdl_cells = sub_data;
+            if ce <4
+                num_observations_needed = min(cellfun(@length,struct2cell(all_celltypes{1,m}))); %min number of cells 
+                sub_data = subsample_fun(all_celltypes{1,m}.(possible_celltypes{ce}),num_observations_needed);
+                mdl_param.mdl_cells = sub_data;
+            else
+                mdl_param.mdl_cells = 1:sum(cellfun(@length,struct2cell(all_celltypes{1,m}))); %all cells together
+            end
             
 %             %use training data
 %             % [align_info,alignment_frames,left_padding,right_padding] = find_align_info (train_imaging,30);
@@ -52,12 +56,14 @@ end
 %convert output to matrix form for easier indexing
 
 %% make quick figure plots! error across subsamples
-event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
+%adjust event onsets to bins!
+event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 for m = 1:length(imaging_st)
 ex_mouse = m;
 figure(m);clf;
 subplot(2,1,1)
-for ce = 1:3
+for ce = 1:4
     hold on; 
     title(info.mouse_date{1,m})
     
@@ -86,7 +92,7 @@ end
 hold off
 
 subplot(2,1,2)
-for ce = 1:3
+for ce = 1:4
     hold on; 
         
     shadedErrorBar(1:size(output_mat{m,ce}.accuracy,2),smooth(mean(output_mat{m,ce}.accuracy,1),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'color', plot_info.colors_celltype(ce,:)});
