@@ -1,5 +1,5 @@
-function [max_cel_avg,max_cel, binss] = fraction_dynamics (imaging_st,alignment,bin_size)
-max_cel = [];
+function [max_cel_avg,freq,max_cel, binss,new_onsets] = fraction_dynamics (imaging_st,alignment,bin_size)
+max_cel = {};
 
 for m = 1:length(imaging_st)
     m
@@ -16,8 +16,12 @@ for m = 1:length(imaging_st)
                 binned_data(trial,cel,b) = mean(aligned_imaging(trial,cel,binss(b):binss(b)+bin_size-1));
             end
             [~,inds] = max(squeeze(binned_data(trial,cel,:)));
-            max_cel(m,trial,cel) = inds;
+            max_cel{m,trial,cel} = inds;
         end
-        max_cel_avg(m,cel) = round(mode(max_cel(m,:,cel),2));
+        [max_cel_avg{m,cel},freq{m,cel}] = mode([max_cel{m,:,cel}]);
+%         max_cel_avg2(m,cel) = round(mean([max_cel{m,:,cel}],2));
     end
 end
+
+event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+new_onsets = find(histcounts(event_onsets,binss));
