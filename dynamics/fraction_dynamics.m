@@ -19,9 +19,8 @@ for m = 1:length(imaging_st)
             max_cel{m,trial,cel} = inds;
         end
         [max_cel_avg{m,cel},freq{m,cel}] = mode([max_cel{m,:,cel}]);
-%         max_cel_avg2(m,cel) = round(mean([max_cel{m,:,cel}],2));
+%         max_cel_avg{m,cel} = round(mean([max_cel{m,:,cel}],2));
     end
 end
-
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 new_onsets = find(histcounts(event_onsets,binss));
