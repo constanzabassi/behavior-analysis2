@@ -11,5 +11,5 @@ roc_mdl.frames = 130:140; %using 10 frames before turn onset (finds avg of these
 roc_mdl.shuff_num = 50;
 
 %% RUN ROC ACROSS DATASETS
-[roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,1); %last value is whether to shuffle datasets or not
+[roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,info,1); %last value is whether to shuffle datasets or not
 

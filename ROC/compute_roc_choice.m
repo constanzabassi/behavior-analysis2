@@ -1,4 +1,4 @@
-function [roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,shuff)
+function [roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,info,shuff)
 %% Compute choice preference for each neuron at each time point during a trial (only correct trials)
 
 %1) get correct trials only (match left and right correct trials)
@@ -73,7 +73,7 @@ roc_mdl.rc = all_rc;
 
 %%
 %plot auc!
-figure(7);clf;
+figure(50);clf;
 [rows,columns] = determine_num_tiles(imaging_st);
 tiledlayout(rows,columns);
 
@@ -86,6 +86,7 @@ auc_values = roc_mdl.auc{1,ex_mouse};%(1,:);
 
 % Plotting the histogram
 nexttile
+
 histogram(auc_values, 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceColor',[0 0 0.5],'LineWidth', 2,'binWidth',0.1);
 
 
@@ -98,7 +99,8 @@ histogram(auc_values, 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceCol
 % Adding labels and title
 xlabel('AUC Values');
 ylabel('Fraction of Neurons');
-title('Fraction of Neurons vs AUC Values');
+xlim([0 1])
+title(info.mouse_date(m));
 
 end
 hold off
@@ -185,3 +187,9 @@ end
 
 %save alignment parameters
 roc_mdl.alignment = alignment;
+roc_mdl.info = info;
+
+mkdir([info.savepath '/ROC']);
+cd([info.savepath '/ROC']);
+save('roc_mdl','roc_mdl');
+saveas(50,'AUC_across_mice.png');
