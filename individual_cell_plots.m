@@ -1,4 +1,4 @@
-function individual_cell_plots(aligned_data, cel_id, all_conditions,alignment,event_onsets)
+function individual_cell_plots(aligned_data, cel_id, all_conditions,alignment,event_onsets,varagin)
 % Number of things to plot
 num_plots = length(alignment.conditions);  % Change this value based on your requirement
 
@@ -15,7 +15,11 @@ for cel = 1:length(cel_id)
         
         nexttile
         hold on
-        title(strcat(all_conditions{c,3},' cell: ',num2str(cel_id)));
+        if nargin > 5
+            title(strcat(all_conditions{c,3},' cell: ',num2str(cel_id),'//',num2str(varagin(1))));
+        else
+            title(strcat(all_conditions{c,3},' cell: ',num2str(cel_id)));
+        end
         cel_data = squeeze(aligned_data(all_conditions{c,1},ce,:)); 
 
         for tr  = 1:size(cel_data,1)
