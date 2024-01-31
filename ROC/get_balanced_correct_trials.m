@@ -1,4 +1,4 @@
-function selected_trials = get_balanced_correct_trials(condition_array_trials)
+function [selected_trials,lc_selected,rc_selected] = get_balanced_correct_trials(condition_array_trials)
 
 selected_trials = false(1, length(condition_array_trials));
 correctness = condition_array_trials(:,2);
