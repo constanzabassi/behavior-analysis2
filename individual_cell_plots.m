@@ -21,7 +21,7 @@ for cel = 1:length(cel_id)
         for tr  = 1:size(cel_data,1)
             plot(cel_data(tr,:),'color',[0.7 0.7 0.7] );
         end
-            plot(mean(cel_data(tr,:),1),'k','LineWidth',1.2);
+            plot(mean(cel_data,1),'k','LineWidth',2);
 
         for i = 1:length(event_onsets)
             xline(event_onsets(i),'--k','LineWidth',1.5)
