@@ -1,13 +1,12 @@
-% function roc_analysis (imaging_st
+% function roc_analysis (imaging_st)
 %% Compute choice preference for each neuron at each time point during a trial (only correct trials)
 
-roc_mdl.frames = 111:141; %using 30 frames before turn onset
-doChoicePref=0;
+roc_mdl.frames = 110:140; %using 30 frames before turn onset
 %1) get correct trials only (match left and right correct trials)
 %2) align data (include datapoints up to turning point
 %3) compute ROC
 
-for m = 1:2%:length(imaging_st)
+for m = 1:length(imaging_st)
     m
     %mdl_param.mouse = m;
     ex_imaging = imaging_st{1,m};
@@ -27,12 +26,13 @@ for m = 1:2%:length(imaging_st)
     all_rc{m} = rc;
 
     % initiate variables
-    numfrs = length(roc_mdl.frames); %frames
+    numfrs = 1;%length(roc_mdl.frames); %frames
     choicePref_all = NaN(numfrs, size(aligned_imaging, 2)); %frames x neurons
+    auc_all = NaN(numfrs, size(aligned_imaging, 2)); %frames x neurons
     targets = [zeros(numfrs, length(ipsiTrs)), ones(numfrs, length(contraTrs))]; %frames x trials
 
     %update aligned imaging to contain specific frames
-    new_aligned_imaging = aligned_imaging(:,:,roc_mdl.frames);
+    new_aligned_imaging = squeeze(mean(aligned_imaging(:,:,roc_mdl.frames),3));
     
 
 
@@ -54,57 +54,56 @@ for m = 1:2%:length(imaging_st)
             auc = trapz([0, fpr, 1], [0, tpr, 1]);
         end
         
-        if doChoicePref==1 % otherwise we go with values of auc.
-            choicePref =  2*(auc-0.5);
-        else % we are interested in auc values 
-            choicePref = auc;
-        end
-        %     figure; plot(choicePref) % look at choicePref for neuron in over time (all frames)
-        choicePref_all(:,cel) = choicePref; % frames x neurons
+        auc_all(:,cel) = auc; % frames x neurons
+        choicePref_all(:,cel) = 2*(auc-0.5); % frames x neurons
     end
 
     %save variables across datasets
     choice_Pref{m} = choicePref_all;
+    roc_mdl.choice_Pref{m} = choicePref_all;
+    roc_mdl.auc{m} = auc_all;
+    %plot ROC for each dataset
+%     figure;
+    
+    roc_plot = plotroc(targets,outputs);
     
 end 
+hold off
 roc_mdl.lc = all_lc;
 roc_mdl.rc = all_rc;
-figure(1);clf;plotroc(targets,outputs);
+
 
 %%
-auc_values = choicePref_all(1,:);
-% % Create a kernel density estimate
-% [f, x] = ksdensity(auc_values);
-% 
-% % Normalize to get the fraction of neurons
-% fraction_of_neurons = f / sum(f);
-% 
-% % Plotting the line
-% figure;
-% plot(x, fraction_of_neurons, 'LineWidth', 2);
-% 
-% % Adding labels and title
-% xlabel('AUC Values');
-% ylabel('Fraction of Neurons');
-% title('Fraction of Neurons vs AUC Values');
+%plot auc!
+ex_mouse = 2;
+possible_celltypes = fieldnames(all_celltypes{1,1});
+
+auc_values = roc_mdl.auc{1,ex_mouse};%(1,:);
 
 % Plotting the histogram
-%figure;
-histogram(auc_values, 'Normalization', 'probability', 'EdgeColor', 'w', 'LineWidth', 2);
+figure(7);clf;
+hold on
+for ce = 1:3
+    histogram(auc_values(all_celltypes{1,ex_mouse}.(possible_celltypes{ce})), 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceColor',plot_info.colors_celltype(ce,:),'LineWidth', 2,'binWidth',0.1);
+end
+hold off
 
 % Adding labels and title
 xlabel('AUC Values');
 ylabel('Fraction of Neurons');
 title('Fraction of Neurons vs AUC Values');
 hold off
+
 %% SHUFFLE TARGET LABELS!
 if shuff == 1
-     choicePref_all_shuff = nan([size(choice_Pref{m}), roc_mdl.shuff_num]); % frames x neurons x num shuffles
-
-    for num_shuff = 1:roc_mdl.shuff_num
-        num_shuff
-        for m = 1%:length(imaging_st)
-            m
+    for m = 1:length(imaging_st)
+        choicePref_all_shuff = nan([size(choice_Pref{m}), roc_mdl.shuff_num]); % frames x neurons x num shuffles
+        auc_all_shuff = nan([size(choice_Pref{m}), roc_mdl.shuff_num]); % frames x neurons x num shuffles
+        auc_all = [];choicePref_all = [];
+        m
+        for num_shuff = 1:roc_mdl.shuff_num
+                num_shuff
+            
             %mdl_param.mouse = m;
             ex_imaging = imaging_st{1,m};
                 
@@ -117,15 +116,14 @@ if shuff == 1
             
             % initiate variables
             % shuffle tr labels, keeping the number of ipsi and contra untouched!
+            numfrs = 1;%length(roc_mdl.frames); %frames
             targets = [zeros(numfrs, length(ipsiTrs)), ones(numfrs, length(contraTrs))]; %frames x trials            
             shuffLabels = randperm(size(targets,2)); %shuffle trial labels
             targets = targets(:,shuffLabels); 
             
-        
             %update aligned imaging to contain specific frames
-            new_aligned_imaging = aligned_imaging(:,:,roc_mdl.frames);
-            numfrs = length(roc_mdl.frames); %frames
-        
+            new_aligned_imaging = squeeze(mean(aligned_imaging(:,:,roc_mdl.frames),3));
+            
         
             for cel = 1:size(new_aligned_imaging, 2) %loop for cell
                 cel
@@ -145,18 +143,34 @@ if shuff == 1
                     auc = trapz([0, fpr, 1], [0, tpr, 1]);
                 end
                 
-                if doChoicePref==1 % otherwise we go with values of auc.
-                    choicePref =  2*(auc-0.5);
-                else % we are interested in auc values 
-                    choicePref = auc;
-                end
-                %     figure; plot(choicePref) % look at choicePref for neuron in over time (all frames)
-                choicePref_all(:,cel) = choicePref; % frames x neurons
+                auc_all(:,cel) = auc; % frames x neurons
+                choicePref_all(:,cel) = 2*(auc-0.5); % frames x neurons
+
             end
+            %save variables across datasets
             choicePref_all_shuff(:,:,num_shuff) = choicePref_all; % frames x neurons x num shuffles
+            auc_all_shuff(:,:,num_shuff) = auc_all;
+            
+
         end 
+
+        choicePref_shuff{m} = choicePref_all_shuff;
+        roc_mdl.choice_Pref_shuff{m} = choicePref_all_shuff;
+        roc_mdl.auc_shuff{m} = auc_all_shuff;
+    
     end
-    choicePref_shuff{m} = choicePref_all_shuff;
-end
+    
+end %goes with if statement
 
 fprintf('%d %d %d: Size of choicePref_all_shuff (frames x cells x num shuffs)\n', size(choicePref_all_shuff));
+
+%determine significant cells!!
+if shuff == 1
+    for m = 1:length(roc_mdl.auc)
+        real_values = roc_mdl.choice_Pref{1,m};
+        shuff_values = squeeze([roc_mdl.choice_Pref_shuff{1,m}(1,:,:)]);
+        [pos_sig,neg_sig] = determine_sig_cells(real_values,shuff_values);
+        roc_mdl.pos_sig{m} = find(pos_sig);
+        roc_mdl.neg_sig{m} = find(neg_sig);
+    end
+end
