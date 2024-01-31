@@ -110,9 +110,10 @@ mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,
 figure(92);clf;
 mouse_data_conditions2 = heatmaps_across_mice_celltypes (imaging_st,plot_info,alignment);
 %% plot average traces of individual cells
-ex_imaging = imaging_st{1,2};
+ex_mouse = 1;
+ex_imaging = imaging_st{1,ex_mouse};
 
-alignment.conditions = [5,7];
+alignment.conditions = [[5,7],[6,8]]; %[5,7] is control
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 alignment.number = [1:6]; %'reward','turn','stimulus'
@@ -122,10 +123,11 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
 
-for c = 114 %[a,b] =max(output{1,1,2}.mdl{140}.Beta); 
-    cel_id = c;
+for c = 1:20 %[a,b] =max(output{1,1,2}.mdl{140}.Beta); 
+    cel_id = roc_mdl.pos_sig{1,ex_mouse}(c);
     figure(c);clf;
-    individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets)
+    choic_pref = roc_mdl.choice_Pref{1,ex_mouse}(cel_id);
+    individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets,choic_pref)
 end
 
 
