@@ -1,7 +1,6 @@
-% function roc_analysis (imaging_st)
+function [roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,shuff)
 %% Compute choice preference for each neuron at each time point during a trial (only correct trials)
 
-roc_mdl.frames = 110:140; %using 30 frames before turn onset
 %1) get correct trials only (match left and right correct trials)
 %2) align data (include datapoints up to turning point
 %3) compute ROC
@@ -16,7 +15,7 @@ for m = 1:length(imaging_st)
     
     [~, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
     
-    [selected_trials,lc,rc] = get_balanced_correct_trials(condition_array_trials); %balances left and right choice for correct 
+    [~,lc,rc] = get_balanced_correct_trials(condition_array_trials); %balances left and right choice for correct 
     %left is ipsi, right is contra 
     ipsiTrs = lc;
     contraTrs = rc;
@@ -63,8 +62,7 @@ for m = 1:length(imaging_st)
     roc_mdl.choice_Pref{m} = choicePref_all;
     roc_mdl.auc{m} = auc_all;
     %plot ROC for each dataset
-%     figure;
-    
+    figure;
     roc_plot = plotroc(targets,outputs);
     
 end 
@@ -75,25 +73,35 @@ roc_mdl.rc = all_rc;
 
 %%
 %plot auc!
-ex_mouse = 2;
-possible_celltypes = fieldnames(all_celltypes{1,1});
+figure(7);clf;
+[rows,columns] = determine_num_tiles(imaging_st);
+tiledlayout(rows,columns);
+
+hold on;
+for m = 1:length(imaging_st)
+ex_mouse = m;
+% possible_celltypes = fieldnames(all_celltypes{1,1});
 
 auc_values = roc_mdl.auc{1,ex_mouse};%(1,:);
 
 % Plotting the histogram
-figure(7);clf;
-hold on
-for ce = 1:3
-    histogram(auc_values(all_celltypes{1,ex_mouse}.(possible_celltypes{ce})), 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceColor',plot_info.colors_celltype(ce,:),'LineWidth', 2,'binWidth',0.1);
-end
-hold off
+nexttile
+histogram(auc_values, 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceColor',[0 0 0.5],'LineWidth', 2,'binWidth',0.1);
+
+
+% hold on
+% for ce = 1:3
+%     histogram(auc_values(all_celltypes{1,ex_mouse}.(possible_celltypes{ce})), 'Normalization', 'probability', 'EdgeColor', 'w', 'FaceColor',plot_info.colors_celltype(ce,:),'LineWidth', 2,'binWidth',0.1);
+% end
+% hold off
 
 % Adding labels and title
 xlabel('AUC Values');
 ylabel('Fraction of Neurons');
 title('Fraction of Neurons vs AUC Values');
-hold off
 
+end
+hold off
 %% SHUFFLE TARGET LABELS!
 if shuff == 1
     for m = 1:length(imaging_st)
@@ -126,7 +134,7 @@ if shuff == 1
             
         
             for cel = 1:size(new_aligned_imaging, 2) %loop for cell
-                cel
+%                 cel
                 traces_i = squeeze(new_aligned_imaging(ipsiTrs, cel, :)); % trials x frames
                 traces_c = squeeze(new_aligned_imaging(contraTrs, cel, :)); % trials x frames
         
@@ -174,3 +182,6 @@ if shuff == 1
         roc_mdl.neg_sig{m} = find(neg_sig);
     end
 end
+
+%save alignment parameters
+roc_mdl.alignment = alignment;
