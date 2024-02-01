@@ -37,14 +37,15 @@ for it = 1:mdl_param.num_iterations
 %             % [all_conditions_t, condition_array_trials_t] = divide_trials (train_imaging); %divide trials into all possible conditions
             
             if count == 1 %keep the trials the same across cell types!
-                selected_trials = subsample_trials_to_decorrelate_choice_and_category(condition_array_trials);%(condition_array_trials_t);
+                %selected_trials = subsample_trials_to_decorrelate_choice_and_category(condition_array_trials);%(condition_array_trials_t);
+                [selected_trials,~,~] = get_balanced_condition_trials(ex_imaging);
             else
                 mdl_param.selected_trials = selected_trials;
             end
             mdl_param.selected_trials = selected_trials;
     
             %get X and Y ready for classifier
-            mdl_Y = condition_array_trials(find(mdl_param.selected_trials),3);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
+            mdl_Y = condition_array_trials(find(mdl_param.selected_trials),2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
             mdl_X = aligned_imaging(find(mdl_param.selected_trials),:,:);
             
             fprintf(['size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
@@ -116,8 +117,7 @@ end
 
 mkdir([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
-save('output','output');
-save('output_mat','output_mat');
+
 %save_figs
 for m = 1:length(imaging_st)
     str = info.mouse_date{1,m} ;
@@ -129,5 +129,8 @@ for m = 1:length(imaging_st)
     saveas(m,strcat('SVM_overtime_',str,'.svg'));
     saveas(m,strcat('SVM_overtime_',str,'.png'));
 end
+
+save('output','output','-v7.3');
+save('output_mat','output_mat');
 
 
