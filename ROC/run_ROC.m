@@ -35,6 +35,5 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 plot_example_cells(imaging_st,alignment,ex_mouse,roc_mdl); %sorts cells based on roc choice preference
 
 %% RUN ROC ACROSS DATASETS OVER TIME!
-roc_mdl.shuff_num = 2;
 [roc_mdl] = compute_roc_choice_overtime (imaging_st,alignment,roc_mdl,info,plot_info,all_celltypes,1);
 
