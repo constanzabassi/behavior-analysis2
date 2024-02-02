@@ -14,6 +14,12 @@ for t = 1:length(good_trials)
 
     for f = 1:length(fields_to_separate)  
         condition_array(count,f+1) = imaging(good_trials(t)).virmen_trial_info.(fields_to_separate{f}); %f+1 bc first column is always the good trials
+
+        %For now binarize stimuli: Convert stimuli to left (odd) or right (even)! (1 or 0)
+        if strcmp(fields_to_separate{f},'condition')
+            condition_array(count,f+1) = rem(condition_array(count,f+1),2);
+        end
+
     end
     
 end
@@ -26,6 +32,7 @@ all_combinations = dec2bin(0:(2^num_conditions - 1)) - '0';
 
 % Initialize a cell array to store matching trials for each combination
 all_conditions = cell(size(all_combinations, 1), 2);
+
 
 % Find trials for each combination of conditions
 for i = 1:size(all_combinations, 1)
@@ -47,6 +54,6 @@ for i = 1:size(all_combinations, 1)
 
     all_conditions{i,1} = find(sum_matching_trials == num_conditions);
     all_conditions{i,2} = {condition_values};
-    all_conditions{i, 3} = labels;
+    all_conditions{i,3} = labels;
 end
 
