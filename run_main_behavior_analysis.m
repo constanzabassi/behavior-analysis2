@@ -121,13 +121,15 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
 [aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
-[all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
+fieldss = fieldnames(ex_imaging(1).virmen_trial_info);
+field_to_separate = {fieldss{1:2}};
+
+[all_conditions, condition_array_trials] = divide_trials_updated (ex_imaging,field_to_separate); %divide trials into specific conditions
 
 for c = 1:7 %[a,b] =max(output{1,1,2}.mdl{140}.Beta); 
-    cel_id = b(c);%roc_mdl.pos_sig{1,ex_mouse}(c);
+    cel_id = (c);%roc_mdl.pos_sig{1,ex_mouse}(c);
     figure(c);clf;
-    choic_pref = roc_mdl.choice_Pref{1,ex_mouse}(cel_id);
-    individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets,choic_pref)
+    individual_cell_plots(aligned_imaging, cel_id, all_conditions,alignment,event_onsets)
 end
 
 
