@@ -235,4 +235,4 @@ mkdir([info.savepath '/ROC']);
 cd([info.savepath '/ROC']);
 save('roc_mdl','roc_mdl');
 saveas(51,'Choice_Prefences_over_time.png');
-saveas(51,'Fraction_choice_selective_over_time.png');
+saveas(52,'Fraction_choice_selective_over_time.png');
