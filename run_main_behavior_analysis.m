@@ -6,11 +6,11 @@ info.mouse_date={'HA11-1R/2023-05-05','HA11-1R/2023-04-13','HA2-1L/2023-04-12','
 
 info.server = {'V:','V:','V:','V:','V:','W:','W:','W:'};%\\runyan-fs-01\Runyan2';
 info.savepath = 'V:/Connie/results/behavior';%'Y:\Connie\results\PVSOM_opto\lab_meetingmay2023'; %'Y:\Connie\results\opto_figs_sfn'
-save_info(info,info.savepath);
 
 %% 2)pool imaging data structure from multiple datasets and organize it
 [all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(info.mouse_date,info.server);
-  
+save_info(info,all_celltypes,imaging_st,info.savepath);
+
 %organize so that all mice are within one variable  
 [num_cells,sorted_cells] = organize_pooled_celltypes(mouse,all_celltypes);
 
