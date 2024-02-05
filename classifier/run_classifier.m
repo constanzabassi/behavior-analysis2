@@ -115,6 +115,9 @@ hold off
 movegui(gcf,'center')
 end
 
+%save info variables
+output{1,1,1}.info = info; %save in the first one
+
 mkdir([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 

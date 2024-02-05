@@ -1,4 +1,4 @@
-function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,info)
+function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,output)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 
@@ -32,7 +32,13 @@ for m = 1:size(betas,2) %per mouse
     % Adding labels and title
     xlabel('Classifier Weight');
     ylabel({'Probability'});
-    title(info.mouse_date(m));
+    title(output{1,1,1}.info.mouse_date(m));
 
 end
 hold off
+
+mkdir([output{1,1,1}.info.savepath '\SVM_' output{1,1,1}.mdl_param.data_type '_' output{1,1,1}.info.savestr]);
+cd([output{1,1,1}.info.savepath '\SVM_' output{1,1,1}.mdl_param.data_type '_' output{1,1,1}.info.savestr]);
+% save('roc_mdl','roc_mdl');
+saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.png'));
+saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.svg'));
