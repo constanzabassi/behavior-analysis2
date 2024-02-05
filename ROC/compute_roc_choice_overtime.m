@@ -97,7 +97,7 @@ for m = 1:length(imaging_st)
         
         %standard error across cells
         SEM= std(choice_values')/sqrt(size(choice_values,2)); %frames/num iterations
-        shadedErrorBar(1:size(choice_values,1),mean(choice_values,2), SEM, 'lineProps',{'color', plot_info.colors_celltype(ce,:)});
+        shadedErrorBar(1:size(choice_values,1),mean(choice_values,2), SEM, 'lineProps',{'color', plot_info.colors_celltype(ce,:),'LineWidth', 1.5});
     end
 
     xline(onset,'--k','LineWidth',1.5)
