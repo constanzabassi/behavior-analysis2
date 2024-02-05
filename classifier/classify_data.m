@@ -20,3 +20,9 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
 info.savestr = 'attempt_2_nooverlap_condition'; %how to save current run
 %% RUN CLASSIFIER
 [svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info);
+
+%% plot weight distribution across celltypes for model run with all cells
+[betas] = compare_svm_weights(output);
+onset = find(histcounts(output{1,1,4}.mdl_param.event_onset,output{1,1,4}.mdl_param.binns+output{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
+
+plot_dist_weights(onset, betas,all_celltypes,plot_info,info);
