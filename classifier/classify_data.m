@@ -3,8 +3,8 @@
 % get inputs for classifier
 alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
-mdl_param.event_onset = 141; %relative to aligned data
-mdl_param.frames_around = -140:90; %frames around onset 
+mdl_param.event_onset = 7; %relative to aligned data this are the events in aligned data:(7,42,77,141,176,201)
+mdl_param.frames_around = -mdl_param.event_onset+1:90;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
 mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
 
