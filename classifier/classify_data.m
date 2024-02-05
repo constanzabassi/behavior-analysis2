@@ -7,6 +7,7 @@ mdl_param.event_onset = 7; %relative to aligned data this are the events in alig
 mdl_param.frames_around = -mdl_param.event_onset+1:90;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
 mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
+%event_onset+current_frame:event_onset+current_frame+bin
 
 mdl_param.data_type = alignment.data_type;
 

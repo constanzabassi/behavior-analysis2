@@ -88,7 +88,7 @@ for ce = 1:4
             xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
         end
     end
-yline(.5,'-k');
+yline(.5,'--k');
 end
 hold off
 
@@ -109,7 +109,7 @@ for ce = 1:4
             xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
         end
     end
-yline(.5,'-k');
+yline(.5,'--k');
 end
 hold off
 movegui(gcf,'center')
