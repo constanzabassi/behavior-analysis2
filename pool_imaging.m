@@ -43,8 +43,8 @@ for m = 1:length(mouse_date)
         load(strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/red_variables/mcherry_cells.mat'));
         
         all_celltypes{m}.pyr_cells = pyr_cells';
-        all_celltypes{m}.pv_cells= tdtom_cells;
         all_celltypes{m}.som_cells= mcherry_cells;
+        all_celltypes{m}.pv_cells= tdtom_cells;
     
         total_sum = [length(all_celltypes{m}.som_cells)+length(all_celltypes{m}.pyr_cells)+length(all_celltypes{m}.pv_cells)];
         if total_sum == size(mouse{1,m}.dff,1) && total_sum == size(mouse{1,m}.deconv,1)
