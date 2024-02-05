@@ -51,11 +51,11 @@ if saveorno == 1
     save('max_cel_mode','max_cel_mode');
     
     %save_figs
-    saveas(55,strcat('frc_dynamics_all.svg'));
-    saveas(55,strcat('frc_dynamics_all.png'));
+    saveas(55,strcat('frc_dynamics_all_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(55,strcat('frc_dynamics_all_binsize',num2str(unique(diff(binss))),'.png'));
     
-    saveas(56,strcat('frc_dynamics_separated.svg'));
-    saveas(56,strcat('frc_dynamics_separated.svg'));
+    saveas(56,strcat('frc_dynamics_separated_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(56,strcat('frc_dynamics_separated_binsize',num2str(unique(diff(binss))),'.png'));
 end
 
 
