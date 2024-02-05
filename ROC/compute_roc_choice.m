@@ -1,4 +1,4 @@
-function [roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,info,shuff)
+function [roc_mdl] = compute_roc_choice (imaging_st,alignment,roc_mdl,info,plot_info,all_celltypes,shuff)
 %% Compute choice preference for each neuron at each time point during a trial (only correct trials)
 
 %1) get correct trials only (match left and right correct trials)
@@ -74,7 +74,7 @@ roc_mdl.rc = all_rc;
 %%
 %plot auc!
 figure(50);clf;
-[rows,columns] = determine_num_tiles(imaging_st);
+[rows,columns] = determine_num_tiles(length(imaging_st));
 tiledlayout(rows,columns);
 
 hold on;
@@ -103,6 +103,45 @@ xlim([0 1])
 title(info.mouse_date(m));
 
 end
+hold off
+
+%% plot auc looking specified by celltypes!
+figure(500);clf;
+[rows,columns] = determine_num_tiles(length(imaging_st));
+tiledlayout(rows,columns);
+edges = 0.2:0.1:0.8;
+possible_celltypes = fieldnames(all_celltypes{1,1});
+
+hold on;
+for m = 1:length(imaging_st)
+    ex_mouse = m;
+    
+    auc_values = roc_mdl.auc{1,ex_mouse};%(1,:);
+    
+    % Plotting the histogram
+    nexttile
+    
+    hold on
+    for ce = 1:3
+%         mean_data = mean(all_data(all_celltypes{1,m}.(possible_celltypes{ce}),:),2); %find mean for specified cells across all subsamples
+%         [mean_prob]= get_hist(mean_data,edges);
+    %     [across_prob] = get_hist(all_data(all_celltypes{1,m}.(possible_celltypes{ce}),:),edges);%cellfun(@(x) get_hist(x,edges),{all_data(all_celltypes{1,m}.(possible_celltypes{ce}),:)},'UniformOutput',false);%probability values for each cell across subsamples
+          [mean_prob]= get_hist(auc_values(all_celltypes{1,m}.(possible_celltypes{ce})),edges);
+          plot(edges,mean_prob,'color', plot_info.colors_celltype(ce,:),'LineWidth', 1.5)
+    
+    %     SEM= std(across_prob')/sqrt(size(across_prob,2)); %frames/num iterations
+    %     shadedErrorBar(edges,mean_prob, SEM, 'lineProps',{'color', plot_info.colors_celltype(ce,:),'LineWidth', 1.5});end
+    end
+    hold off
+    % Adding labels and title
+    xlabel('AUC Values');
+    ylabel('Fraction of Neurons');
+%     xlim([0 1])
+    title(info.mouse_date(m));
+
+xline(0.5,'--k')
+end
+
 hold off
 %% SHUFFLE TARGET LABELS!
 if shuff == 1
@@ -189,7 +228,8 @@ end
 roc_mdl.alignment = alignment;
 roc_mdl.info = info;
 
-mkdir([info.savepath '/ROC']);
-cd([info.savepath '/ROC']);
+mkdir([info.savepath '/ROC/' roc_mdl.savestr]);
+cd([info.savepath '/ROC/' roc_mdl.savestr]);
 save('roc_mdl','roc_mdl');
 saveas(50,'AUC_across_mice.png');
+saveas(500,'AUC_across_mice_celltypes.png');
