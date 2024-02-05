@@ -81,7 +81,7 @@ roc_mdl.rc_overtime = all_rc;
 %determine onset of binned data
 onset = find(histcounts(roc_mdl.event_onset,roc_mdl.binss));
 figure(51);clf;
-[rows,columns] = determine_num_tiles(imaging_st);
+[rows,columns] = determine_num_tiles(length(imaging_st));
 tiledlayout(rows,columns);
 
 for m = 1:length(imaging_st)
@@ -199,7 +199,7 @@ end
 
 %%
 figure(52);clf;
-[rows,columns] = determine_num_tiles(imaging_st);
+[rows,columns] = determine_num_tiles(length(imaging_st));
 tiledlayout(rows,columns);
 
 for m = 1:length(imaging_st)
