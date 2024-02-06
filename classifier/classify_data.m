@@ -18,13 +18,13 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.82 0.04 0.04 % red  
                             0 0 0.5]; %dark purple
 
-info.savestr = 'attempt_2_nooverlap_condition'; %how to save current run
+info.savestr = 'attempt_1_nooverlap_is_stim'; %how to save current run
 %% RUN CLASSIFIER
 [svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info);
 
 %% plot weight distribution across celltypes for model run with all cells
-[betas] = compare_svm_weights(output); %uses ce = 4 which is all cells to get betas
-onset = find(histcounts(output{1,1,4}.mdl_param.event_onset,output{1,1,4}.mdl_param.binns+output{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
+[betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas
+onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
 
-plot_dist_weights(onset, betas,all_celltypes,plot_info,output);
+plot_dist_weights(onset, betas,all_celltypes,plot_info,svm);
 
