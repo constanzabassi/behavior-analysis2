@@ -45,7 +45,9 @@ for it = 1:mdl_param.num_iterations
             mdl_param.selected_trials = selected_trials;
     
             %get X and Y ready for classifier
-            mdl_Y = condition_array_trials(find(mdl_param.selected_trials),2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
+            fieldss = fieldnames(ex_imaging(1).virmen_trial_info);
+            [~, condition_array] = divide_trials_updated (ex_imaging,{fieldss{3}});
+            mdl_Y = condition_array(find(mdl_param.selected_trials),2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
             mdl_X = aligned_imaging(find(mdl_param.selected_trials),:,:);
             
             fprintf(['size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
