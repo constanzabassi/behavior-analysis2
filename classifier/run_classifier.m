@@ -38,7 +38,8 @@ for it = 1:mdl_param.num_iterations
             
             if count == 1 %keep the trials the same across cell types!
                 %selected_trials = subsample_trials_to_decorrelate_choice_and_category(condition_array_trials);%(condition_array_trials_t);
-                [selected_trials,~,~] = get_balanced_condition_trials(ex_imaging);
+                %[selected_trials,~,~] = get_balanced_condition_trials(ex_imaging);
+                [selected_trials,~,~] = get_balanced_field_trials(imaging_st{1,1},[3,4])
             else
                 mdl_param.selected_trials = selected_trials;
             end
@@ -46,7 +47,7 @@ for it = 1:mdl_param.num_iterations
     
             %get X and Y ready for classifier
             fieldss = fieldnames(ex_imaging(1).virmen_trial_info);
-            [~, condition_array] = divide_trials_updated (ex_imaging,{fieldss{3}});
+            [~, condition_array] = divide_trials_updated (ex_imaging,{fieldss{4}});
             mdl_Y = condition_array(find(mdl_param.selected_trials),2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
             mdl_X = aligned_imaging(find(mdl_param.selected_trials),:,:);
             
