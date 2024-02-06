@@ -7,7 +7,9 @@ mdl_param.event_onset = 7; %relative to aligned data this are the events in alig
 mdl_param.frames_around = -mdl_param.event_onset+1:231-mdl_param.event_onset;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
 mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
-%event_onset+current_frame:event_onset+current_frame+bin
+mdl_param.fields_to_balance = [3,4]; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {'is_stim_trial'}=4
+mdl_param.field_to_predict = 4; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {'is_stim_trial'}=4
+
 
 mdl_param.data_type = alignment.data_type;
 
