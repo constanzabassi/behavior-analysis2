@@ -4,5 +4,5 @@ if ~isempty(savepath)
     cd([savepath '\data_info'])
     save('info','info');
     save('all_celltypes','all_celltypes');
-    save('imaging_st','imaging_st');
+    save('imaging_st','imaging_st','-v7.3');
 end
