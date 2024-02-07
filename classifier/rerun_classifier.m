@@ -13,6 +13,11 @@ for it = 1:mdl_param.num_iterations
             count = count+1;
             mdl_param.mouse = m;
             ex_imaging = imaging_st{1,m};
+
+            %get aligned data
+            [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+            [aligned_imaging,~,~] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+
             %get previously used mdl cells and trials
             mdl_param.selected_trials = svm{it,m,ce}.mdl_param.selected_trials;
             mdl_param.mdl_cells = svm{it,m,ce}.mdl_param.mdl_cells;
