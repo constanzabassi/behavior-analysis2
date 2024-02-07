@@ -124,6 +124,10 @@ output{1,1,1}.info = info; %save in the first one
 mkdir([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 
+%SAVE SVM OUTPUT!
+save('output','output','-v7.3');
+save('output_mat','output_mat');
+
 %save_figs
 for m = 1:length(imaging_st)
     str = info.mouse_date{1,m} ;
@@ -136,7 +140,5 @@ for m = 1:length(imaging_st)
     saveas(m,strcat('SVM_overtime_',str,'.png'));
 end
 
-save('output','output','-v7.3');
-save('output_mat','output_mat');
 
 
