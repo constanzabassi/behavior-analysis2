@@ -40,16 +40,17 @@ else
         condition2 = [virmen_trial_info.(fieldss{selected_field_num(2)})];
     end
     
-    lc = condition & condition2;
-    li = condition & ~condition2;
-    rc = ~condition & condition2;
-    ri = ~condition & ~condition2;
+    lc = condition & condition2;% [1,1]
+    li = condition & ~condition2;% [1,0]
+    rc = ~condition & condition2;% [0,1]
+    ri = ~condition & ~condition2;% [0,0]
     
     % make sure that each of these groups is equally represented in
     % the training trials, to ensure that stimulus category and
     % behavioural choice are uncorrelated.
     
     smallest_set_size = min([nnz(lc), nnz(li), nnz(rc), nnz(ri)]);
+    smallest_set_size
     lc_selected = randsample(find(lc), smallest_set_size);
     li_selected = randsample(find(li), smallest_set_size);
     rc_selected = randsample(find(rc), smallest_set_size);
