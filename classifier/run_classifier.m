@@ -140,5 +140,7 @@ for m = 1:length(imaging_st)
     saveas(m,strcat('SVM_overtime_',str,'.png'));
 end
 
+%output{1,1,1} = rmfield(output{1,1,1},'info');
+
 
 
