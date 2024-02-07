@@ -1,9 +1,9 @@
 %% RERUN SVM USING SAME SUBSAMPLED CELLS AND TRIALS AS PREVIOUS SVM!!
 %to test regularization parameters of SVM
-function [output, output_mat] = rerun_classifier(svm, imaging_st,all_celltypes,mdl_param, alignment,plot_info,info)
-possible_celltypes = fieldnames(all_celltypes{1,1});
+function [output, output_mat] = rerun_classifier(svm, imaging_st, alignment,plot_info,info)
 
 mdl_param = svm{1,1,1}.mdl_param;
+
 for it = 1:mdl_param.num_iterations
     it
     for m = 1:length(imaging_st)

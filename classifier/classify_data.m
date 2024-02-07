@@ -30,3 +30,8 @@ onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.bi
 
 plot_dist_weights(onset, betas,all_celltypes,plot_info,svm);
 
+%% TESTING SVM REGULARIZATION PARAMETERS
+og_svm = output; %load which one you want to rerun
+info.savestr = 'box_10_choice_from_attempt2'; %update save string
+[output2, output_mat2] = rerun_classifier(og_svm, imaging_st, alignment,plot_info,info)
+
