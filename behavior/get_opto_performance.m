@@ -14,17 +14,23 @@ for it = 1:behav_param.num_iterations
         [selected_trials,~,~] = get_balanced_field_trials(ex_imaging,behav_param.fields_to_balance);
         [~, condition_array] = divide_trials_updated (ex_imaging,{'correct','left_turn','condition','is_stim_trial'});
         trial_ids = find(selected_trials);
-        trial_ids_opto = trial_ids(find(condition_array(trial_ids,4)));
-        trial_ids_ctrl = trial_ids(find(condition_array(trial_ids,4)==0));
+        trial_ids_opto = trial_ids(find(condition_array(trial_ids,5)));
+        trial_ids_ctrl = trial_ids(find(condition_array(trial_ids,5)==0));
 
         correct_or_no = condition_array(trial_ids,2);
         left_or_no = condition_array(trial_ids,3);
+        turn_onsets = [imaging_array.turn_frame];
         performance(it,m).correct_all = sum(correct_or_no)/length(correct_or_no);
         performance(it,m).left_all = sum(left_or_no)/length(correct_or_no);
+        performance(it,m).turn_onset_all = turn_onsets;
+
         performance(it,m).correct_opto = sum(condition_array(trial_ids_opto,2))/length(trial_ids_opto);
         performance(it,m).left_opto = sum(condition_array(trial_ids_opto,3))/length(trial_ids_opto);
         performance(it,m).correct_ctrl = sum(condition_array(trial_ids_ctrl,2))/length(trial_ids_ctrl);
         performance(it,m).left_ctrl = sum(condition_array(trial_ids_ctrl,3))/length(trial_ids_ctrl);
+        performance(it,m).turn_onset_opto = turn_onsets(trial_ids_opto);
+        performance(it,m).turn_onset_ctrl = turn_onsets(trial_ids_ctrl);
+
         performance(it,m).trial_ids_opto = trial_ids_opto;
         performance(it,m).trial_ids_ctrl = trial_ids_ctrl;
         
