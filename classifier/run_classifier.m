@@ -68,7 +68,6 @@ cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 
 %SAVE SVM OUTPUT!
 save('output','output','-v7.3');
-save('output_mat','output_mat');
 
 %% make quick figure plots! error across subsamples
 mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
@@ -128,6 +127,9 @@ end
 hold off
 movegui(gcf,'center')
 end
+
+save('output_mat','output_mat');
+
 
 %save_figs
 for m = 1:length(imaging_st)
