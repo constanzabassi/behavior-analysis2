@@ -1,6 +1,6 @@
 function mouse_data_conditions = heatmaps_across_mice_celltypes (imaging_st,plot_info,alignment)
 % Number of things to plot
-num_plots = length(alignment.conditions);  % Change this value based on your requirement
+num_plots = length(alignment.conditions)*3;  % Change this value based on your requirement
 
 % Calculate the number of rows and columns for the tiled layout
 rows = ceil(sqrt(num_plots));

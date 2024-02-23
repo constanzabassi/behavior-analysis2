@@ -9,10 +9,13 @@ info.savepath = 'V:/Connie/results/behavior';%'Y:\Connie\results\PVSOM_opto\lab_
 
 %% 2)pool imaging data structure from multiple datasets and organize it
 [all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(info.mouse_date,info.server);
-save_info(info,all_celltypes,imaging_st,info.savepath);
+[imaging_st,info.eliminated_trials] = eliminate_trials(imaging_st,7,800);
 
 %organize so that all mice are within one variable  
 [num_cells,sorted_cells] = organize_pooled_celltypes(mouse,all_celltypes);
+
+save_info(info,all_celltypes,imaging_st,mouse,info.savepath);
+
 
 %% 3) heatmaps of average across all datasets! also plots sorted values based on last condition (correct/left/stim)
 
@@ -30,7 +33,7 @@ make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment,plot_info,all_
 
 
 %% 4) plot invididual mice average across conditions with concatenated alignment
-ex_imaging = imaging_st{1,7};
+ex_imaging = imaging_st{1,16};
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
@@ -108,9 +111,10 @@ mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,
 
 %%
 figure(92);clf;
+plot_info.xlabel = 'Frames';
 mouse_data_conditions2 = heatmaps_across_mice_celltypes (imaging_st,plot_info,alignment);
 %% plot average traces of individual cells
-ex_mouse = 6;
+ex_mouse = 9;
 ex_imaging = imaging_st{1,ex_mouse};
 
 alignment.conditions = [3,4]; %[5,7] is control
