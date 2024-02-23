@@ -68,13 +68,14 @@ alignment.title = {'PYR','SOM','PV'};
 plot_info.xlabel = [];
 
 heatmaps_across_mice_mellon (imaging_st,plot_info,alignment,[]);
+heatmaps_all_celltypes (imaging_st,plot_info,alignment,[]);
 
-save_data_directory = [];%'W:\Connie\results\context_stim\spike_rates';%[];
+save_data_directory = [info.savepath '\heatmaps'];%'W:\Connie\results\context_stim\spike_rates';%[];
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
     cd(save_data_directory)
 
-    image_string = strcat('heatmaps_8datasets_condition-v2',num2str(alignment.conditions,3));
+    image_string = strcat('heatmaps_condition_',num2str(alignment.conditions,3));
     saveas(90,[image_string '_datasets.svg']);
     saveas(90,[image_string '_datasets.fig']);
     saveas(90,[image_string '_datasets.pdf']);
