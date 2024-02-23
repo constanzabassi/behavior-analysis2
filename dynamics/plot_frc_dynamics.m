@@ -1,6 +1,7 @@
 function plot_frc_dynamics(max_cel_avg,all_celltypes,binss,new_onsets,plot_info, info,saveorno)
 figure(55);clf;
-tiledlayout(3,3)
+[r,c]=determine_num_tiles(size(max_cel_mode,1));
+tiledlayout(r,c)
 for m = 1:size(max_cel_avg,1)
     nexttile
     
