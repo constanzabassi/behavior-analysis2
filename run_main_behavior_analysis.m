@@ -9,6 +9,7 @@ info.savepath = 'V:/Connie/results/behavior';%'Y:\Connie\results\PVSOM_opto\lab_
 
 %% 2)pool imaging data structure from multiple datasets and organize it
 [all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(info.mouse_date,info.server);
+[imaging_st,info.eliminated_trials] = eliminate_trials(imaging_st,7,800);
 save_info(info,all_celltypes,imaging_st,info.savepath);
 
 %organize so that all mice are within one variable  
