@@ -11,3 +11,5 @@ performance = get_opto_performance(imaging_st_cat,behav_param,alignment);
 
 [behav_param.p_val] = plot_performance(performance(:,[1:8,10:24]),[info.savepath '/performance_analysis']);
 save('behav_param','behav_param');
+
+plot_performance_all_bar(performance,[info.savepath '/performance_analysis']);
