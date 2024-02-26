@@ -45,6 +45,29 @@ for m = 1:size(max_cel_avg,1)
     hold off
 end
 
+%% averge across all datasets!
+figure(57);clf;
+hold on
+for ce = 1:3
+    temp = [];
+    for m = 1:size(max_cel_avg,1) 
+
+       temp = [temp,[max_cel_avg{m,all_celltypes{1,m}.(possible_celltypes{ce})}]];
+    end
+    average_across_all{ce} = temp;
+
+    frc=histcounts(average_across_all{ce},1:length(binss))./length(average_across_all{ce});
+    
+    plot(frc,'LineWidth',1.5,'color',plot_info.colors_celltype(ce,:));
+    for i = 1:length(new_onsets)
+            xline(new_onsets(i),'--k','LineWidth',1.5)
+    end
+
+end
+ylabel({'Fraction neurons'; 'with max activity'})
+xlim([0 length(binss)])
+hold off
+
 if saveorno == 1
     mkdir([info.savepath '\frc_dynamics'])
     cd([info.savepath '\frc_dynamics'])
@@ -52,13 +75,16 @@ if saveorno == 1
     save('max_cel_mode','max_cel_mode');
     
     %save_figs
-    saveas(55,strcat('frc_dynamics_all_binsize',num2str(unique(diff(binss))),'.svg'));
-    saveas(55,strcat('frc_dynamics_all_binsize',num2str(unique(diff(binss))),'.png'));
+    saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'.png'));
     
-    saveas(56,strcat('frc_dynamics_separated_binsize',num2str(unique(diff(binss))),'.svg'));
-    saveas(56,strcat('frc_dynamics_separated_binsize',num2str(unique(diff(binss))),'.png'));
-end
+    saveas(56,strcat('frc_dynamics_celltypes_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(56,strcat('frc_dynamics_celltypes_binsize',num2str(unique(diff(binss))),'.png'));
 
+    saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'.png'));
+
+end
 
 % for m = 1:length(imaging_st)
 %     str = info.mouse_date{1,m} ;
