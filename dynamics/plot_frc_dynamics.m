@@ -1,4 +1,8 @@
-function plot_frc_dynamics(max_cel_avg,all_celltypes,binss,new_onsets,plot_info, info,saveorno)
+function plot_frc_dynamics(dynamics_info,all_celltypes,plot_info, info,saveorno)
+
+max_cel_avg = dynamics_info.max_cel_mode;
+binss = dynamics_info.binss;
+new_onsets = dynamics_info.new_onsets;
 figure(55);clf;
 [r,c]=determine_num_tiles(size(max_cel_avg,1));
 tiledlayout(r,c)
@@ -74,15 +78,31 @@ if saveorno == 1
     max_cel_mode = max_cel_avg;
     save('max_cel_mode','max_cel_mode');
     
+    if ~isempty(dynamics_info.conditions)
+        %save_figs
+    saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'_condition',num2str(dynamics_info.conditions),'.svg'));
+    saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'_condition',num2str(dynamics_info.conditions),'.png'));
+    
+    saveas(56,strcat('frc_dynamics_separatedcelltypes_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(56,strcat('frc_dynamics_separatedcelltypes_binsize',num2str(unique(diff(binss))),'.png'));
+
+    saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'_condition',num2str(dynamics_info.conditions),'.svg'));
+    saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'_condition',num2str(dynamics_info.conditions),'.png'));
+    else
     %save_figs
     saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'.svg'));
     saveas(55,strcat('frc_dynamics_allcelltypes_binsize',num2str(unique(diff(binss))),'.png'));
     
-    saveas(56,strcat('frc_dynamics_celltypes_binsize',num2str(unique(diff(binss))),'.svg'));
-    saveas(56,strcat('frc_dynamics_celltypes_binsize',num2str(unique(diff(binss))),'.png'));
+
+    saveas(56,strcat('frc_dynamics_separatedcelltypes_binsize',num2str(unique(diff(binss))),'.svg'));
+    saveas(56,strcat('frc_dynamics_separatedcelltypes_binsize',num2str(unique(diff(binss))),'.png'));
 
     saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'.svg'));
     saveas(57,strcat('frc_dynamics_all_datasets_binsize',num2str(unique(diff(binss))),'.png'));
+    end
+end
+
+    
 
 end
 
