@@ -32,6 +32,14 @@ hold off
 title('Silhouettes Scores')
 legend('PV','SOM','location','northwest')
 
+figure(89);clf;
+hold on;
+Violin({all_sil(1,pv)},1,'ViolinColor', {plot_info.colors_celltype(2,:)});Violin({all_sil(1,pv)},2,'ViolinColor', {plot_info.colors_celltype(3,:)});hold off
+ylabel('Silhouettes Scores')
+xticks([1,2])
+xticklabels({'PV','SOM'})
+
+
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
     cd(save_data_directory)
