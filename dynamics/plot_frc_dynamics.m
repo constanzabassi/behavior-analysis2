@@ -18,6 +18,7 @@ for m = 1:size(max_cel_avg,1)
         xline(new_onsets(i),'--k','LineWidth',1.5)
     end
     ylabel({'Fraction neurons'; 'with max activity'})
+    xlim([1 length(binss)-1])
     hold off
 end
 
@@ -46,6 +47,7 @@ for m = 1:size(max_cel_avg,1)
         
     end
     ylabel({'Fraction neurons'; 'with max activity'})
+    xlim([1 length(binss)-1])
     hold off
 end
 
@@ -69,8 +71,10 @@ for ce = 1:3
 
 end
 ylabel({'Fraction neurons'; 'with max activity'})
-xlim([0 length(binss)])
+xlim([1 length(binss)-1])
 hold off
+set(gca, 'box', 'off', 'xtick', [])
+set(gcf,'Position',[23 453 683 133])
 
 if saveorno == 1
     mkdir([info.savepath '\frc_dynamics'])

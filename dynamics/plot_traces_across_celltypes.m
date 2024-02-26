@@ -43,6 +43,7 @@ for ce = 1:3
     ylabel({'Average activity'; 'across cell types'})
     xlim([1 length(binss)])
     set(gca, 'box', 'off', 'xtick', [])
+    set(gcf,'Position',[23 453 683 133])
     hold off
 end
 

@@ -1,3 +1,21 @@
+%% FIGURE ONE?
+%% PLOT HEATMAP FOR SPECIFIC CONDITION
+
+alignment.conditions = [5];
+alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.type = 'all'; %'reward','turn','stimulus','ITI'
+plot_info.min_max = [-0.25 1.5];
+alignment.number = [1:6]; %'reward','turn','stimulus'
+alignment.cells = [cellfun(@(x) x.pyr_cells,all_celltypes,'UniformOutput',false);cellfun(@(x) x.som_cells,all_celltypes,'UniformOutput',false);cellfun(@(x) x.pv_cells,all_celltypes,'UniformOutput',false)];
+alignment.title = {'PYR','SOM','PV'};
+plot_info.xlabel = [];
+
+figure(90);clf;
+colormap viridis
+heatmaps_all_celltypes (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps']);
+set(gcf,'Position',[23 177 683 420]);
+
+
 %% DYNAMICS PLOT OF FRACTION OF CELLS
 plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue

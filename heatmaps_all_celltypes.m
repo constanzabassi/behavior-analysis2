@@ -1,4 +1,4 @@
-function mouse_data_conditions = heatmaps_all_celltypes (imaging_st,plot_info,alignment,sorting_id)
+function mouse_data_conditions = heatmaps_all_celltypes (imaging_st,plot_info,alignment,sorting_id,save_data_directory)
 % Create a tiled layout
 tiledlayout(3, 1,"TileSpacing","compact");
 
@@ -40,6 +40,16 @@ for c = alignment.conditions
         ylabel({alignment.title{ce};'Neurons'})
         hold off
     end
+end
+
+if ~isempty(save_data_directory)
+    mkdir(save_data_directory)
+    cd(save_data_directory)
+
+    image_string = strcat('heatmaps_condition_',num2str(alignment.conditions,3));
+    saveas(90,[image_string '_datasets.svg']);
+    saveas(90,[image_string '_datasets.fig']);
+    saveas(90,[image_string '_datasets.png']);
 end
 
 
