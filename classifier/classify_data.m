@@ -30,6 +30,12 @@ onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.bi
 
 plot_dist_weights(onset, betas,all_celltypes,plot_info,svm);
 
+%% average across datasets
+[~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
+mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
+event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
+
+plot_svm_across_datasets(svm_mat,plot_info,event_onsets);
 %% TESTING SVM REGULARIZATION PARAMETERS
 og_svm = output; %load which one you want to rerun
 info.savestr = 'box_10_choice_from_attempt2'; %update save string
