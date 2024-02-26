@@ -75,6 +75,7 @@ xlim([1 length(binss)-1])
 hold off
 set(gca, 'box', 'off', 'xtick', [])
 set(gcf,'Position',[23 453 683 133])
+set(gca,'fontsize', 14)
 
 if saveorno == 1
     mkdir([info.savepath '\frc_dynamics'])

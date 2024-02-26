@@ -40,10 +40,11 @@ for ce = 1:3
     for i = 1:length(new_onsets)
         xline(new_onsets(i),'--k','LineWidth',1.5)
     end
-    ylabel({'Average activity'; 'across cell types'})
+    ylabel({'Mean dF/F'})
     xlim([1 length(binss)])
     set(gca, 'box', 'off', 'xtick', [])
     set(gcf,'Position',[23 453 683 133])
+    set(gca,'fontsize', 14)
     hold off
 end
 
