@@ -1,4 +1,4 @@
-function [max_cel_avg,freq,max_cel, binss,new_onsets] = fraction_dynamics (imaging_st,alignment,bin_size)
+function [max_cel_avg,freq,max_cel, binss,new_onsets] = fraction_dynamics (imaging_st,alignment,dynamics_info)
 max_cel = {};
 
 for m = 1:length(imaging_st)
@@ -6,7 +6,13 @@ for m = 1:length(imaging_st)
     ex_imaging = imaging_st{1,m};
     [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
     [aligned_imaging,~,~] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
+
+    if ~isempty(dynamics_info.conditions)
+        [all_conditions,~] = divide_trials (ex_imaging);
+        aligned_imaging =  aligned_imaging(all_conditions{dynamics_info.conditions,1},:,:);
+    end
     
+    bin_size = dynamics_info.bin_size;
     binss = 1:bin_size:size(aligned_imaging,3)-bin_size;
 
     for cel = 1:size(aligned_imaging,2)
