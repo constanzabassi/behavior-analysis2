@@ -1,7 +1,7 @@
 function [sig_test] = plot_performance_all_bar(performance,save_data_directory)
 overall_mean = [];
 for m = 1:size(performance,2)
-    overall_mean = [overall_mean,mean([performance(:,m).correct_opto])];
+    overall_mean = [overall_mean,mean([performance(:,m).correct_all])];
 end
 
 %% make the plot
@@ -12,13 +12,13 @@ h=bar([mean(overall_mean)],'FaceColor','w','EdgeColor','k','LineWidth',2)
 hold on
 errorbar(h(1).XEndPoints,mean(overall_mean),std(overall_mean),'LineStyle','none','Color','k','LineWidth',2)
 % simple version
-% scatter(y,overall_mean,60,'MarkerEdgeColor','k','LineWidth',1)
+% scatter(y,overall_mean,100,'MarkerEdgeColor','k','LineWidth',1)
 
 %title
-title('Fraction Correct')
+ylabel('Fraction Correct')
 yticks([0:0.2:1])
 xticklabels([])
-
+set(gca,'fontsize', 14)
 %% save figures
 
 if ~isempty(save_data_directory)

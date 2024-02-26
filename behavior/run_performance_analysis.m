@@ -5,11 +5,11 @@ behav_param.fields_to_balance = [3,4];%{'correct'}=1 {'left_turn'}=2 {'condition
 alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
-performance = get_opto_performance(imaging_st_cat,behav_param,alignment);
+performance = get_opto_performance(imaging_st,behav_param,alignment);
 
 %% make plots
 
-[behav_param.p_val] = plot_performance(performance(:,[1:8,10:24]),[info.savepath '/performance_analysis']);
+[behav_param.p_val] = plot_performance(performance(:,1:16),[info.savepath '/performance_analysis']);
 save('behav_param','behav_param');
 
 plot_performance_all_bar(performance,[info.savepath '/performance_analysis']);
