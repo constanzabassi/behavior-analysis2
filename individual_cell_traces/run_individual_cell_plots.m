@@ -1,5 +1,8 @@
 %% find nice cell traces to show based on SVM betas!
 %1) load svm 
+[betas] = compare_svm_weights(svm);
+onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
+bins_chosen = onset-5:onset+5;
 
 %%
 ex_mouse = 4;
