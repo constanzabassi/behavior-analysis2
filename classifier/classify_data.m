@@ -28,7 +28,7 @@ info.savestr = 'outcome_25sub'; %how to save current run
 [betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas
 onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
 
-plot_dist_weights(onset, betas,all_celltypes,plot_info,svm);
+plot_dist_weights(onset, betas,all_celltypes,plot_info,svm,svm_info);
 
 %% average across datasets
 [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
