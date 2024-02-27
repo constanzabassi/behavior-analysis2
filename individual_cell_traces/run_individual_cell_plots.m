@@ -1,3 +1,7 @@
+%% find nice cell traces to show based on SVM betas!
+%1) load svm 
+
+%%
 ex_mouse = 4;
 ex_imaging = imaging_st{1,ex_mouse};
 
