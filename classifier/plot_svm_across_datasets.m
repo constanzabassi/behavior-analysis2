@@ -1,4 +1,4 @@
-function plot_svm_across_datasets(svm_mat,plot_info,event_onsets)
+function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,save_str,save_path)
 overall_mean = [];
 overall_shuff = [];
 
@@ -36,4 +36,17 @@ for ce = 1:4
         end
     end
 yline(.5,'--k');
+
 end
+ylabel({'% Accuracy'})
+xlim([1 size(overall_mean,2)])
+set(gca, 'box', 'off', 'xtick', [])
+set(gca,'fontsize', 14)
+
+if ~isempty(save_path)
+    mkdir(save_path )
+    cd(save_path)
+    saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.svg'));
+    saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.png'));
+end
+

@@ -35,7 +35,7 @@ plot_dist_weights(onset, betas,all_celltypes,plot_info,svm);
 mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
 event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 
-plot_svm_across_datasets(svm_mat,plot_info,event_onsets);
+plot_svm_across_datasets(svm_mat,plot_info,event_onsets,'_is_stim_sub25_',['V:/Connie/results/behavior/svm']);
 %% TESTING SVM REGULARIZATION PARAMETERS
 og_svm = output; %load which one you want to rerun
 info.savestr = 'box_10_choice_from_attempt2'; %update save string
