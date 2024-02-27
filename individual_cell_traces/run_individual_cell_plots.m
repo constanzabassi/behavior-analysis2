@@ -4,6 +4,7 @@
 onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
 bins_chosen = onset-5:onset+5;
 
+[avg_beta,beta_cel] = find_avg_svm_beta (betas,all_celltypes,bins_chosen)
 %%
 ex_mouse = 4;
 ex_imaging = imaging_st{1,ex_mouse};
