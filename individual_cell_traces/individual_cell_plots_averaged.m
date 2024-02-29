@@ -1,4 +1,4 @@
-function individual_cell_plots_averaged(aligned_data, cel_id, all_conditions,alignment,event_onsets)
+function individual_cell_plots_averaged(aligned_data, cel_id, all_conditions,alignment,event_onsets,minnmaxx)
 
 for cel = 1:length(cel_id)
     ce = cel_id(cel);
@@ -27,4 +27,5 @@ for cel = 1:length(cel_id)
     axis off
     ylim([-0.6 2.5])
     hold off
+    movegui(gcf,'center')
 end
