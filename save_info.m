@@ -1,4 +1,4 @@
-function save_info(info,all_celltypes,imaging_st,mouse,savepath)
+function save_info(info,all_celltypes,imaging_st,savepath)
 if ~isempty(savepath)
     mkdir([savepath '\data_info'])
     cd([savepath '\data_info'])
