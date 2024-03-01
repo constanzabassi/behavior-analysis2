@@ -14,3 +14,7 @@ plot_ct_event(pyr_mean_activity,som_mean_activity,pv_mean_activity,'nosave')
 
 %% PLOT ACTIVITY OF ALL CELL TYPES DURING EVENTS
 plot_allct_event(pyr_mean_activity,som_mean_activity,pv_mean_activity,'nosave')
+%% DETERMINE ONSET OF EVENTS RELATIVE TO TRIAL EVENTS!
+[event_sums,cat_array, ~] = get_event_relative2task (all_frames,ds_events);
+
+[event_stats] = errorbar_events2task(event_sums,plot_info,[info.savepath '/pop_event']);
