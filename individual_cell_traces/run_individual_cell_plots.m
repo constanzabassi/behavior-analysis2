@@ -20,7 +20,7 @@ alignment.number = [1:6]; %'reward','turn','stimulus'
 [aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
 event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 fieldss = fieldnames(ex_imaging(1).virmen_trial_info);
-field_to_separate = {fieldss{1:2}};
+field_to_separate = {fieldss{[1:2]}}; %1:2 is correct/incorrect left turn/right turn,3 condition, 4 is_stim
 
 [all_conditions, condition_array_trials] = divide_trials_updated (ex_imaging,field_to_separate); %divide trials into specific conditions
 %chosen_cells = [216,117,240,227,257,54];
