@@ -4,6 +4,6 @@ if ~isempty(savepath)
     cd([savepath '\data_info'])
     save('info','info');
     save('all_celltypes','all_celltypes');
-    save('mouse','mouse','-v7.3');
+    %save('mouse','mouse','-v7.3'); %really slow to save
     save('imaging_st','imaging_st','-v7.3');
 end
