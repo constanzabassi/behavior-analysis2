@@ -14,7 +14,7 @@ info.savepath = 'V:/Connie/results/behavior';%'Y:\Connie\results\PVSOM_opto\lab_
 %organize so that all mice are within one variable  
 [num_cells,sorted_cells] = organize_pooled_celltypes(mouse,all_celltypes);
 
-save_info(info,all_celltypes,imaging_st,mouse,info.savepath);
+save_info(info,all_celltypes,imaging_st,info.savepath);
 
 
 %% 3) heatmaps of average across all datasets! also plots sorted values based on last condition (correct/left/stim)
