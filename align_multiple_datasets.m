@@ -1,4 +1,4 @@
-function [aligned_data_all,all_conditions_all]= align_multiple_datasets(imaging_st,alignment)
+function [aligned_data_all,all_conditions_all,num_trials]= align_multiple_datasets(imaging_st,alignment)
 for m = 1:length(imaging_st)
     m
     imaging = imaging_st{1,m};
@@ -9,6 +9,7 @@ for m = 1:length(imaging_st)
     aligned_data_all{m} = aligned_imaging;
     all_conditions_all{m} = all_conditions;
     %
-    concatenated_conditions = [all_conditions_all{1,:}]
-    cellfun(@(x) length(x),concatenated_conditions)
+    concatenated_conditions = [all_conditions_all{m}]
+    temp = cellfun(@(x) length(x),concatenated_conditions);
+    num_trials(:,m) = temp(:,1);
 end
