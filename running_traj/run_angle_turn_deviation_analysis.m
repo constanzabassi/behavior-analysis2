@@ -1,6 +1,9 @@
 %% analysis of running trajectories/view angle changes based on Green et al 2023
+vel_ball = get_ball_velocity(info,all_frames); %to get yaw
+%%
 %get data for each mouse
 savepath = [info.savepath '\navigation_correction'];
+save_str = ['ex_plots_viewangle_roll_SOM_dataset_maze_reward_frames'];
 num_bins = 25;
 for m = 1:length(imaging_st)
 imaging = imaging_st{1,m};
@@ -17,29 +20,32 @@ heading_deviation = compute_heading_deviation2(imaging_array, imaging_trial_info
 
 %also plot heading direction
 median_viewangle = nanmedian([imaging_array.view_angle]); %for some reason it is not zero
+
+
 figure(1);clf
 for p = 1:36
+    frames_to_include = [imaging_array(p).maze_frames,imaging_array(p).reward_frames];
     subplot(6,6,p);
     p = p;
     hold on;
     title(num2str(good_trials(p)))
-    %plot(rescale(imaging_array(p).x_velocity(imaging_array(p).maze_frames),-1,1));
-    plot(vel_ball{m,1}{p,2},'k');
-    plot((imaging_array(p).view_angle(imaging_array(p).maze_frames))-median_viewangle,'color',[0.5 0.5 0.5]);
+    plot(rescale(imaging_array(p).x_velocity(frames_to_include),-1,1),'k');
+%     plot(vel_ball{m,1}{p,2},'k');
+    plot((imaging_array(p).view_angle(frames_to_include))-median_viewangle,'color',[0.5 0.5 0.5]);
 %     plot(imresize(heading_deviation(p,:),[1,length(imaging_array(p).maze_frames)]),'color',[0.5 0.5 0.5]);
     %plot(rescale(smooth(mean(imaging(good_trials(p)).dff(all_celltypes{1,m}.pv_cells,imaging_array(p).maze_frames)),10,'boxcar'),-1,1),'color',[0.82 0.04 0.04]);
-    plot(rescale(smooth(mean(imaging(good_trials(p)).dff(all_celltypes{1,m}.som_cells,imaging_array(p).maze_frames)),3,'boxcar'),-2,2),'color',[0.17 0.35 0.8]);
+    plot(rescale(smooth(mean(imaging(good_trials(p)).dff(all_celltypes{1,m}.som_cells,frames_to_include)),3,'boxcar'),-2,2),'color',[0.17 0.35 0.8]);
     
     hold off;
-    xlim([1 length(imaging_array(p).maze_frames)])
+    xlim([1 length(frames_to_include)])
     ylim([-4 4])
 end
 
 if ~isempty(savepath)
         mkdir(savepath)
         cd(savepath)
-        saveas(1,strcat('ex_plots_viewangle_yaw_SOM_dataset',num2str(m),'.svg'));
-        saveas(1,strcat('ex_plots_viewangle_yaw_SOM_dataset',num2str(m),'.png'));
+        saveas(1,strcat(save_str,num2str(m),'.svg'));
+        saveas(1,strcat(save_str,num2str(m),'.png'));
 end
 
 end
