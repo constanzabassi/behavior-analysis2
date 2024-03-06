@@ -30,3 +30,9 @@ plot_frc_dynamics(dynamics_info,all_celltypes,plot_info, info,1); %last is save 
 %% make plot of grand avg of dff across celltypes!
 
 plot_traces_across_celltypes(imaging_st,all_celltypes,alignment,dynamics_info,plot_info,info);
+
+%% define stimulus, turn, reward, ITI periods
+alignment.left_padding = [6     1     1    30     4     1]; 
+alignment.right_padding = [33    33    33    30    23    80]; 
+
+task_period = define_trial_task_periods(alignment);
