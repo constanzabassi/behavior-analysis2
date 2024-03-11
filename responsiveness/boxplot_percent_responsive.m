@@ -19,7 +19,8 @@ for t = 1:length(tw)
 %         scatter(t*ones(nx,1)+w*(rand(nx,1)-0.5)+x_seq(a), v, mksz,...
 %             cc{a}, 'filled', 'markerfacealpha', r);
         h = boxplot(v, 'position', t+x_seq(ce), 'width', w, 'colors', plot_info.colors_celltype(ce,:),'symbol', '');
-        hh = findobj('LineStyle','--','LineWidth',0.5); set(h, 'LineStyle','-','LineWidth',1);
+        hh = findobj('LineStyle','--','LineWidth',0.5); 
+        set(h, 'LineStyle','-','LineWidth',1);
         if ce==1; v0 = v; end
         yl = ylim;%setBoxStyle(h, 1);
         yma = max(yma, yl(2)+5);
@@ -37,7 +38,7 @@ for t = 1:length(tw)
     end
 end
 set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
-xlim([0.5 length(tw)+0.5]); ylim([0 104]);
+xlim([0.5 length(tw)+0.5]); ylim([0 max(max(max([squeeze(num_responsive(:,:,:))])))+5]);
 ylabel('Percentage'); box off
 title('Responsive cells','FontWeight','Normal');
 set_current_fig;
