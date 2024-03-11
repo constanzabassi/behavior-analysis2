@@ -35,7 +35,7 @@ xticklabels({'Stimulus', 'Turn', 'Reward', 'ITI'});
 %% Compute Wilcoxon signed rank test
     p_values = zeros(1, size(som_data, 2));
     for i = 1:size(som_data, 2)
-        [p_values(i), ~] = signrank(som_data(:,i), pv_data(:,i));
+        [p_values(i), ~] = ranksum(som_data(:,i), pv_data(:,i));
 
         y_val = max([means(i)+std_devs(i); means2(i)+std_devs2(i)]);
         plot_pval_star(i,y_val+2, p_values(i),[0,0]); %yl(2)+3
