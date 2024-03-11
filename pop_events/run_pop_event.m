@@ -22,3 +22,8 @@ load([info.savepath '/data_info/all_frames.mat']);
 
 load([info.savepath '/data_info/plot_info.mat']);
 [event_stats] = errorbar_events2task(event_sums,plot_info,[info.savepath '/pop_event']);
+
+figure(334);clf;
+subplot(2,1,1);title('SOM events');imagesc(event_sums.som);ylabel('Datasets');xticks([1:4]);xticklabels({'Stim','Turn','Reward','ITI'});
+subplot(2,1,2);title('PV events');imagesc(event_sums.pv);ylabel('Datasets');xticks([1:4]);xticklabels({'Stim','Turn','Reward','ITI'});
+saveas(334,'event_sums_across_datasets.png')
