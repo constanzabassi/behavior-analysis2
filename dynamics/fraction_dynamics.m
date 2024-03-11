@@ -9,7 +9,7 @@ for m = 1:length(imaging_st)
 
     if ~isempty(dynamics_info.conditions)
         [all_conditions,~] = divide_trials (ex_imaging);
-        aligned_imaging =  aligned_imaging(all_conditions{dynamics_info.conditions,1},:,:);
+        aligned_imaging =  aligned_imaging(vertcat(all_conditions{dynamics_info.conditions,1}),:,:);
     end
     
     bin_size = dynamics_info.bin_size;
