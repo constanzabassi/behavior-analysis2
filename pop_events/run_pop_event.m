@@ -15,6 +15,10 @@ plot_ct_event(pyr_mean_activity,som_mean_activity,pv_mean_activity,'nosave')
 %% PLOT ACTIVITY OF ALL CELL TYPES DURING EVENTS
 plot_allct_event(pyr_mean_activity,som_mean_activity,pv_mean_activity,'nosave')
 %% DETERMINE ONSET OF EVENTS RELATIVE TO TRIAL EVENTS!
-[event_sums,cat_array, ~] = get_event_relative2task (all_frames,ds_events);
+% all_frames from all_frames = frames_relative2general(info,imaging_st)
+load([info.savepath '/data_info/all_frames.mat']);
+%[event_sums,cat_array, ~] = get_event_relative2task(all_frames,ds_events); %rough alignment (only using frames in maze, reward or ITI
+[event_sums,cat_array, ~] = get_event_relative2task_updated (all_frames,imaging_st,ds_events);
 
+load([info.savepath '/data_info/plot_info.mat']);
 [event_stats] = errorbar_events2task(event_sums,plot_info,[info.savepath '/pop_event']);
