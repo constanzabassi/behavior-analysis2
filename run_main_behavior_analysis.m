@@ -67,10 +67,12 @@ alignment.cells = [cellfun(@(x) x.pyr_cells,all_celltypes,'UniformOutput',false)
 alignment.title = {'PYR','SOM','PV'};
 plot_info.xlabel = [];
 
-heatmaps_across_mice_mellon (imaging_st,plot_info,alignment,[]);
-heatmaps_all_celltypes (imaging_st,plot_info,alignment,[]);
-
 save_data_directory = [info.savepath '\heatmaps'];%'W:\Connie\results\context_stim\spike_rates';%[];
+
+heatmaps_across_mice_mellon (imaging_st,plot_info,alignment,[]);
+heatmaps_all_celltypes (imaging_st,plot_info,alignment,[],save_data_directory);
+
+
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
     cd(save_data_directory)
