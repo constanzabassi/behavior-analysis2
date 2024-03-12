@@ -108,7 +108,7 @@ if nargin > 2 %do alternative alignment!
     right_padding(event) = 35;
     
     event = 4;
-    left_padding(event) = 60;
+    left_padding(event) = 90;
     right_padding(event) = 60; %used to be 30
     
     event = 5; 
