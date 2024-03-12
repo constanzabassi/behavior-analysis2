@@ -1,5 +1,5 @@
 %% SVM predict choice using cell type activity
-function [output, output_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info)
+function [output, output_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,single_event)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 for it = 1:mdl_param.num_iterations
@@ -12,7 +12,11 @@ for it = 1:mdl_param.num_iterations
             mdl_param.mouse = m;
             ex_imaging = imaging_st{1,m};
             
-            [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+            if single_event == 1
+                [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30,1);
+            else
+                [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging,30);
+            end
             [aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
             
             [all_conditions, condition_array_trials] = divide_trials (ex_imaging); %divide trials into all possible conditions
@@ -72,7 +76,7 @@ save('svm_info','info');
 save('output','output','-v7.3');
 
 %% make quick figure plots! error across subsamples
-mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
+mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
 %adjust event onsets to bins!
 event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 for m = 1:length(imaging_st)
