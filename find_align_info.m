@@ -1,4 +1,4 @@
-function [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,turn_frames)
+function [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,turn_frames,varargin)
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
 
@@ -93,6 +93,41 @@ event = 6; %ITI time
 alignment_frames(event,:) = cellfun(@(x) x(1), {imaging_array.iti_frames});
 left_padding(event) = 1;
 right_padding(event) = 80;
+
+if nargin > 2 %do alternative alignment!
+    event = 1;
+    left_padding(event) = 6;%min_length_stim; %smallest # frames in front
+    right_padding(event) = 35;
+    
+    event = 2;
+    left_padding(event) = 1;
+    right_padding(event) = 35;
+    
+    event = 3;
+    left_padding(event) = 1;
+    right_padding(event) = 35;
+    
+    event = 4;
+    left_padding(event) = 60;
+    right_padding(event) = 60; %used to be 30
+    
+    event = 5; 
+    if all(cellfun(@isempty, reward_onset)) %use ITI tone for incorrect trials
+        left_padding(event) = 60; %used to be 4 %smallest # frames in front during reward period
+        right_padding(event) = 60; %used to be 4%larger # frames after reward during reward period
+    else
+        incorrect_trials = setdiff(1:length(good_trials),reward_trial);
+        alignment_frames(event,incorrect_trials) = [pure_onsets{1,incorrect_trials}];
+        left_padding(event) = 60;%used to be 4%min_length_reward; %smallest # frames in front during reward period
+        right_padding(event) = 60;%max_length_reward-min_length_reward; %larger # frames after reward during reward period
+    end
+    
+    event = 6; %ITI time
+    left_padding(event) = 60;
+    right_padding(event) = 60;
+
+end
+
 
 
 
