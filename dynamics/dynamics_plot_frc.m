@@ -1,7 +1,7 @@
 %% FIGURE ONE?
 %% PLOT HEATMAP FOR SPECIFIC CONDITION
 
-alignment.conditions = [5];
+alignment.conditions = []; %empty to run all conditions
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.25 1.5];
@@ -23,8 +23,8 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
                             0.82 0.04 0.04 % red  
                             0 0 0.5]; %dark purple
-dynamics_info.bin_size = 10;
-dynamics_info.conditions = 5; %1:8 for stim or empty to do all conditions!
+dynamics_info.bin_size = 5;
+dynamics_info.conditions = []; %1:8 for stim or empty to do all conditions!
 [dynamics_info.max_cel_mode,dynamics_info.freq,~, dynamics_info.binss,dynamics_info.new_onsets] = fraction_dynamics (imaging_st,alignment,dynamics_info); 
 
 plot_frc_dynamics(dynamics_info,all_celltypes,plot_info, info,1); %last is save or not
