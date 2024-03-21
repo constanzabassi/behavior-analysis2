@@ -19,6 +19,7 @@ mdl_param.field_to_predict = 2; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {
 mdl_param.data_type = alignment.data_type;
 
 mdl_param.num_iterations = 25; %number of times to subsample
+mdl_param.single_event = 1; %align to single event == 1 or 1:6 events (concatenated) not 1
 
 plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
@@ -27,7 +28,7 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
 
 info.savestr = 'choice_aligned_25sub'; %how to save current run
 %% RUN CLASSIFIER
-[svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,1); %last is whether to align to onset of single event
+[svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,mdl_param.single_event); %last is whether to align to onset of single event
 
 %% plot weight distribution across celltypes for model run with all cells
 [betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas
@@ -36,11 +37,15 @@ onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.bi
 plot_dist_weights(onset, betas,all_celltypes,plot_info,svm,svm_info);
 
 %% average across datasets
-[~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
-mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,[1:6]);
+if mdl_param.single_event == 1
+    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
+else
+    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
+end
+mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
 event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 
-plot_svm_across_datasets(svm_mat,plot_info,event_onsets,'_is_stim_sub25_',['V:/Connie/results/behavior/svm']);
+plot_svm_across_datasets(svm_mat,plot_info,event_onsets,info.savestr,['V:/Connie/results/behavior/svm']);
 %% TESTING SVM REGULARIZATION PARAMETERS
 og_svm = output; %load which one you want to rerun
 info.savestr = 'box_10_choice_from_attempt2'; %update save string
