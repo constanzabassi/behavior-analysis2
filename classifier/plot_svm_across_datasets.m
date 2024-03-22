@@ -1,4 +1,4 @@
-function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,save_str,save_path)
+function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path)
 overall_mean = [];
 overall_shuff = [];
 
@@ -40,7 +40,11 @@ yline(.5,'--k');
 end
 ylabel({'% Accuracy'})
 xlim([1 size(overall_mean,2)])
-set(gca, 'box', 'off', 'xtick', [])
+[second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
+xticks([second_ticks]);
+xticklabels(second_labels);
+
+set(gca, 'box', 'off')
 set(gca,'fontsize', 14)
 
 if ~isempty(save_path)
