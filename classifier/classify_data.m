@@ -6,11 +6,19 @@ alignment.type = 'turn'; %'reward','turn','stimulus','ITI'
 alignment.events = [4]; %1:6 is all
 alignment.single_event = 1; %align to single event == 1 or 1:6 events (concatenated) not 1
 
-mdl_param.event_onset = 91;%141; %relative to aligned data this are the events in aligned data:(7,42,77,141,176,201)
+
+%use alignment info to get this number!
+if alignment.single_event == 1
+    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
+else
+    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
+end
+
+mdl_param.event_onset = left_padding(alignment.events)+1;%141; %relative to aligned data this are the events in aligned data:(7,42,77,141,176,201)
 %updated event onsets! 7 42 77 141 155 180
 
 frame_length = 150; %used to be 281 with update is 260
-mdl_param.frames_around = -mdl_param.event_onset+1:(frame_length)-mdl_param.event_onset;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
+mdl_param.frames_around = -mdl_param.event_onset+1:(frame_length)-mdl_param.event_onset+1;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
 %why -50? (frame_length-50)
 mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
@@ -41,17 +49,17 @@ plot_dist_weights(onset, betas,all_celltypes,plot_info,svm,svm_info);
 save('betas','betas');
 
 %% average across datasets
-
-if alignment.single_event == 1
-    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
-else
-    [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
-end
+% 
+% if alignment.single_event == 1
+%     [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
+% else
+%     [~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30);
+% end
 
 mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
 event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 
-plot_svm_across_datasets(svm_mat,plot_info,event_onsets,info.savestr,['V:/Connie/results/behavior/svm']);
+plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,info.savestr,['V:/Connie/results/behavior/svm']);
 %% TESTING SVM REGULARIZATION PARAMETERS
 og_svm = output; %load which one you want to rerun
 info.savestr = 'box_10_choice_from_attempt2'; %update save string
