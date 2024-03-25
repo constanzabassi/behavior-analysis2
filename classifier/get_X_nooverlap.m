@@ -13,9 +13,18 @@ current_frame = current_frame;%+bin+1;
 
 
 if strcmp(mdl_param.data_type,'dff')
-    X = squeeze(mean(aligned_data(:,cells_ids,event_onset+current_frame:event_onset+current_frame+bin),3)); %mean across frames
+    if ~ismember(size(aligned_data,3),event_onset+current_frame)
+        X = squeeze(mean(aligned_data(:,cells_ids,event_onset+current_frame:event_onset+current_frame+bin),3)); %mean across frames
+    else
+        X = squeeze(mean(aligned_data(:,cells_ids,event_onset+current_frame:size(aligned_data,3)),3)); %mean across frames
+    end
+
 elseif strcmp(mdl_param.data_type,'deconv')
-    X = sum(squeeze(aligned_data(:,cells_ids,event_onset+current_frame:event_onset+current_frame+bin)),3); %sum across frames
+    if ~ismember(size(aligned_data,3),event_onset+current_frame)
+        X = sum(squeeze(aligned_data(:,cells_ids,event_onset+current_frame:event_onset+current_frame+bin)),3); %sum across frames
+    else
+        X = sum(squeeze(aligned_data(:,cells_ids,event_onset+current_frame:size(aligned_data,3))),3); %sum across frames
+    end
 end
 X = normc(X); %normalize columns (features/neurons)
 % X = zscore(X);

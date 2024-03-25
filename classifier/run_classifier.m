@@ -57,6 +57,7 @@ for it = 1:mdl_param.num_iterations
             
             fprintf(['subsample #: ', num2str(it),' || mouse :' , num2str(m), ' ||    celltype :' num2str(ce), ' ||  size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
             output{it,m,ce} = classify_over_time(mdl_X,mdl_Y, mdl_param);
+            all_model_outputs{it,m,ce} = mdl_param;
         end
     end
 end
@@ -71,6 +72,7 @@ mkdir([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 
 save('svm_info','info');
+save('all_model_outputs','all_model_outputs','-v7.3');
 
 %SAVE SVM OUTPUT!
 save('output','output','-v7.3');
