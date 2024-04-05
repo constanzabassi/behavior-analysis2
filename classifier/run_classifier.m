@@ -2,6 +2,7 @@
 function [output, output_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,single_event)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
+disp(['Saving file under: ' info.savestr]);
 for it = 1:mdl_param.num_iterations
     it
     for m = 1:length(imaging_st)
