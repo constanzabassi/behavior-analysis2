@@ -57,6 +57,13 @@ for it = 1:mdl_param.num_iterations
             
             fprintf(['subsample #: ', num2str(it),' || mouse :' , num2str(m), ' ||    celltype :' num2str(ce), ' ||  size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
             output{it,m,ce} = classify_over_time(mdl_X,mdl_Y, mdl_param);
+
+            %get betas across all celltypes
+            if ce == 4
+                for bin = 1:length(output{1,1,ce}.mdl)
+                    betas{it,m,bin} = output{it,m,ce}.mdl{1,bin}.Beta;     
+                end
+            end
             all_model_outputs{it,m,ce} = mdl_param;
         end
     end
@@ -71,7 +78,9 @@ end
 mkdir([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 cd([info.savepath '\SVM_' alignment.data_type '_' info.savestr])
 
-save('svm_info','info');
+svm_info = info;
+save('svm_info','svm_info');
+save('betas','betas')
 save('all_model_outputs','all_model_outputs','-v7.3');
 
 %SAVE SVM OUTPUT!
