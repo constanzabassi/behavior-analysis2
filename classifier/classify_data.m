@@ -1,7 +1,7 @@
 %classify data
 
 % get inputs for classifier
-alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
+alignment.data_type = 'deconv';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'reward'; %'reward','turn','stimulus','ITI'
 alignment.events = [5]; %1:6 is all
 alignment.single_event = 1; %align to single event == 1 or 1:6 events (concatenated) not 1
@@ -39,13 +39,15 @@ plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.82 0.04 0.04 % red  
                             0 0 0.5]; %dark purple
 
-info.savestr = 'outcome_aligned_25sub'; %how to save current run
+info.savestr = 'reward_aligned_25sub'; %how to save current run
 
 %% RUN CLASSIFIER
 [svm, svm_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,alignment.single_event); %last is whether to align to onset of single event
 
 %% plot weight distribution across celltypes for model run with all cells
-[betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas
+%[betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas
+load('betas.mat');
+load('svm_info.mat');
 onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
 
 plot_dist_weights(onset, betas,all_celltypes,plot_info,svm,svm_info);
@@ -63,7 +65,7 @@ save('betas','betas');
 mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
 event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
 
-plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,info.savestr,['V:/Connie/results/behavior/svm']);
+plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,[alignment.data_type '_' info.savestr],['V:/Connie/results/behavior/svm']);
 %% TESTING SVM REGULARIZATION PARAMETERS
 og_svm = output; %load which one you want to rerun
 info.savestr = 'box_10_choice_from_attempt2'; %update save string
