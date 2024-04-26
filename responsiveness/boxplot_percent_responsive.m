@@ -1,4 +1,4 @@
-% function plot_responsive
+function boxplot_percent_responsive(num_responsive,plot_info,info,saveorno)
 
 tw = 1:6;
 
@@ -24,8 +24,14 @@ for t = 1:length(tw)
 %         out_line = findobj(h, 'Tag', 'Outliers');
 %         set(out_line, 'Visible', 'off');
 
+        %set line width
         hh = findobj('LineStyle','--','LineWidth',0.5); 
-        set(h, 'LineStyle','-','LineWidth',1);
+        set(h(1:6), 'LineStyle','-','LineWidth',1.1);
+
+        %set outliers
+%         out_line = findobj(h, 'Tag', 'Outliers');
+%         set(out_line, 'LineStyle','-','LineWidth',1.25);
+
         if ce==1; v0 = v; end
         yl = ylim;%setBoxStyle(h, 1);
         yma = max(yma, yl(2)+5);
@@ -48,7 +54,9 @@ ylabel('Percentage'); box off
 title('Responsive cells','FontWeight','Normal');
 set_current_fig;
 
+if saveorno == 1
 mkdir([info.savepath '/responsive'])
 cd([info.savepath '/responsive'])
 saveas(gcf,'boxplot_percent_responsive_outliers.png')
 saveas(gcf,'boxplot_percent_responsive_outliers.svg')
+end

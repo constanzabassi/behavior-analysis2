@@ -1,3 +1,6 @@
+% 1) load data
+% [all_celltypes,imaging_st,info,plot_info] = load_organized_datasets('V:\Connie\results\behavior_updated\data_info'); 
+%%
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 alignment.data_type = 'dff'; %'reward','turn','stimulus','ITI'
 
@@ -24,4 +27,4 @@ end
 %% unpack responsive and put into cell type categories
 num_responsive = unpack_responsive(responsive_neuron2, all_celltypes); %datasets,task_periods,celltypes
 %% make plot
-boxplot_percent_responsive;
+boxplot_percent_responsive(num_responsive,plot_info,info,0); %last is save or no
