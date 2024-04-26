@@ -1,0 +1,5 @@
+function [all_celltypes,imaging_st,info,plot_info] = load_organized_datasets(path)
+load("all_celltypes.mat")
+load("imaging_st.mat")
+load('info.mat')
+load('plot_info.mat')
