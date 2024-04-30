@@ -43,7 +43,7 @@ for t = 1:length(tw)
         pval = ranksum(data(:,1), data(:,2));
         plot_data{t,c} = pval;
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
-        plot_pval_star(t,y_val+(c*3), pval,x_line_vals); %yl(2)+3
+        plot_pval_star(t,y_val+(c*3), pval,x_line_vals,.15); %yl(2)+3
         
 
     end
