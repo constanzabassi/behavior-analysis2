@@ -20,8 +20,8 @@ end
 specified_window = event_onsets:event_onsets+10; %1 sec %event_onsets:event_onsets+5;%
 specified_mean = [];
 for ce = 1:4
-    specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3);
-end
+    specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3); %[max(squeeze(mean_data(ce,:,specified_window)),[],2)]
+end 
 
 
 tw = 1; %right now just focus on single svms
