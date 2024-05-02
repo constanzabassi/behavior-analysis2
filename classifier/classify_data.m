@@ -67,11 +67,11 @@ event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_pa
 
 plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,[alignment.data_type '_' info.savestr],['V:/Connie/results/behavior/svm']);
 %% bar plots of average across datasets
-%[~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
-% mdl_param = all_model_outputs{1,1};
-%alignment.events = 1;
-% mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
-% event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset(1)));
+[~,~,left_padding,right_padding] = find_align_info (imaging_st{1,1},30,1);
+mdl_param = all_model_outputs{1,1};
+alignment.events = 5;
+mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
+event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset(1)));
 
 [svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(output_mat,plot_info,event_onsets,[alignment.data_type '_' svm_info.savestr],['V:/Connie/results/behavior/svm']);
 %% TESTING SVM REGULARIZATION PARAMETERS
