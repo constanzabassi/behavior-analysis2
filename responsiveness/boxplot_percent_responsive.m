@@ -4,7 +4,7 @@ tw = 1:6;
 
 plot_data = cell(length(tw), 3);
 combos = nchoosek(1:3,2); %comparing celltypes
-ts_str = {'Stim 1','Stim 2','Stim 3','Turn','Reward','ITI'};
+ts_str = plot_info.xlabel_events;%{'Stim 1','Stim 2','Stim 3','Turn','Reward','ITI'};
 % ts_str = {'Stim 1','Stim 2','Turn','Reward','ITI'};
 
 figure; set(gcf,'color','w'); hold on; yma = -Inf;

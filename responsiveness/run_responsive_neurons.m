@@ -3,6 +3,7 @@
 %%
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 alignment.data_type = 'dff'; %'reward','turn','stimulus','ITI'
+plot_info.xlabel_events = {'sound','sound','sound','turn','reward','ITI'};
 
 %% align all datasets inside imaging st
 [aligned_data_all,all_conditions_all,num_trials,alignment]= align_multiple_datasets(imaging_st,alignment);
@@ -27,4 +28,6 @@ end
 %% unpack responsive and put into cell type categories
 num_responsive = unpack_responsive(responsive_neuron2, all_celltypes); %datasets,task_periods,celltypes
 %% make plot
-boxplot_percent_responsive(num_responsive,plot_info,info,0); %last is save or no
+boxplot_percent_responsive(num_responsive,plot_info,info,1); %last is save or no
+cd([info.savepath '/responsive'])
+save('num_responsive','num_responsive')
