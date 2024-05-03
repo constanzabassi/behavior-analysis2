@@ -1,6 +1,6 @@
-function plot_frc_dynamics(dynamics_info,all_celltypes,plot_info, info,saveorno)
+function plot_frc_dynamics(max_cel_avg,dynamics_info,all_celltypes,plot_info, info,saveorno)
 
-max_cel_avg = dynamics_info.max_cel_mode;
+
 binss = dynamics_info.binss;
 new_onsets = dynamics_info.new_onsets;
 figure(55);clf;
