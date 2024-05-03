@@ -59,6 +59,9 @@ end
 %do legend after significance data are not added to legend
 legend([a(1).mainLine a(2).mainLine a(3).mainLine],'PYR', 'SOM', 'PV', 'Location', 'southeast');
 
+set(gca,'xtick',dynamics_info.new_onsets,'xticklabel',plot_info.xlabel_events,'xticklabelrotation',45);
+
+set_current_fig;
 if ~isempty(info)
     mkdir([info.savepath '\frc_dynamics'])
     cd([info.savepath '\frc_dynamics'])
