@@ -2,7 +2,7 @@
 function [output, output_mat] = run_classifier(imaging_st,all_celltypes,mdl_param, alignment,plot_info,info,single_event)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
-disp(['Saving file under: ' info.savestr]);
+disp(['Saving path: ' info.savepath '\SVM_' alignment.data_type '_' info.savestr]);
 for it = 1:mdl_param.num_iterations
     it
     for m = 1:length(imaging_st)
@@ -90,7 +90,7 @@ save('output','output','-v7.3');
 %% make quick figure plots! error across subsamples
 mdl_param.event_onset_true = determine_onsets(left_padding,right_padding,alignment.events);
 %adjust event onsets to bins!
-event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset));
+event_onsets = find(histcounts(mdl_param.event_onset_true,mdl_param.binns+mdl_param.event_onset(1)));
 for m = 1:length(imaging_st)
 ex_mouse = m;
 figure(m);clf;
