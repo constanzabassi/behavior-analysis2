@@ -1,10 +1,10 @@
-% function plot_responsive
+function boxplot_percent_responsive(num_responsive,plot_info,info,saveorno)
 
 tw = 1:6;
 
 plot_data = cell(length(tw), 3);
 combos = nchoosek(1:3,2); %comparing celltypes
-ts_str = {'Stim 1','Stim 2','Stim 3','Turn','Reward','ITI'};
+ts_str = plot_info.xlabel_events;%{'Stim 1','Stim 2','Stim 3','Turn','Reward','ITI'};
 % ts_str = {'Stim 1','Stim 2','Turn','Reward','ITI'};
 
 figure; set(gcf,'color','w'); hold on; yma = -Inf;
@@ -24,8 +24,14 @@ for t = 1:length(tw)
 %         out_line = findobj(h, 'Tag', 'Outliers');
 %         set(out_line, 'Visible', 'off');
 
+        %set line width
         hh = findobj('LineStyle','--','LineWidth',0.5); 
-        set(h, 'LineStyle','-','LineWidth',1);
+        set(h(1:6), 'LineStyle','-','LineWidth',1.1);
+
+        %set outliers
+%         out_line = findobj(h, 'Tag', 'Outliers');
+%         set(out_line, 'LineStyle','-','LineWidth',1.25);
+
         if ce==1; v0 = v; end
         yl = ylim;%setBoxStyle(h, 1);
         yma = max(yma, yl(2)+5);
@@ -37,7 +43,7 @@ for t = 1:length(tw)
         pval = ranksum(data(:,1), data(:,2));
         plot_data{t,c} = pval;
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
-        plot_pval_star(t,y_val+(c*3), pval,x_line_vals); %yl(2)+3
+        plot_pval_star(t,y_val+(c*3), pval,x_line_vals,.15); %yl(2)+3
         
 
     end
@@ -48,7 +54,9 @@ ylabel('Percentage'); box off
 title('Responsive cells','FontWeight','Normal');
 set_current_fig;
 
+if saveorno == 1
 mkdir([info.savepath '/responsive'])
 cd([info.savepath '/responsive'])
 saveas(gcf,'boxplot_percent_responsive_outliers.png')
 saveas(gcf,'boxplot_percent_responsive_outliers.svg')
+end

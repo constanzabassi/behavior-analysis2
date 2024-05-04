@@ -1,4 +1,4 @@
-function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,output,svm_info)
+function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,data_type,svm_info)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 
@@ -37,8 +37,8 @@ for m = 1:size(betas,2) %per mouse
 end
 hold off
 
-mkdir([svm_info.savepath '\SVM_' output{1,1,1}.mdl_param.data_type '_' svm_info.savestr]);
-cd([svm_info.savepath '\SVM_' output{1,1,1}.mdl_param.data_type '_' svm_info.savestr]);
+mkdir([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
+cd([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
 % save('roc_mdl','roc_mdl');
 saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.png'));
 saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.svg'));

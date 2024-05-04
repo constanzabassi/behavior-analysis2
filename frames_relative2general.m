@@ -26,7 +26,8 @@ for m = 1:length(imaging_st)
     end
     all_frames{m} = vr;
 end
-
+mkdir([info.savepath '\data_info'])
 cd([info.savepath '\data_info'])
 save('all_frames','all_frames');
 
+% info.mouse_date = {'HA11-1R/2023-05-05'};info.server ={'V:'};imaging_st{1,1} = imaging;info.savepath = 'V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR';all_frames = frames_relative2general(info,imaging_st);
