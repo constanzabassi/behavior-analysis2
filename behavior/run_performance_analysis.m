@@ -8,8 +8,10 @@ alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 performance = get_opto_performance(imaging_st,behav_param,alignment);
 
 %% make plots
+%take control mouse out
+chosen_mice = setdiff(1:length(imaging_st),find(strcmp(info.mouse_date,'HE1-00\2023-05-30')));
 
-[behav_param.p_val] = plot_performance(performance(:,1:16),[info.savepath '/performance_analysis']);
+[behav_param.p_val] = plot_performance(performance(:,chosen_mice),[info.savepath '/performance_analysis']);
 save('behav_param','behav_param');
 
 plot_performance_all_bar(performance,[info.savepath '/performance_analysis']);
