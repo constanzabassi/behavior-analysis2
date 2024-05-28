@@ -6,6 +6,7 @@ alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
 performance = get_opto_performance(imaging_st,behav_param,alignment);
+performance = get_opto_performance_selected_trials(imaging_st,behav_param,alignment,[1:5]); %takes first five after trials are balanced
 
 %% make plots
 %take control mouse out
