@@ -16,6 +16,10 @@ set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
 xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel('% correct')
+
+[sig_test.p_correct, h1] = signrank([performance.correct_opto],[performance.correct_ctrl]);
+plot_pval_star(0,max([performance.correct_opto])*100, sig_test.p_correct,[1 2],.15); %yl(2)+3
+
 set_current_fig;
 set(gca,'FontSize',12);
 %% % LEFT TURNS
@@ -33,6 +37,10 @@ set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
 xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel('% left')
+
+[sig_test.p_left, h1] = signrank([performance.left_opto],[performance.left_ctrl]);
+plot_pval_star(0,max([performance.left_opto])*100, sig_test.p_left,[1 2],.15); %yl(2)+3
+
 set_current_fig;
 set(gca,'FontSize',12);
 %% TIME TO COMPLETE TURN
@@ -54,12 +62,16 @@ set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
 xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel({'seconds to'; 'turn onset'})
+
+[sig_test.p_turn_onset, h1] = signrank(temp(:,1),temp(:,2));
+plot_pval_star(0,max(cellfun(@mean,{performance.turn_onset_opto}))/30, sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
+
 set_current_fig;
 set(gca,'FontSize',12);
-%% perform statistical analysis
-[sig_test.p_correct, h1] = signrank([performance.correct_opto],[performance.correct_ctrl]);
-[sig_test.p_left, h1] = signrank([performance.left_opto],[performance.left_ctrl]);
-[sig_test.p_turn_onset, h1] = signrank(temp(:,1),temp(:,2));
+% %% perform statistical analysis
+% [sig_test.p_correct, h1] = signrank([performance.correct_opto],[performance.correct_ctrl]);
+% [sig_test.p_left, h1] = signrank([performance.left_opto],[performance.left_ctrl]);
+% [sig_test.p_turn_onset, h1] = signrank(temp(:,1),temp(:,2));
 
 %% save figures
 
