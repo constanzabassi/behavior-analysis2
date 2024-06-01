@@ -39,6 +39,32 @@ ylabel('Silhouettes Scores')
 xticks([1,2])
 xticklabels({'PV','SOM'})
 
+[red_stats.all] = get_basic_stats(all_sil(1,:));
+[red_stats.som] = get_basic_stats(all_sil(1,som));
+[red_stats.pv] = get_basic_stats(all_sil(1,pv));
+
+som_sem = red_stats.som.sd/sqrt(red_stats.som.n);
+pv_sem = red_stats.pv.sd/sqrt(red_stats.pv.n);
+
+red_stats.pv.sem = pv_sem;
+red_stats.som.sem = som_sem;
+
+
+figure(90);clf;
+hold on;
+
+x_values = 1:2;  % x-values for plots
+scatter(1,mean(all_sil(1,som)),'filled','SizeData',60, 'LineWidth', 1, 'MarkerEdgeColor', plot_info.colors_celltype(2,:), 'Color', plot_info.colors_celltype(2,:));  % som
+scatter(2,mean(all_sil(1,pv)), 'filled','SizeData',60, 'LineWidth', 1, 'MarkerEdgeColor', plot_info.colors_celltype(3,:), 'Color', plot_info.colors_celltype(3,:));  % pv
+
+errorbar(1, mean(all_sil(1,som)), som_sem, 'o', 'MarkerSize', 10, 'MarkerEdgeColor',plot_info.colors_celltype(2,:), 'Color', plot_info.colors_celltype(2,:));  % som
+errorbar(2, mean(all_sil(1,pv)), pv_sem, 'o', 'MarkerSize', 10, 'MarkerEdgeColor', plot_info.colors_celltype(3,:), 'Color', plot_info.colors_celltype(3,:));  % pv
+
+ylabel('Silhouettes Scores')
+xticks([1,2])
+xticklabels({'SOM','PV'})
+xlim([0 3])
+set_current_fig;
 
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
@@ -48,4 +74,12 @@ if ~isempty(save_data_directory)
     saveas(88,[image_string '_datasets.svg']);
     saveas(88,[image_string '_datasets.fig']);
     saveas(88,[image_string '_datasets.pdf']);
+
+    saveas(90,[image_string '_datasets_scattersem.svg']);
+    saveas(90,[image_string '_datasets_scattersem.fig']);
+    saveas(90,[image_string '_datasets_scattersem.pdf']);
+
+    save('all_sil','all_sil');
+    save('missing_data','missing_data')
+    save('red_stats','red_stats');
 end
