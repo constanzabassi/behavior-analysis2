@@ -16,7 +16,15 @@ for m = 1:length(info.mouse_date)
         temp(1,:)= clustering_info.used_silhouettes;
         temp(2,:) = celltype_ids;
         all_sil = [all_sil, temp];
-    else
+    else %mouse that had uncertain cells that were deleted!
+%         allredvect = clustering_info.redvect;
+%         allredvect(unique([clustering_info.uncertain])) = 1;
+%         new_ids = find(ismember(find(allredvect),red_vects)); %this should match the number of actually used cells
+% 
+%         temp(1,:)= clustering_info.used_silhouettes(new_ids);
+%         temp(2,:) = celltype_ids;
+%         all_sil = [all_sil, temp];
+
         missing_data = [missing_data,info.mouse_date(m)];
     end
 end
@@ -49,16 +57,27 @@ pv_sem = red_stats.pv.sd/sqrt(red_stats.pv.n);
 red_stats.pv.sem = pv_sem;
 red_stats.som.sem = som_sem;
 
+p_val = ranksum(all_sil(1,som),all_sil(1,pv));
+red_stats.p_val = p_val;
+
 
 figure(90);clf;
 hold on;
 
 x_values = 1:2;  % x-values for plots
+
 scatter(1,mean(all_sil(1,som)),'filled','SizeData',60, 'LineWidth', 1, 'MarkerEdgeColor', plot_info.colors_celltype(2,:), 'Color', plot_info.colors_celltype(2,:));  % som
 scatter(2,mean(all_sil(1,pv)), 'filled','SizeData',60, 'LineWidth', 1, 'MarkerEdgeColor', plot_info.colors_celltype(3,:), 'Color', plot_info.colors_celltype(3,:));  % pv
 
 errorbar(1, mean(all_sil(1,som)), som_sem, 'o', 'MarkerSize', 10, 'MarkerEdgeColor',plot_info.colors_celltype(2,:), 'Color', plot_info.colors_celltype(2,:));  % som
 errorbar(2, mean(all_sil(1,pv)), pv_sem, 'o', 'MarkerSize', 10, 'MarkerEdgeColor', plot_info.colors_celltype(3,:), 'Color', plot_info.colors_celltype(3,:));  % pv
+
+
+% if p_val< 0.05
+%     xline_vars = 1:2;   
+%     y_val = max(all_sil(1,:));
+%     plot_pval_star(0, y_val+.1, p_val, xline_vars,0.01)
+% end
 
 ylabel('Silhouettes Scores')
 xticks([1,2])
