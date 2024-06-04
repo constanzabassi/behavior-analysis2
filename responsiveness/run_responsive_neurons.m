@@ -30,4 +30,5 @@ num_responsive = unpack_responsive(responsive_neuron2, all_celltypes); %datasets
 %% make plot
 boxplot_percent_responsive(num_responsive,plot_info,info,1); %last is save or no
 cd([info.savepath '/responsive'])
-save('num_responsive','num_responsive')
+save('num_responsive','num_responsive');
+save('responsive_neuron2','responsive_neuron2');
