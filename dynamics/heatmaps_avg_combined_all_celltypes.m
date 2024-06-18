@@ -110,8 +110,12 @@ end
 nexttile
 hold on
 for ce = 1:3
+
+        data = squeeze(binned_data_all(:,ce,:));
+        SEM= std(data)/sqrt(size(data,1));
+        a(ce) = shadedErrorBar(1:size(data,2),mean(data,1), SEM, 'lineProps',{'color', plot_info.colors_celltype(ce,:),'LineWidth',1.5});
     
-    plot(squeeze(mean(binned_data_all(:,ce,:),1)),'LineWidth',1.5,'color',plot_info.colors_celltype(ce,:));
+%     plot(squeeze(mean(binned_data_all(:,ce,:),1)),'LineWidth',1.5,'color',plot_info.colors_celltype(ce,:));
 
     for i = 1:length(new_onsets)
         xline(new_onsets(i),'--k','LineWidth',1.5)
