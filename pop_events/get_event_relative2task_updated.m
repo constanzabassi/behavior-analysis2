@@ -1,13 +1,21 @@
-function [event2tast_sums,cat_array, event_2task] = get_event_relative2task_updated (all_frames,imaging_st,ds_events)
+function [event2tast_sums,event2task_sums,cat_array, event_2task] = get_event_relative2task_updated (all_frames,imaging_st,ds_events)
 %%% OUTPUT cat_array: trial_id, onset, event, PV or SOM, task event associated with it
 % event2tast_sums: datasets x event sums (stimulus/turn/reward/ITI)
+% event2task_sums: datasets x event sums (stimulus/stimulus2/stimulus3/turn/reward/ITI)
 
 %initialize variables
     som_sum = [];
     pv_sum =[];
 
+    som_sum_v2 = [];
+    pv_sum_v2 =[];
+
 for m = 1:length(all_frames)
     m
+
+    %initialize variables
+    som_all = [];
+    pv_all = [];
     %
 %     temp = {all_frames{1,m}.maze};
 %     temp_turns = [all_frames{1,m}.turn];
@@ -35,6 +43,7 @@ for m = 1:length(all_frames)
         onset_frames(:,t) = all_frames{1,m}(t).maze(1)+alignment_frames(:,t)-1; 
     end
 
+    %using whole time period
     for e = 1:size(onset_frames,1)
         if e == 1
             task_periods.stimulus = [onset_frames(e,:);onset_frames(e,:)+24]';
@@ -51,7 +60,6 @@ for m = 1:length(all_frames)
         end
     end
 
-
     
     event_task ={};
     for os = 1:length(ds_events(m).onsets)
@@ -62,7 +70,7 @@ for m = 1:length(all_frames)
         elseif ~isempty(find(current_onset>=task_periods.stimulus2(:,1) & current_onset <=task_periods.stimulus2(:,2)))
             event_task{os} = {find(current_onset>=task_periods.stimulus2(:,1) & current_onset <=task_periods.stimulus2(:,2)),ds_events(m).onsets(os).onset,ds_events(m).onsets(os).onset,ds_events(m).onsets(os).condition,'stimulus2'};
         
-        elseif ~isempty(find(current_onset>=task_periods.stimulus2(:,1) & current_onset <=task_periods.stimulus(:,2)))
+        elseif ~isempty(find(current_onset>=task_periods.stimulus3(:,1) & current_onset <=task_periods.stimulus3(:,2)))
             event_task{os} = {find(current_onset>=task_periods.stimulus3(:,1) & current_onset <=task_periods.stimulus3(:,2)),ds_events(m).onsets(os).onset,ds_events(m).onsets(os).onset,ds_events(m).onsets(os).condition,'stimulus3'};
 
         elseif ~isempty(find(current_onset>=task_periods.turn(:,1) & current_onset <=task_periods.turn(:,2)))
@@ -73,6 +81,9 @@ for m = 1:length(all_frames)
 
         elseif ~isempty(find(current_onset>=task_periods.ITI(:,1) & current_onset <=task_periods.ITI(:,2)))
             event_task{os} = {find(current_onset>=task_periods.ITI(:,1) & current_onset <=task_periods.ITI(:,2)),ds_events(m).onsets(os).onset,ds_events(m).onsets(os).onset,ds_events(m).onsets(os).condition,'ITI'};
+        
+        elseif ~isempty(find(current_onset>=task_periods.stimulus(:,1)-24 & current_onset <task_periods.stimulus(:,1)))
+            event_task{os} = {find(current_onset>=task_periods.stimulus(:,1)-24 & current_onset <task_periods.stimulus(:,1)),ds_events(m).onsets(os).onset,ds_events(m).onsets(os).onset,ds_events(m).onsets(os).condition,'ITI_end'};
 
         end
     end
@@ -106,6 +117,41 @@ for m = 1:length(all_frames)
     som_sum = [som_sum;som_all];
     pv_sum = [pv_sum;pv_all];
 
+
+
+    % include 3 sound repeats
+    %sum for each condition
+    som_all = [];pv_all = [];
+    temp = cellfun(@(x) strcmp(x,'stimulus'), cat_array{1,m});
+    som_all(1,1) = sum(temp(SOM_events,5));
+    pv_all(1,1) = sum(temp(PV_events,5));
+    temp = cellfun(@(x) strcmp(x,'stimulus2'), cat_array{1,m});
+    som_all(1,2) = sum(temp(SOM_events,5));
+    pv_all(1,2) = sum(temp(PV_events,5));
+    temp = cellfun(@(x) strcmp(x,'stimulus3'), cat_array{1,m});
+    som_all(1,3) = sum(temp(SOM_events,5));
+    pv_all(1,3) = sum(temp(PV_events,5));
+
+    temp = cellfun(@(x) strcmp(x,'turn'), cat_array{1,m});
+    som_all(1,4) = sum(temp(SOM_events,5));
+    pv_all(1,4) = sum(temp(PV_events,5));
+
+    temp = cellfun(@(x) strcmp(x,'reward'), cat_array{1,m});
+    som_all(1,5) = sum(temp(SOM_events,5));
+    pv_all(1,5) = sum(temp(PV_events,5));
+
+    temp = cellfun(@(x) strcmp(x,'ITI'), cat_array{1,m});
+    som_all(1,6) = sum(temp(SOM_events,5));
+    pv_all(1,6) = sum(temp(PV_events,5));
+
+    temp = cellfun(@(x) strcmp(x,'ITI_end'), cat_array{1,m});
+    som_all(1,7) = sum(temp(SOM_events,5));
+    pv_all(1,7) = sum(temp(PV_events,5));
+
+    som_sum_v2 = [som_sum_v2;som_all];
+    pv_sum_v2 = [pv_sum_v2;pv_all];
+
+
 %     imaging = imaging_st{1,m};
 %     empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 %     good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
@@ -126,3 +172,6 @@ for m = 1:length(all_frames)
 end
 event2tast_sums.som = som_sum;
 event2tast_sums.pv = pv_sum;
+
+event2task_sums.som= som_sum_v2;
+event2task_sums.pv= pv_sum_v2;

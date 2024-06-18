@@ -3,6 +3,7 @@ popevent_params.peaks = [1,90,2,300,10]; %'MinPeakHeight',cp(1),'MinPeakDistance
 %[1,2,10];%'MinPeakHeight',cp(1),'MinPeakProminence',cp(2),'MinPeakWidth',cp(3));
 popevent_params.activity_type ='dff_avg';
 
+[all_celltypes,imaging_st,mouse,cat_imaging] = pool_imaging(info.mouse_date,info.server);
 ds_events = get_ds_events(info,mouse,all_celltypes,popevent_params.peaks,popevent_params.activity_type);
 
 %% GET MEAN ACTIVITY BY EVENTS
@@ -18,10 +19,10 @@ plot_allct_event(pyr_mean_activity,som_mean_activity,pv_mean_activity,'nosave')
 % all_frames from all_frames = frames_relative2general(info,imaging_st)
 load([info.savepath '/data_info/all_frames.mat']);
 %[event_sums,cat_array, ~] = get_event_relative2task(all_frames,ds_events); %rough alignment (only using frames in maze, reward or ITI
-[event_sums,cat_array, ~] = get_event_relative2task_updated (all_frames,imaging_st,ds_events);
+[event_sums,event_sums_more,cat_array, ~] = get_event_relative2task_updated (all_frames,imaging_st,ds_events);
 
 load([info.savepath '/data_info/plot_info.mat']);
-[event_stats] = errorbar_events2task(event_sums,plot_info,[info.savepath '/pop_event']);
+[event_stats] = errorbar_events2task(event_sums_more,plot_info,[info.savepath '/pop_event_more_ITIend']);
 
 figure(334);clf;
 subplot(2,1,1);title('SOM events');imagesc(event_sums.som);ylabel('Datasets');xticks([1:4]);xticklabels({'Stim','Turn','Reward','ITI'});

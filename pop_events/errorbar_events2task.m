@@ -19,9 +19,16 @@ std_devs2 = std(pv_data);
 % Plotting
 b= errorbar(1:size(pv_data,2), means2, std_devs2, 'o-', 'LineWidth', 1.5,'Color',plot_info.colors_celltype(3,:));
 ylabel('Number of Events');
-xlim([0 5])
-xticks([1:4])
-xticklabels({'Stimulus', 'Turn', 'Reward', 'ITI'});
+xlim([0 size(pv_data,2)+1])
+xticks([1:size(pv_data,2)])
+
+if size(pv_data,2) == 4
+    xticklabels({'Stimulus', 'Turn', 'Reward', 'ITI'});
+elseif size(pv_data,2) == 6
+    xticklabels({'Stimulus','Stimulus2','Stimulus3', 'Turn', 'Reward', 'ITI'});
+elseif size(pv_data,2) == 7
+    xticklabels({'Stimulus','Stimulus2','Stimulus3', 'Turn', 'Reward', 'ITI', 'before Stimulus/ITI end'});
+end
 
 
 
@@ -38,7 +45,7 @@ xticklabels({'Stimulus', 'Turn', 'Reward', 'ITI'});
         [p_values(i), ~] = ranksum(som_data(:,i), pv_data(:,i));
 
         y_val = max([means(i)+std_devs(i); means2(i)+std_devs2(i)]);
-        plot_pval_star(i,y_val+2, p_values(i),[0,0]); %yl(2)+3
+        plot_pval_star(i,y_val+2, p_values(i),[0,0],0.5); %yl(2)+3
     end
     ylim([-5 round(max(max([means+std_devs; means2+std_devs2])))+5])
 %     %% Mark significant p-values
@@ -52,7 +59,7 @@ xticklabels({'Stimulus', 'Turn', 'Reward', 'ITI'});
 %             text(i, max([means_som(i), means_pv(i)]), '*', 'HorizontalAlignment', 'center');
 %         end
 %     end
-legend([a,b],{'SOM','PV'})
+legend([a,b],{'SOM','PV'},'Location','northwest')
 %% Output stats
     stats.p_val_wilcoxon = p_values;
     stats.p_som = p_som;
