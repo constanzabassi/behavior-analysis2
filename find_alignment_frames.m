@@ -8,3 +8,9 @@ for i=1:size(alignment_frames, 2)
     end
     frames(i,:) = temp_frames;
 end
+
+%get rid of zero frames (for passive)
+if length(find(frames==0))>1
+    zero_frames = find(frames(1,:)==0);
+    frames(:,zero_frames) = [];
+end
