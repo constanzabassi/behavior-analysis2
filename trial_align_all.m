@@ -26,6 +26,7 @@ for m = 1:size(imaging_st,2)
 end
 
 task_info.condition_labels = [all_conditions{:,3}];
+event_onsets = determine_onsets(left_padding,right_padding,alignment.number);
 task_info.event_onsets = event_onsets;
 
 if ~isempty(info.savepath)

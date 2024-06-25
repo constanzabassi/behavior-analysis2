@@ -81,7 +81,7 @@ end
 binss = 1:bin_size:size(aligned_imaging,3)-bin_size;
 
 %find event onsets if using bins
-event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
+event_onsets = determine_onsets(left_padding,right_padding,alignment.number);
 new_onsets = find(histcounts(event_onsets,binss));
 
 %find the mean across datasets for each celltype!
