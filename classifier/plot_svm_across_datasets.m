@@ -3,7 +3,7 @@ overall_mean = [];
 overall_shuff = [];
 
 
-for ce = 1:4
+for ce = 1:size(svm_mat,2)
     mean_across_data = cellfun(@(x) mean(x.accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data = vertcat(mean_across_data{1,:});
     overall_mean(ce,:) = mean(mean_across_data,1);
@@ -18,7 +18,7 @@ end
 
 
 figure(100);clf;
-for ce = 1:4
+for ce = 1:size(svm_mat,2)
     hold on; 
         %shadedErrorBar(1:size(time),mean(aross_subsamples gives
         %size(time))

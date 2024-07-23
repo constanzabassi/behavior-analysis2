@@ -1,9 +1,9 @@
-function [plot_data,sorted_combinations] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,save_str,save_path)
+function [plot_data,sorted_combinations] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,comp_window,save_str,save_path)
 overall_mean = [];
 overall_shuff = [];
+total_celltypes = size(svm_mat,2);
 
-
-for ce = 1:4
+for ce = 1:total_celltypes
     mean_across_data = cellfun(@(x) mean(x.accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data = vertcat(mean_across_data{1,:});
     overall_mean(ce,:) = mean(mean_across_data,1);
@@ -17,15 +17,16 @@ for ce = 1:4
 end
 
 %find average across specified time window
-specified_window = event_onsets:event_onsets+10; %1 sec %event_onsets:event_onsets+5;%
-specified_mean = [];
-for ce = 1:4
+specified_window = event_onsets:event_onsets+comp_window; %1 sec %event_onsets:event_onsets+5;%
+specified_mean = []; specified_mean_shuff =[];
+for ce = 1:total_celltypes
     specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3); %[max(squeeze(mean_data(ce,:,specified_window)),[],2)]
+    specified_mean_shuff(ce,:) = mean(mean_data2(ce,:,specified_window),3);
 end 
 
 
 tw = 1; %right now just focus on single svms
-total_comparisons = 4; %four cell types
+total_comparisons = total_celltypes; %four cell types
 
 plot_data = cell(length(tw), total_comparisons);
 combos = nchoosek(1:total_comparisons,2); %comparing celltypes
@@ -36,7 +37,7 @@ abs_diff = abs(diff(combos, 1, 2));
 [~, idx] = sort(abs_diff, 'ascend');
 sorted_combinations = combos(idx, :);
 
-ts_str = {'PYR','SOM','PV','All'};
+ts_str = plot_info.labels;
 
 figure(101);clf; set(gcf,'color','w'); hold on; yma = -Inf;
 w = 0.1; 
@@ -45,7 +46,7 @@ x_val_dif = .6/(total_comparisons-1);
 x_seq = [-0.3:x_val_dif:0.3];
 sig_ct = 0;
 for t = 1:length(tw)
-    for ce = 1:4 %compare across celltypes!
+    for ce = 1:total_celltypes %compare across celltypes!
         
         data = specified_mean(ce,:); 
         
@@ -84,6 +85,12 @@ for t = 1:length(tw)
         end
 
     end
+end
+
+for c = 1:total_celltypes
+    data = [specified_mean(c,:);specified_mean_shuff(c,:)]; %specified_mean(ce,:)
+    pval = ranksum(data(1,:), data(2,:));
+    plot_data{2,c} = pval;
 end
 
 %set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);

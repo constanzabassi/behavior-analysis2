@@ -160,17 +160,9 @@ elseif varargin{1,1} == 2 %do alternative alignment! for task
     right_padding(event) = 60; %used to be 30
     
     event = 5; 
-    if all(cellfun(@isempty, reward_onset)) %use ITI tone for incorrect trials
-        alignment_frames(event,:) = cellfun(@(x) x(3),stimulus_repeats_onsets);
-        left_padding(event) = 60; %used to be 4 %smallest # frames in front during reward period
-        right_padding(event) = 60; %used to be 4%larger # frames after reward during reward period
-    else
-        alignment_frames(event,reward_trial) = cellfun(@(x) x(3),stimulus_repeats_onsets);
-        incorrect_trials = setdiff(1:length(good_trials),reward_trial);
-        alignment_frames(event,incorrect_trials) = [pure_onsets{1,incorrect_trials}];
-        left_padding(event) = 60;%used to be 4%min_length_reward; %smallest # frames in front during reward period
-        right_padding(event) = 60;%max_length_reward-min_length_reward; %larger # frames after reward during reward period
-    end
+    alignment_frames(event,:) = cellfun(@(x) x(3),stimulus_repeats_onsets);
+    left_padding(event) = 60; %used to be 4 %smallest # frames in front during reward period
+    right_padding(event) = 60; %used to be 4%larger # frames after reward during reward period
     
     event = 6; %ITI time
     alignment_frames(event,:) = cellfun(@(x) x(3)+31,stimulus_repeats_onsets);
