@@ -1,8 +1,8 @@
-function mouse_data_conditions = heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info)
+function mouse_data_conditions = heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info,celltypes_to_plot)
 % Create a tiled layout
-tiledlayout(size(alignment.cells,1), 1,"TileSpacing","compact");
+tiledlayout(1,size(alignment.cells,1), "TileSpacing","compact");
 
-for ce = 1:3
+for ce = celltypes_to_plot
     %Initialize variables
     celltype = {alignment.cells{ce,:}};
     for c = alignment.conditions

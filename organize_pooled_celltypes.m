@@ -7,7 +7,7 @@ num_cells = [];
 sorted_cells = {};
 %sorted_sig_cells_wilcoxon = [];
 for m = 1:length(dff_st)
-    num_cells = [num_cells, size(dff_st{1,m}.dff,1)];
+    num_cells = [num_cells, length(all_celltypes{1,m}.som_cells)+length(all_celltypes{1,m}.pyr_cells)+length(all_celltypes{1,m}.pv_cells)];
     if m ==1
     sorted_som = [sorted_som ; all_celltypes{1,m}.som_cells];
     sorted_pyr = [sorted_pyr ; [all_celltypes{1,m}.pyr_cells]];

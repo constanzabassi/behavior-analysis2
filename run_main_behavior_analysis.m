@@ -110,7 +110,7 @@ end
 hold off
 
 figure(91);clf;
-mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info);
+mouse_data_conditions =heatmap_spatial_aligned_across_mice(imaging_st,alignment,plot_info,[1:3]);
 
 %%
 figure(92);clf;
