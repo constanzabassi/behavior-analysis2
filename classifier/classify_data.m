@@ -51,7 +51,7 @@ load('betas.mat');
 load('svm_info.mat');
 onset = find(histcounts(svm{1,1,4}.mdl_param.event_onset,svm{1,1,4}.mdl_param.binns+svm{1,1,4}.mdl_param.event_onset)); %gives onset bin of event
 
-plot_dist_weights(onset, betas,all_celltypes,plot_info,svm,svm_info);
+plot_dist_weights(onset, betas,all_celltypes,plot_info,mdl_param.data_type,svm_info,[1:3]);
 
 save('betas','betas');
 
