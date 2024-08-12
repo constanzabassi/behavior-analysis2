@@ -5,23 +5,30 @@ tiledlayout(4, 1,"TileSpacing","tight");
 for ce = 1:3
 %Initialize variables
 celltype = {alignment.cells{ce,:}};
-
-if length(alignment.conditions) == 1
-    for c = alignment.conditions
+mouse_data ={}; mouse_data_conditions ={};
+if length(alignment.conditions) >= 1
+    for con = 1:length(alignment.conditions)
         %find infor for each mouse and combine it
         for m = 1:length(celltype)
+            c = alignment.conditions(con);
             imaging = imaging_st{1,m};
             [all_conditions, condition_array_trials] = divide_trials (imaging); %divide trials into all possible conditions   
             celltypes_permouse = celltype{m};
             [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30);
             [aligned_imaging] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,celltypes_permouse);
-            mouse_data{m} = aligned_imaging(all_conditions{c,1},:,:); %use specified trials in the condition array
+            mouse_data{m,con} = aligned_imaging(all_conditions{c,1},:,:); %use specified trials in the condition array
+            mouse_data_conditions{m,con} = mouse_data{m,con};
         end
-        mouse_data_conditions{m,c} = mouse_data{m};
+        
+    end
         mean_mouse_data = cellfun(@(x) squeeze(mean(x,1)),mouse_data,'UniformOutput',false);
-
+        mean_mouse_data ={};
+        for m = 1:length(celltype)
+            mean_mouse_data{m} = squeeze(mean(cat(1,mouse_data{m,:}),1));
+        end
         nexttile
         hold on
+        
         data_to_plot = cat(1,mean_mouse_data{1,:});%concatenated mouse data
         
 
@@ -40,8 +47,8 @@ if length(alignment.conditions) == 1
         set(gca,'fontsize', 12,'FontName','Arial')
         ylabel({alignment.title{ce};'Neurons'})
         hold off
-    end
-    else
+    %end
+else
     %find infor for each mouse and combine it
         for m = 1:length(celltype)
             imaging = imaging_st{1,m};
@@ -85,6 +92,7 @@ event_onsets = determine_onsets(left_padding,right_padding,alignment.number);
 new_onsets = find(histcounts(event_onsets,binss));
 
 %find the mean across datasets for each celltype!
+
 for m = 1:size(imaging_st,2)
     m
     for ce = 1:3
@@ -95,9 +103,12 @@ for m = 1:size(imaging_st,2)
         [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30);
         [aligned_imaging] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,celltypes_permouse);
 
-        for b = 1:length(binss)        
-            binned_data(ce,b) = squeeze(mean(aligned_imaging(:,:,binss(b):binss(b)+bin_size-1),[1,2,3])); %mean across trials and celltypes
-          
+        for b = 1:length(binss)
+            if length(alignment.conditions) >= 1
+                binned_data(ce,b) = squeeze(mean(aligned_imaging(cat(1,all_conditions{alignment.conditions,1}),:,binss(b):binss(b)+bin_size-1),[1,2,3]));
+            else
+                binned_data(ce,b) = squeeze(mean(aligned_imaging(:,:,binss(b):binss(b)+bin_size-1),[1,2,3])); %mean across trials and celltypes
+            end
         end
         
     end
