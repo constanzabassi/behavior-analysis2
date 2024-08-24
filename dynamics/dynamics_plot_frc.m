@@ -1,7 +1,7 @@
 %% FIGURE ONE?
 %% PLOT HEATMAP FOR SPECIFIC CONDITION
 
-alignment.conditions = []; %empty to run all conditions
+alignment.conditions = [5:8]; %empty to run all conditions
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.25 1];
@@ -12,7 +12,7 @@ plot_info.xlabel = [];
 plot_info.sorting_type = 1;
 plot_info.ylabel = 'Frames';
 plot_info.xlabel_events = {'sound','sound','sound','turn','reward','ITI'};
-
+bin_size = 3;
 
 % figure(90);clf;
 % colormap viridis
@@ -26,8 +26,12 @@ plot_info.xlabel_events = {'sound','sound','sound','turn','reward','ITI'};
 figure(90);clf;
 colormap viridis
 %plot heatmaps and grand avg
-mouse_data_conditions = heatmaps_avg_combined_all_celltypes (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],3);%last number is bin size
+%mouse_data_conditions = heatmaps_avg_combined_all_celltypes (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size);%last number is bin size
+mouse_data_conditions = heatmaps_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size,'y_velocity');
 
+alignment.number = 6; %just ITI
+alignment.type = 'ITI';
+mouse_data_conditions = scatter_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[],bin_size,'y_velocity');
 %% DYNAMICS PLOT OF FRACTION OF CELLS
 plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
@@ -46,7 +50,7 @@ plot_frc_dynamics(dynamics_info.max_cel_avg,dynamics_info,all_celltypes,plot_inf
 dynamics_info.bin_size = 1;
 [dynamics_info.max_cel_avg,dynamics_info.new_onsets,dynamics_info.binss] = peak_times_avg (imaging_st,alignment,dynamics_info);
 % p_cdf =  cdf_peak_times(dynamics_info.max_cel_mode,dynamics_info,all_celltypes,plot_info,[]);
-p_cdf =  cdf_peak_times(avg_peaks,dynamics_info,all_celltypes,plot_info,info);
+[dynamics_info.p_cdf,dynamics_info.KW_peaks] =  cdf_peak_times(dynamics_info.max_cel_avg,dynamics_info,all_celltypes,plot_info,info);
 
 %% define stimulus, turn, reward, ITI periods
 % alignment.left_padding = [6     1     1    30     4     1]; 

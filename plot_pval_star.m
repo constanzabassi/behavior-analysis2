@@ -2,7 +2,9 @@ function plot_pval_star(x_val, y_val, p, xline_vars,y_val_line_diff,varargin)
 %%% assumes distance between three is x_seq = [-0.2, 0, 0.2];
 
 % Add significance symbols based on p-value
-if p < 0.001
+if p < 0.0001
+    sig_symbol = '****';
+elseif p < 0.001
     sig_symbol = '***';
 elseif p < 0.01
     sig_symbol = '**';
