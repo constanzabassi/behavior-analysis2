@@ -31,6 +31,37 @@ for it = 1:behav_param.num_iterations
         performance(it,m).turn_onset_opto = turn_onsets(trial_ids_opto);
         performance(it,m).turn_onset_ctrl = turn_onsets(trial_ids_ctrl);
 
+        %find mean measurements for other metrics including x/y velocity
+        %and view angle changes!
+        temp =[];
+        temp2 =[];
+        temp3 =[];
+        for trial = trial_ids_opto
+            current_trial = imaging_array(trial);
+            temp = [temp,nanmean(current_trial.y_velocity(current_trial.maze_frames))];
+            temp2 = [temp,nanmean(abs(current_trial.x_velocity(current_trial.maze_frames)))];
+            temp3 = [temp,nanmean(abs(current_trial.view_angle(current_trial.maze_frames)))];
+        end
+        performance(it,m).y_vel = temp;
+        performance(it,m).x_vel = temp2;
+        performance(it,m).view_angle = temp3;
+
+        temp =[];
+        temp2 =[];
+        temp3 =[];
+        for trial = trial_ids_ctrl
+            current_trial = imaging_array(trial);
+            temp = [temp,nanmean(current_trial.y_velocity(current_trial.maze_frames))];
+            temp2 = [temp,nanmean(abs(current_trial.x_velocity(current_trial.maze_frames)))];
+            temp3 = [temp,nanmean(abs(current_trial.view_angle(current_trial.maze_frames)))];
+        end
+        performance(it,m).y_vel_ctrl = temp;
+        performance(it,m).x_vel_ctrl = temp2;
+        performance(it,m).view_angle_ctrl = temp3;
+
+%         performance(it,m).y_vel = cellfun(@(x) nanmean(x),{imaging_array(trial_ids_opto).y_velocity});
+%         performance(it,m).x_vel = cellfun(@(x) nanmean(abs(x)),{imaging_array(trial_ids_opto).x_velocity});
+
         performance(it,m).trial_ids_opto = trial_ids_opto;
         performance(it,m).trial_ids_ctrl = trial_ids_ctrl;
         

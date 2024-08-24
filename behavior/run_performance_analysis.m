@@ -6,7 +6,7 @@ alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 
 performance = get_opto_performance(imaging_st,behav_param,alignment);
-performance = get_opto_performance_selected_trials(imaging_st,behav_param,alignment,[1:5]); %takes first five after trials are balanced
+% performance = get_opto_performance_selected_trials(imaging_st,behav_param,alignment,[1:5]); %takes first five after trials are balanced
 
 %% make plots
 %take control mouse out
@@ -14,5 +14,8 @@ chosen_mice = setdiff(1:length(imaging_st),find(strcmp(info.mouse_date,'HE1-00\2
 
 [behav_param.p_val] = plot_performance(performance(:,chosen_mice),[info.savepath '/performance_analysis']);
 save('behav_param','behav_param');
+
+% plot y,x velocity and view angle (abs of x and view angle)
+[behav_param.p_val_alt] = plot_performance_alt(performance(:,chosen_mice),[info.savepath '/performance_analysis']);
 
 plot_performance_all_bar(performance,[info.savepath '/performance_analysis']);
