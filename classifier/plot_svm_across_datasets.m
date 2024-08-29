@@ -1,4 +1,4 @@
-function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path)
+function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path,minmax)
 overall_mean = [];
 overall_shuff = [];
 
@@ -53,6 +53,9 @@ xlim([1 size(overall_mean,2)])
 [second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
 xticks([second_ticks]);
 xticklabels(second_labels);
+if ~isempty(minmax)
+    ylim([minmax(1) minmax(2)])
+end
 
 set(gca, 'box', 'off')
 set(gca,'fontsize', 14)

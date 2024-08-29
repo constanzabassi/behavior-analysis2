@@ -1,4 +1,4 @@
-function [plot_data,sorted_combinations] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,comp_window,save_str,save_path)
+function [plot_data,sorted_combinations, KW_Test] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,comp_window,save_str,save_path,minmax)
 overall_mean = [];
 overall_shuff = [];
 total_celltypes = size(svm_mat,2);
@@ -6,12 +6,12 @@ total_celltypes = size(svm_mat,2);
 for ce = 1:total_celltypes
     mean_across_data = cellfun(@(x) mean(x.accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data = vertcat(mean_across_data{1,:});
-    overall_mean(ce,:) = mean(mean_across_data,1);
+    overall_mean(ce,:) = mean(mean_across_data,1,'omitnan');
     mean_data(ce,:,:) = mean_across_data;
 
     mean_across_data_shuff = cellfun(@(x) mean(x.shuff_accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data_shuff = vertcat(mean_across_data_shuff{1,:});
-    overall_shuff(ce,:) = mean(mean_across_data_shuff,1);
+    overall_shuff(ce,:) = mean(mean_across_data_shuff,1,'omitnan');
     mean_data2(ce,:,:) = mean_across_data_shuff;
 
 end
@@ -20,8 +20,8 @@ end
 specified_window = event_onsets:event_onsets+comp_window; %1 sec %event_onsets:event_onsets+5;%
 specified_mean = []; specified_mean_shuff =[];
 for ce = 1:total_celltypes
-    specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3); %[max(squeeze(mean_data(ce,:,specified_window)),[],2)]
-    specified_mean_shuff(ce,:) = mean(mean_data2(ce,:,specified_window),3);
+    specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3,'omitnan'); %[max(squeeze(mean_data(ce,:,specified_window)),[],2)]
+    specified_mean_shuff(ce,:) = mean(mean_data2(ce,:,specified_window),3,'omitnan');
 end 
 
 
@@ -42,7 +42,7 @@ ts_str = plot_info.labels;
 figure(101);clf; set(gcf,'color','w'); hold on; yma = -Inf;
 w = 0.1; 
 
-x_val_dif = .6/(total_comparisons-1);
+x_val_dif = .6/(total_comparisons);%.6/(total_comparisons-1);
 x_seq = [-0.3:x_val_dif:0.3];
 sig_ct = 0;
 for t = 1:length(tw)
@@ -55,8 +55,8 @@ for t = 1:length(tw)
         h = boxplot(data, 'position', t+x_seq(ce), 'width', w, 'colors', plot_info.colors_celltype(ce,:),'symbol', 'o');
 
         % Find lines connecting outliers and remove them
-%         out_line = findobj(h, 'Tag', 'Outliers');
-%         set(out_line, 'Visible', 'off');
+        out_line = findobj(h, 'Tag', 'Outliers');
+        set(out_line, 'Visible', 'off');
 
         %set line width
         hh = findobj('LineStyle','--','LineWidth',0.5); 
@@ -69,17 +69,35 @@ for t = 1:length(tw)
         if ce==1; v0 = data; end
         yl = ylim;%setBoxStyle(h, 1);
         yma = max(yma, yl(2)+5);
+        
+
+    end
+
+    if ce == total_celltypes
+        data = specified_mean_shuff(ce,:); 
+        
+        h = boxplot(data, 'position', t+x_seq(ce+1), 'width', w, 'colors', [0.5 0.5 0.5],'symbol', 'o');
+
+        % Find lines connecting outliers and remove them
+        out_line = findobj(h, 'Tag', 'Outliers');
+        set(out_line, 'Visible', 'off');
+
+        %set line width
+        hh = findobj('LineStyle','--','LineWidth',0.5); 
+        set(h(1:6), 'LineStyle','-','LineWidth',1.8);
 
     end
     combos = sorted_combinations ;
     for c = 1:size(combos,1)
         data = [squeeze(specified_mean(combos(c,:),:))]; %specified_mean(ce,:)
         y_val =  max(max([squeeze(specified_mean(:,:))]));
+        [KW_Test.celltypes_p_val,KW_Test.stimcontext_tbl, KW_Test.stimcontext_stats_cell] = kruskalwallis(data',[1:total_celltypes],'off');
+
         pval = ranksum(data(1,:), data(2,:));
         plot_data{t,c} = pval;
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
-        if pval < 0.05
+        if pval < 0.05 && KW_Test.celltypes_p_val < 0.05
             sig_ct =sig_ct+1;
             plot_pval_star(t,1+(sig_ct*.04), pval,x_line_vals,0.01); %yl(2)+3
         end
@@ -92,11 +110,13 @@ for c = 1:total_celltypes
     pval = ranksum(data(1,:), data(2,:));
     plot_data{2,c} = pval;
 end
-
-%set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
 set(gca,'xtick',x_seq+1,'xticklabel',ts_str,'xticklabelrotation',45);
+%set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
 %xlim([0.5 length(tw)+0.5]); ylim([.4 1]);
-xlim([1+x_seq(1)-.1 1+x_seq(end)+.1]); ylim([.4 1.15]);
+xlim([1+x_seq(1)-.1 1+x_seq(end)+.1]);
+if ~isempty(minmax)
+    ylim([minmax(1) minmax(2)])
+end
 yticks([.4:.1:1])
 yline(.5,'--k');
 ylabel('Decoding Accuracy'); box off
