@@ -121,6 +121,7 @@ end
 %         end
 %     end
 % end
+save all_trials all_trials
 if saveorno == 1;
     save train_imaging_spk train_imaging_spk '-v7.3'
     save test_imaging_spk test_imaging_spk '-v7.3'

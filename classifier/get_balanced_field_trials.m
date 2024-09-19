@@ -124,7 +124,7 @@ elseif length(selected_field_num)==3
 
             condition_combo = {lc, li, rc, ri, lcs, lis, rcs, ris};
             condition_selected = [];
-            for i = length(condition_combo)
+            for i = 1:length(condition_combo)
                 condition_selected = [condition_selected, randsample(find(condition_combo{i}), smallest_set_size)];
             end
         else
