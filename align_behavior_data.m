@@ -1,4 +1,4 @@
-function [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,varargin)
+function [aligned_imaging,imaging_array,align_info,frames] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,varargin)
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
 imaging_array = [imaging(good_trials).movement_in_imaging_time]; %convert to array for easier indexing
@@ -75,6 +75,20 @@ elseif strcmp(alignment.type ,'ITI')
         end
 elseif strcmp(alignment.type ,'all')
     frames = find_alignment_frames (alignment_frames,[1:6],left_padding,right_padding);
+        for vr_trials = 1:length(good_trials) 
+            t = vr_trials;
+            frames_to_include = frames(t,:);%
+            if strcmp(alignment.data_type,'dff')
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(t)).dff(cell_ids,frames_to_include);
+            elseif strcmp(alignment.data_type,'z_dff')
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(t)).z_dff(cell_ids,frames_to_include);
+            else
+                aligned_imaging(vr_trials,:,:) = imaging(good_trials(t)).deconv(cell_ids,frames_to_include);
+            end
+           
+        end
+    elseif strcmp(alignment.type ,'pre')
+    frames = find_alignment_frames (alignment_frames,[1:5],left_padding,right_padding);
         for vr_trials = 1:length(good_trials) 
             t = vr_trials;
             frames_to_include = frames(t,:);%
