@@ -64,7 +64,7 @@ else
             [all_conditions, condition_array_trials] = divide_trials (imaging); %divide trials into all possible conditions   
             celltypes_permouse = celltype{m};
             [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30);
-            [aligned_imaging] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,celltypes_permouse);
+            [aligned_imaging,imaging_array]= align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment,celltypes_permouse);
             [aligned_imaging_array] = align_imaging_array (imaging_array,align_info,alignment_frames,left_padding,right_padding,alignment,extra_fields);
             mouse_data{m} = aligned_imaging(:,:,:); %use specified trials in the condition array
             mouse_data_behavior{m} = aligned_imaging_array;

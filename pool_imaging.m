@@ -27,6 +27,9 @@ for m = 1:length(mouse_date)
     end
 
     %save concatenated version (massive matrix)
+    if isfield(imaging(1),'relative_frames')
+        imaging = rmfield(imaging,'relative_frames');
+    end
     cat_imaging = cat(2,cat_imaging,imaging);
 
 end

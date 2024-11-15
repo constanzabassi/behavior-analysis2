@@ -1,7 +1,7 @@
 %% FIGURE ONE?
 %% PLOT HEATMAP FOR SPECIFIC CONDITION
 
-alignment.conditions = [5:8]; %empty to run all conditions
+alignment.conditions = []; %empty to run all conditions [5:8];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.25 1];
@@ -26,12 +26,14 @@ bin_size = 3;
 figure(90);clf;
 colormap viridis
 %plot heatmaps and grand avg
-%mouse_data_conditions = heatmaps_avg_combined_all_celltypes (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size);%last number is bin size
-mouse_data_conditions = heatmaps_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size,'y_velocity');
+mouse_data_conditions = heatmaps_avg_combined_all_celltypes (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size);%last number is bin size
+figure(90);clf;
+colormap viridis
+mouse_data_conditions = heatmaps_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[info.savepath '\heatmaps'],bin_size,'y_velocity',[]);
 
-alignment.number = 6; %just ITI
-alignment.type = 'ITI';
-mouse_data_conditions = scatter_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[],bin_size,'y_velocity');
+% alignment.number = 6; %just ITI
+% alignment.type = 'ITI';
+% mouse_data_conditions = scatter_avg_combined_all_celltypes_extra_fields (imaging_st,plot_info,alignment,[],[],bin_size,'y_velocity',[]);
 %% DYNAMICS PLOT OF FRACTION OF CELLS
 plot_info.colors_celltype = [0.37 0.75 0.49 %light green
                             0.17 0.35 0.8  %blue
