@@ -28,8 +28,8 @@ alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'stimulus'; %'reward','turn','stimulus', 'ITI'
 alignment.cell_type = 'pyr';
 
-make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment,plot_info,all_celltypes);
-%make_conditionheatmaps_celltypes(imaging_st,[],alignment,plot_info,all_celltypes); %plots invidual datasets!
+%make_conditionheatmaps_celltypes(imaging_st,cat_imaging,alignment,plot_info,all_celltypes);
+make_conditionheatmaps_celltypes(imaging_st,[],alignment,plot_info,all_celltypes); %plots invidual datasets!
 
 
 %% 4) plot invididual mice average across conditions with concatenated alignment

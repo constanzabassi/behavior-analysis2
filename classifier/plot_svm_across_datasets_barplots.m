@@ -76,7 +76,7 @@ for t = 1:length(tw)
     if ce == total_celltypes
         data = specified_mean_shuff(ce,:); 
         
-        h = boxplot(data, 'position', t+x_seq(ce+1), 'width', w, 'colors', [0.5 0.5 0.5],'symbol', 'o');
+        h = boxplot(data, 'position', t+x_seq(ce+1), 'width', w, 'colors', [0.2 0.2 0.2]*ce,'symbol', 'o');
 
         % Find lines connecting outliers and remove them
         out_line = findobj(h, 'Tag', 'Outliers');
@@ -88,10 +88,11 @@ for t = 1:length(tw)
 
     end
     combos = sorted_combinations ;
+    [KW_Test.celltypes_p_val,KW_Test.stimcontext_tbl, KW_Test.stimcontext_stats_cell] = kruskalwallis(specified_mean',[1:total_celltypes],'off');
+
     for c = 1:size(combos,1)
         data = [squeeze(specified_mean(combos(c,:),:))]; %specified_mean(ce,:)
         y_val =  max(max([squeeze(specified_mean(:,:))]));
-        [KW_Test.celltypes_p_val,KW_Test.stimcontext_tbl, KW_Test.stimcontext_stats_cell] = kruskalwallis(data',[1:total_celltypes],'off');
 
         pval = ranksum(data(1,:), data(2,:));
         plot_data{t,c} = pval;
