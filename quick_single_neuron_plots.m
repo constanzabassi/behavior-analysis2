@@ -1,5 +1,14 @@
-
-ex_m = 4;
+load('V:\Connie\results\behavior_updated\data_info\info.mat')
+load('V:\Connie\results\behavior_updated\data_info\plot_info.mat')
+load('V:\Connie\results\behavior_updated\data_info\task_info.mat')
+load('V:\Connie\results\behavior_updated\data_info\all_celltypes.mat')
+load('V:\Connie\results\behavior_updated\data_info\all_frames.mat')
+load('V:\Connie\results\behavior_updated\data_info\imaging_st.mat')
+%%
+% sig = load('V:\Connie\results\glm_decoding\prelim\passive\significant_neurons_data.mat'); %none
+sig = load('V:\Connie\results\glm_decoding\prelim\passive\significant_neurons_data.mat'); %0.1
+%%
+ex_m = 1;
 ex_imaging = imaging_st{1,ex_m };
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
@@ -13,36 +22,36 @@ event_onsets = determine_onsets(left_padding,right_padding,[1:6]);
 %  'HA2-1L_2023-05-05': {'pyr': [119, 80, 199, 156, 26],
 %   'som': [2, 5, 10, 13, 6],
 %   'pv': [10, 0, 7, 8, 1]},
-informative_neurons = [105, 2, 9, 338, 182]+1;
-neuron_to_plot = all_celltypes{1, ex_m }.pyr_cells(informative_neurons(4)); %pyr 106
-figure(88);clf;
-subplot(1,2,1)
-title('Left Correct trials')
-%left correct trials opto and control
-hold on
-imagesc(squeeze(aligned_imaging([all_conditions{5,1}],neuron_to_plot,:)));
-for i = 1:length(event_onsets)
-    xline(event_onsets(i),'-w','LineWidth',1.5)
-end
-
-set_current_fig;
-subplot(1,2,2)
-title('Right Correct trials')
-hold on
-imagesc(squeeze(aligned_imaging([all_conditions{7,1}],neuron_to_plot,:)));
-for i = 1:length(event_onsets)
-    xline(event_onsets(i),'-w','LineWidth',1.5)
-end
-hold off
-set_current_fig;
-
-% make_heatmap(squeeze(mean(aligned_imaging)),plot_info,event_onsets(1),event_onsets);
-
+informative_neurons = sig.HA11_1R_2023_05_05.pyr;
+neuron_to_plot = all_celltypes{1, ex_m }.pyr_cells(informative_neurons(1)); %pyr 106
+% figure(88);clf;
+% subplot(1,2,1)
+% title('Left Correct trials')
+% %left correct trials opto and control
+% hold on
+% imagesc(squeeze(aligned_imaging([all_conditions{5,1}],neuron_to_plot,:)));
+% for i = 1:length(event_onsets)
+%     xline(event_onsets(i),'-w','LineWidth',1.5)
+% end
+% 
+% set_current_fig;
+% subplot(1,2,2)
+% title('Right Correct trials')
+% hold on
+% imagesc(squeeze(aligned_imaging([all_conditions{7,1}],neuron_to_plot,:)));
+% for i = 1:length(event_onsets)
+%     xline(event_onsets(i),'-w','LineWidth',1.5)
+% end
+% hold off
+% set_current_fig;
+% 
+% % make_heatmap(squeeze(mean(aligned_imaging)),plot_info,event_onsets(1),event_onsets);
+% 
 %% passive
-%passive_st = load('V:\Connie\results\passive\data_info\imaging_st.mat').imaging_st;
+% passive_st = load('V:\Connie\results\passive\data_info\imaging_st.mat').imaging_st;
 alignment.type = 'stimulus';
 mdl_param.field_to_predict = [3,4];
-ex_imaging_passive = passive{1,ex_m };
+ex_imaging_passive = passive_st{1,ex_m };
 [align_info,alignment_frames,left_padding,right_padding] = find_align_info (ex_imaging_passive,30,2);
 [passive_data,~,~] = align_behavior_data (ex_imaging_passive,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
 event_onsets = determine_onsets(left_padding,right_padding,[1:3]);
@@ -60,10 +69,19 @@ right_tr = find(condition_array(:,2) ==0 & condition_array(:,3) ==0);
 %  'HA2-1L_2023-05-05': {'pyr': [119, 80, 199, 156, 26],
 %   'som': [2, 5, 10, 13, 6],
 %   'pv': [10, 0, 7, 8, 1]},
-neuron_to_plot = all_celltypes{1, ex_m }.pyr_cells(81); 
+
+%sort by peaks
+top = [1, 13, 14, 18, 25, 26, 31, 34, 37, 42, 49, 56, 62, 65, 76, 77, 79, 80, 82, 87, 88, 90, 92, 98, 103, 108, 111, 112, 127, 141, 146, 165, 172, 181, 191, 193, 198, 203, 214, 215, 226, 227, 229, 232, 237, 244, 257, 260, 261, 263, 268, 271, 287, 294, 295, 300, 305, 314, 315, 318, 326];
+[a,b] = sort(sig.HA11_1R_2023_05_05.pyr.peaks)
+cell_ex = b(end-3);
+informative_neurons = sig.HA11_1R_2023_05_05.pyr.indices;
+neuron_to_plot = all_celltypes{1, ex_m }.pyr_cells(informative_neurons(cell_ex)); %pyr 106
+%print(num2str(sig.HA11_1R_2023_05_05.pyr.peaks(cell_ex)))
+% neuron_to_plot = all_celltypes{1, ex_m }.pyr_cells(81); 
 
 figure(88);clf;
-subplot(1,2,1)
+sgtitle(num2str(sig.HA11_1R_2023_05_05.pyr.peaks(cell_ex)))
+subplot(2,2,1)
 title('Left Correct trials')
 %left correct trials opto and control
 hold on
@@ -73,7 +91,7 @@ for i = 1:length(event_onsets)
 end
 
 set_current_fig;
-subplot(1,2,2)
+subplot(2,2,2)
 title('Right Correct trials')
 hold on
 imagesc(squeeze(aligned_imaging([all_conditions{7,1}],neuron_to_plot,:)));
@@ -84,8 +102,8 @@ hold off
 set_current_fig;
 
 
-figure(89);clf;
-subplot(1,2,1)
+%figure(89);clf;
+subplot(2,2,3)
 title('Left trials passive')
 %left correct trials opto and control
 hold on
@@ -95,7 +113,7 @@ for i = 1:length(event_onsets)
 end
 
 set_current_fig;
-subplot(1,2,2)
+subplot(2,2,4)
 title('Right trials passive')
 hold on
 imagesc(squeeze(passive_data([right_tr],neuron_to_plot,:)));
