@@ -11,10 +11,10 @@ alignment.data_type = 'deconv';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 alignment.events = [1:6]; %1:6 is all
 alignment.single_event = 1:6; %align to single event == 1 or 1:6 events (concatenated) not 1
-alignment.active_passive = 1;
+alignment.active_passive = 2;
 
 %update savepath (was dpn
-info.savepath = 'V:/Connie/results/task_decoding'
+info.savepath = 'V:/Connie/results/task_decoding';
 %mdl parameter info
 mdl_param.bin = 3; %bin size in terms of frames
 mdl_param.fields_to_balance = [2,3]; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {'is_stim_trial'}=4
@@ -33,13 +33,12 @@ if alignment.single_event == 1
 else
 
     %use alignment from glmdecoder code!!!
-    cd('C:\Code\Github\GLMdecoder-main')
     if alignment.active_passive == 2
         load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')
-        [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30,alignment.active_passive);
+        [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30,alignment.active_passive);
     else
         load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR\imaging.mat')
-        [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30);
+        [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30);
     end
 
     event_onset = determine_onsets(left_padding,right_padding,alignment.events);
@@ -76,7 +75,7 @@ plot_info.labels = {'PYR','SOM','PV','All'};
 info.savestr = 'sounds_allaligned_50sub'; %how to save current run
 
 %% RUN CLASSIFIER
-[svm, svm_mat] = run_classifier_glm_inputs('GLM_3nmf_pre',all_celltypes,mdl_param, alignment,plot_info,info,alignment.single_event); %last is whether to align to onset of single event
+[svm, svm_mat] = run_classifier_glm_inputs('GLM_3nmf_passive',all_celltypes,mdl_param, alignment,plot_info,info,alignment.single_event); %last is whether to align to onset of single event
 
 %% plot weight distribution across celltypes for model run with all cells
 %[betas] = compare_svm_weights(svm); %uses ce = 4 which is all cells to get betas

@@ -54,10 +54,10 @@ end
 %find(decoder_results.aligned.shuffled.photostim(1).cat_results.alignment.trials_used.train);
 disp(['Saving path: ' info.savepath '\SVM_' alignment.data_type '_' info.savestr]);
     for it = 1:mdl_param.num_iterations
-        it
+%         it
 %     for m = 1:length(imaging_st)
         count = 0;
-        m
+%         m
         for ce = 1:4 %4th will be all cells together no subsamples!
             count = count+1;
             mdl_param.mouse = m;
@@ -85,7 +85,7 @@ disp(['Saving path: ' info.savepath '\SVM_' alignment.data_type '_' info.savestr
 
 %             [aligned_imaging,imaging_array,align_info] = align_behavior_data (ex_imaging,align_info,alignment_frames,left_padding,right_padding,alignment);
             
-            [all_conditions, condition_array_trials] = divide_trials(imaging_train_input); % (ex_imaging); %divide trials into all possible conditions
+%             [all_conditions, condition_array_trials] = divide_trials(imaging_train_input); % (ex_imaging); %divide trials into all possible conditions
             %  condition_array_trials (trial_ids, correct or not, left or not, stim or not)
                         
             %subsample cells!
