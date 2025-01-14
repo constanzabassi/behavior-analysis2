@@ -25,7 +25,9 @@ end
 %% STORE VARIABLES 
 output.accuracy=accuracy; %in Christians accuracy is (datasets,bins)
 output.shuff_accuracy=shuff_accuracy; 
-output.mdl = mdl;
-output.shuff_mdl = shuff_mdl;
+%%% trying to make structure smaller...
+% output.mdl = mdl;
+% output.shuff_mdl = shuff_mdl;
 output.mdl_param = mdl_param;
+
 
