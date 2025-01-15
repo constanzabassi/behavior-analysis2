@@ -2,14 +2,14 @@
 function [acc] = run_classifier_glm_inputs_cluster(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
+acc = {};
+shuff_acc = {};
 for m = current_mouse
 %     ss = info.server(m);
 %     ss = ss {1,1};
 info.mouse_date{1,m} = strrep(info.mouse_date{1,m}, '\', '/');
     base = strcat('/ix/crunyan/cdb66/Data/',num2str(info.mouse_date{1,m}),'/',save_string_glm,'/');
 
-acc = {};
-shuff_acc = {};
 %load GLM data!
 for splits = 1:10
 dir_base = strcat(base,'/prepost trial cv 73 #', num2str(splits));
@@ -259,7 +259,7 @@ end
             fprintf(['split #: ', num2str(splits),' || subsample #: ', num2str(it),' || mouse :' , num2str(info.mouse_date{1,m}), ' ||    celltype :' num2str(ce), ' ||  size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
             output{splits,it,ce} = classify_over_time_glm_inputs(mdl_X,mdl_Y, mdl_param,mdl_X_test,mdl_Y_test);
             
-            %
+            % gete accuracy!
             acc{splits,it,ce} = output{splits,it,ce}.accuracy;
             shuff_acc{splits,it,ce} = output{splits,it,ce}.shuff_accuracy;
             %get betas across all celltypes

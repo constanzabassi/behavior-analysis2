@@ -26,7 +26,7 @@ end
 output.accuracy=accuracy; %in Christians accuracy is (datasets,bins)
 output.shuff_accuracy=shuff_accuracy; 
 %%% trying to make structure smaller...
-% output.mdl = mdl;
+output.mdl = mdl;
 % output.shuff_mdl = shuff_mdl;
 output.mdl_param = mdl_param;
 
