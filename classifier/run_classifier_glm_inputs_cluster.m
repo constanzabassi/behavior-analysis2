@@ -76,10 +76,10 @@ end
 %             end
 
             if alignment.active_passive == 2
-                [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging_train_input,30,alignment.active_passive);
+                [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging_train_input,30,alignment.active_passive);
                 [align_info_test,alignment_frames_test,left_padding_t,right_padding_t] = find_align_info_updated (imaging_test_input,30,alignment.active_passive);
             else
-                [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging_train_input,30);
+                [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging_train_input,30);
                 [align_info_test,alignment_frames_test,left_padding_t,right_padding_t] = find_align_info_updated (imaging_test_input,30);
             end
             [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging_train_input,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
