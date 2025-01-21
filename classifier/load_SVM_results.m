@@ -2,6 +2,7 @@ function loaded_svm_result = load_SVM_results(info,model_type,task_event_type,sv
 for n = 1:length(info.chosen_mice)
     mm = info.mouse_date(info.chosen_mice(n));
     mm = mm{1,1};
+    mm
     ss = info.serverid(info.chosen_mice(n));
     ss = ss {1,1};
     base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/'));
