@@ -74,7 +74,7 @@ else
      end
     %updated event onsets! 7 42 77 141 155 180
     
-    mdl_param.frames_around = -mdl_param.event_onset+1:frame_length;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
+    mdl_param.frames_around = -mdl_param.event_onset+1:frame_length-mdl_param.bin+1;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
     mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
 
     load('/ix/crunyan/cdb66/Data/all_celltypes.mat'); %datasets organized based on info in the same folder!

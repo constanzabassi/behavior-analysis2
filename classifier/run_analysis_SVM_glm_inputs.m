@@ -7,10 +7,16 @@ active_events = [7,39,71,132,146];%
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 %% LOAD THE DATA!
-current_mice = [0     3     4     5     6     9    10    12    13    14    15    16    17    18    23    24]+1;%[1     2     3     4     5     6     7     8    10    11    13    14    15    16    17    18    19    20    21    22    24    25];CHOICE %%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
+%choice: [0 1 2 3 4 5 6 7 9 10 12 13 14 15 16 17 18 19 20 21 23 24]+1 %to add 11 
+% sound: [1 3 4 5 7 9 12 13 14 16 17 18 19 20 21 23 24]+1 %to add 0/2/6/10/11/15
+
+% outcome:[0     1     3     4     5     6     9    10    12    13    14
+% 15    16    17    18    23    24]+1 to add 11/19
+%photostim: setdiff(1:25,[11,25]) % to add 6?/11 (25 is control)
+current_mice =[1 3 4 5 7 9 12 13 14 16 17 18 19 20 21 23 24]+1 ;%setdiff(1:25,[6,11,25]) ;%%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
 
 info.chosen_mice = current_mice;
-info.task_event_type = 'outcome';
+info.task_event_type = 'sound_category';
 
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc');
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc');
@@ -38,8 +44,8 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
 end
 
 %%
-plot_info.colors = [0.780, 0.082, 0.522;1.000, 0.412, 0.706]%'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];% 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0];%brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];%'darkslateblue','mediumslateblue'
-plot_info.minmax = [0.4,1];
+plot_info.colors = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
+plot_info.minmax = [0.4,.9];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
@@ -76,13 +82,17 @@ plot_info.colors_celltype = plot_info.colors;
 mdl_param = all_model_outputs{1,1}{1};
 save_string = info.task_event_type;
 % all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'all_model_outputs');
-plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.4,.8]);movegui(gcf,'center')
+plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.4,.7]);movegui(gcf,'center')
 
 %% to determine events
 if alignment.active_passive == 2
     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')
-    [align_info,alignment_frames,left_padding,right_padding] = find_align_info (imaging,30,2);
+    [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30,2);
     events = determine_onsets(left_padding,right_padding,1:3);
+        alignment.type = 'stimulus';
+    alignment.data_type = 'deconv';
+    [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
+
 else
     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR\imaging.mat')
     [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30);
