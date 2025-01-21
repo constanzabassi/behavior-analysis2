@@ -1,8 +1,8 @@
-function all_frames = frames_relative2general(info,imaging_st)
+function all_frames = frames_relative2general(info,imaging_st, saveorno)
 for m = 1:length(imaging_st)
-    m
     good_trials = [];
     imaging = imaging_st{1,m};
+    info.mouse_date{1,m}
     empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
     good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
     
@@ -26,8 +26,10 @@ for m = 1:length(imaging_st)
     end
     all_frames{m} = vr;
 end
+if saveorno == 1
 mkdir([info.savepath '\data_info'])
 cd([info.savepath '\data_info'])
 save('all_frames','all_frames');
+end
 
 % info.mouse_date = {'HA11-1R/2023-05-05'};info.server ={'V:'};imaging_st{1,1} = imaging;info.savepath = 'V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR';all_frames = frames_relative2general(info,imaging_st);
