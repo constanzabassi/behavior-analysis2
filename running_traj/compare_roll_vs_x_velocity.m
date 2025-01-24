@@ -6,8 +6,8 @@
 
 
 %%
-mouse_date = 'HE4-1L1R\2023-08-24';
-server = 'W:';
+mouse_date = 'HA11-1R\2023-05-01';%'HE4-1L1R\2023-08-24';
+server ='V:' %'W:';
 %HE4-1L1R\2023-08-24
 clear info2
 load([server, '\Connie\ProcessedData\' mouse_date '\VR\imaging.mat']);
@@ -32,6 +32,7 @@ for t = 30:39;nexttile;
     plot(imaging(good_trials(t)).movement_in_imaging_time.x_position,'-g');
     %plot(corrected_velocity(1,trial_frames),'-m'); %movement_in_imaging_time.turn_frame
     plot(corrected_velocity(2,trial_frames),'-m');
+    plot(rescale(diff(corrected_velocity(2,trial_frames)),-25,25),'-c');
 %     plot(corrected_velocity(3,trial_frames),'-c');
 %     plot(imaging(good_trials(t)).movement_in_imaging_time.turn_frame,0,'*r');
     

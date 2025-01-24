@@ -8,12 +8,11 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 %% LOAD THE DATA!
 %choice: [0 1 2 3 4 5 6 7 9 10 12 13 14 15 16 17 18 19 20 21 23 24]+1 %to add 11 
-% sound: [1 3 4 5 7 9 12 13 14 16 17 18 19 20 21 23 24]+1 %to add 0/2/6/10/11/15
+% sound: [0 1 3 4 5 6 7 9 12 13 14 15 16 17 18 19 20 21 23 24]+1 %to add 2/10/11
 
-% outcome:[0     1     3     4     5     6     9    10    12    13    14
-% 15    16    17    18    23    24]+1 to add 11/19
+% outcome:[0 1 3 4 5 6 9 10 12 13 14 15 16 17 18 23 24]+1 to add 11/19
 %photostim: setdiff(1:25,[11,25]) % to add 6?/11 (25 is control)
-current_mice =[1 3 4 5 7 9 12 13 14 16 17 18 19 20 21 23 24]+1 ;%setdiff(1:25,[6,11,25]) ;%%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
+current_mice =[0 1 3 4 5 6 7 9 12 13 14 15 16 17 18 19 20 21 23 24]+1;%setdiff(1:25,[6,11,25]) ;%%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
 
 info.chosen_mice = current_mice;
 info.task_event_type = 'sound_category';
@@ -21,7 +20,7 @@ info.task_event_type = 'sound_category';
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc');
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc');
 
-info.chosen_mice = 1;
+info.chosen_mice = 2;
 all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
 info.chosen_mice = current_mice;
 %adjust event onsets to bins!
@@ -30,7 +29,7 @@ event_onsets = find(histcounts(active_events,all_model_outputs{1,1}{1}.binns+act
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     acc_passive = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'acc');
     shuff_acc_passive = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'shuff_acc');
-    info.chosen_mice = 1;
+    info.chosen_mice = 2;
 
 %     all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
     all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive','sound_category','all_model_outputs');
