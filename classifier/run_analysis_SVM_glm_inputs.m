@@ -12,7 +12,7 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 % outcome:[0 1 3 4 5 6 9 10 12 13 14 15 16 17 18 23 24]+1 to add 11/19
 %photostim: setdiff(1:25,[11,25]) % to add 6?/11 (25 is control)
-current_mice =[0 1 3 4 5 6 7 9 12 13 14 15 16 17 18 19 20 21 23 24]+1;%setdiff(1:25,[6,11,25]) ;%%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
+current_mice = setdiff(1:25,[9,23]); %[0 1 3 4 5 6 7 9 12 13 14 15 16 17 18 19 20 21 23 24]+1;%setdiff(1:25,[6,11,25]) ;%%[0     1     3     4     6     7     8    12    13    14    15    17    18    20    21    22    23]+1; PHOTOSTIM%[2     3     4     5     6     8    10    13    14    15    16    17    18    19    21    22    24    25]; SOUNDS%setdiff(1:25,[9,23,12]);
 
 info.chosen_mice = current_mice;
 info.task_event_type = 'sound_category';
@@ -44,7 +44,7 @@ end
 
 %%
 plot_info.colors = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
-plot_info.minmax = [0.4,.9];
+plot_info.minmax = [0.45,.7];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
@@ -81,7 +81,7 @@ plot_info.colors_celltype = plot_info.colors;
 mdl_param = all_model_outputs{1,1}{1};
 save_string = info.task_event_type;
 % all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'all_model_outputs');
-plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.4,.7]);movegui(gcf,'center')
+plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7]);movegui(gcf,'center')
 
 %% to determine events
 if alignment.active_passive == 2
