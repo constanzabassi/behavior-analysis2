@@ -22,14 +22,14 @@ for it = 1:behav_param.num_iterations
         turn_onsets = [imaging_array.turn_frame];
         performance(it,m).correct_all = sum(correct_or_no)/length(correct_or_no);
         performance(it,m).left_all = sum(left_or_no)/length(correct_or_no);
-        performance(it,m).turn_onset_all = turn_onsets;
+        performance(it,m).turn_onset_all = turn_onsets/30;
 
         performance(it,m).correct_opto = sum(condition_array(trial_ids_opto,2))/length(trial_ids_opto);
         performance(it,m).left_opto = sum(condition_array(trial_ids_opto,3))/length(trial_ids_opto);
         performance(it,m).correct_ctrl = sum(condition_array(trial_ids_ctrl,2))/length(trial_ids_ctrl);
         performance(it,m).left_ctrl = sum(condition_array(trial_ids_ctrl,3))/length(trial_ids_ctrl);
-        performance(it,m).turn_onset_opto = turn_onsets(trial_ids_opto);
-        performance(it,m).turn_onset_ctrl = turn_onsets(trial_ids_ctrl);
+        performance(it,m).turn_onset_opto = turn_onsets(trial_ids_opto)/30;
+        performance(it,m).turn_onset_ctrl = turn_onsets(trial_ids_ctrl)/30;
 
         %find mean measurements for other metrics including x/y velocity
         %and view angle changes!
