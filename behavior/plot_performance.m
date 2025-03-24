@@ -1,61 +1,80 @@
-function [sig_test] = plot_performance(performance,save_data_directory)
+function [sig_test] = plot_performance(performance,save_data_directory,mouseID)
 [r,c] = determine_num_tiles(size(performance,2));
 figure(5555);clf;
 % tiledlayout(r,c)
+unique_mice = unique(mouseID);
+n_mice = length(unique_mice);
+correct_per_mouse_opto = [];
+left_per_mouse_opto = [];
+sec_to_turn_per_mouse_opto = [];
+correct_per_mouse_ctrl = [];
+left_per_mouse_ctrl = [];
+sec_to_turn_per_mouse_ctrl = [];
+
+for m = 1:n_mice
+    curr_mouse = unique_mice(m);
+    mouse_datasets = find(mouseID == curr_mouse);
+    d = mouse_datasets;
+    correct_per_mouse_opto = [correct_per_mouse_opto,mean([performance(d).correct_opto])];
+    left_per_mouse_opto = [left_per_mouse_opto,mean([performance(d).left_opto])];
+    sec_to_turn_per_mouse_opto = [sec_to_turn_per_mouse_opto,mean([performance(d).turn_onset_opto])];
+
+    correct_per_mouse_ctrl = [correct_per_mouse_ctrl,mean([performance(d).correct_ctrl])];
+    left_per_mouse_ctrl = [left_per_mouse_ctrl,mean([performance(d).left_ctrl])];
+    sec_to_turn_per_mouse_ctrl = [sec_to_turn_per_mouse_ctrl,mean([performance(d).turn_onset_ctrl])];
+    
+end
 %% % CORRECT
 subplot(1,3,1)
 hold on
-bar(1, mean(cellfun(@(x) mean(x,1),{performance.correct_opto}))*100,'FaceColor',[0.9 0.6 0],'LineStyle','none')
-bar(2, mean(cellfun(@(x) mean(x,1),{performance.correct_ctrl}))*100,'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
+bar(1, mean(correct_per_mouse_opto)*100,'FaceColor',[0.9 0.6 0],'LineStyle','none')
+bar(2, mean(correct_per_mouse_ctrl)*100,'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
 
-for m = 1:size(performance,2)
-plot([ mean([performance(:,m).correct_opto]),mean([performance(:,m).correct_ctrl])]*100 ,'-','color','k', 'MarkerFaceColor', 'k');
-
+for m = 1:n_mice
+    plot([ [correct_per_mouse_opto(m)],[correct_per_mouse_ctrl(m)]]*100 ,'-','color','k', 'MarkerFaceColor', 'k');
 end
 set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
 xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel('% correct')
 
-[sig_test.p_correct, h1] = signrank([performance.correct_opto],[performance.correct_ctrl]);
-plot_pval_star(0,max([performance.correct_opto])*100, sig_test.p_correct,[1 2],.15); %yl(2)+3
+[sig_test.p_correct, h1] = signrank([correct_per_mouse_opto],[correct_per_mouse_ctrl]);
+plot_pval_star(0,max([correct_per_mouse_opto])*100, sig_test.p_correct,[1 2],.15); %yl(2)+3
 
 set_current_fig;
 set(gca,'FontSize',12);
 %% % LEFT TURNS
 subplot(1,3,2)
 hold on
-bar(1, mean(cellfun(@(x) mean(x,1),{performance.left_opto}))*100,'FaceColor',[0.9 0.6 0],'LineStyle','none')
-bar(2, mean(cellfun(@(x) mean(x,1),{performance.left_ctrl}))*100,'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
+bar(1, mean(left_per_mouse_opto)*100,'FaceColor',[0.9 0.6 0],'LineStyle','none')
+bar(2, mean(left_per_mouse_ctrl)*100,'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
 
-for m = 1:size(performance,2)
+for m = 1:n_mice
 
-plot([ mean([performance(:,m).left_opto]),mean([performance(:,m).left_ctrl])]*100 ,'-','color','k', 'MarkerFaceColor', 'k');
+plot([ [left_per_mouse_opto(m)], [left_per_mouse_ctrl(m)]]*100 ,'-','color','k', 'MarkerFaceColor', 'k');
 
 end
 set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
 xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel('% left')
+ylim([0 75])
 
-[sig_test.p_left, h1] = signrank([performance.left_opto],[performance.left_ctrl]);
-plot_pval_star(0,max([performance.left_opto])*100, sig_test.p_left,[1 2],.15); %yl(2)+3
+[sig_test.p_left, h1] = signrank([left_per_mouse_opto],[left_per_mouse_ctrl]);
+plot_pval_star(0,max([left_per_mouse_opto])*100, sig_test.p_left,[1 2],.15); %yl(2)+3
 
 set_current_fig;
 set(gca,'FontSize',12);
 %% TIME TO COMPLETE TURN
 subplot(1,3,3)
 hold on
-bar(1, mean(cellfun(@(x) mean(mean(x),1),{performance.turn_onset_opto})),'FaceColor',[0.9 0.6 0],'LineStyle','none')
-bar(2, mean(cellfun(@(x) mean(mean(x),1),{performance.turn_onset_ctrl})),'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
+bar(1, mean(sec_to_turn_per_mouse_opto),'FaceColor',[0.9 0.6 0],'LineStyle','none')
+bar(2, mean(sec_to_turn_per_mouse_ctrl),'FaceColor',[0.8 0.8 0.8],'LineStyle','none')
 
 temp = [];
-for m = 1:size(performance,2)
-opto_turn = mean(performance(1,m).turn_onset_opto);
-ctrl_turn = mean(performance(1,m).turn_onset_ctrl);
-temp(m,:) = [opto_turn, ctrl_turn];
+for m = 1:n_mice
 
-plot([opto_turn,ctrl_turn] ,'-','color','k', 'MarkerFaceColor', 'k');
+plot([[sec_to_turn_per_mouse_opto(m)],[sec_to_turn_per_mouse_ctrl(m)]] ,'-','color','k', 'MarkerFaceColor', 'k');
 
 end
 set(gca, 'XLimMode', 'manual', 'XLim', [0 3]);
@@ -63,8 +82,9 @@ xticks([1 2])
 xticklabels({'Opto','Ctrl'})
 ylabel({'seconds to'; 'turn onset'})
 
-[sig_test.p_turn_onset, h1] = signrank(temp(:,1),temp(:,2));
-plot_pval_star(0,max(cellfun(@mean,{performance.turn_onset_opto})), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
+[sig_test.p_turn_onset, h1] = signrank(sec_to_turn_per_mouse_opto,sec_to_turn_per_mouse_ctrl);
+% plot_pval_star(0,max(cellfun(@mean,{performance.turn_onset_opto})), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
+plot_pval_star(0,max([sec_to_turn_per_mouse_opto]), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
 
 set_current_fig;
 set(gca,'FontSize',12);
