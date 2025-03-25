@@ -24,6 +24,39 @@ for m = 1:length(info.mouse_date)
 %         temp(1,:)= clustering_info.used_silhouettes(new_ids);
 %         temp(2,:) = celltype_ids;
 %         all_sil = [all_sil, temp];
+        % Given `redvect` after removing uncertain values (length 62)
+        redvect = find(clustering_info.redvect); % Your filtered redvect
+        
+        % Uncertain values to locate in the original sequence
+        uncertain_positions = clustering_info.uncertain; % Example: [218, 251, 261]
+        if contains(mm,'2023-07-07')
+            uncertain_positions = uncertain_positions(2:3); %union(clustering_info.uncertain,clustering_info.excluded);
+        elseif contains(mm,'2023-03-31')
+            uncertain_positions = uncertain_positions(2);
+        end
+        % Find where these uncertain values **would have been** in `redvect`
+            indices_to_remove = zeros(size(uncertain_positions)); % Preallocate
+        
+        
+        for i = 1:length(uncertain_positions)
+            % Find the first index where redvect surpasses the uncertain value
+            idx = find(redvect >= uncertain_positions(i), 1, 'first');
+            
+            if isempty(idx)
+                indices_to_remove(i) = length(redvect) + 1; % If it's larger than all elements
+            else
+                indices_to_remove(i) = idx;
+                
+                % If multiple uncertain values lie between, increment the indices
+                if i > 1 && indices_to_remove(i) == (indices_to_remove(i-1))
+                    indices_to_remove(i:end) = indices_to_remove(i:end) + 1;
+                end
+            end
+        end
+        clustering_info.used_silhouettes(indices_to_remove) = [];
+        temp(1,:)= clustering_info.used_silhouettes;
+        temp(2,:) = celltype_ids;
+        all_sil = [all_sil, temp];
 
         missing_data = [missing_data,info.mouse_date(m)];
     end
