@@ -74,18 +74,28 @@ pv = find(all_sil(2,:)== 2);
 som = find(all_sil(2,:)== 1);
 figure(88);clf;
 hold on
-histogram(all_sil(1,pv),'BinWidth',0.02,'FaceColor',plot_info.colors_celltype(3,:),'Normalization','probability'); 
-histogram(all_sil(1,som),'BinWidth',0.02,'FaceColor',plot_info.colors_celltype(2,:),'Normalization','probability'); 
+histogram(all_sil(1,som),'BinWidth',0.05,'FaceColor',plot_info.colors_celltype(2,:),'Normalization','probability'); 
+histogram(all_sil(1,pv),'BinWidth',0.05,'FaceColor',plot_info.colors_celltype(3,:),'Normalization','probability'); 
 hold off
-title('Silhouettes Scores')
-legend('PV','SOM','location','northwest')
+set(gcf,'units','points','position',[100,100,150,150])
+xlabel('Silhouette Scores')
+% ylabel('Proportion')
+xline(.7,'--','color',[.5 .5 .5]) %exclusion criteria line
+legend('SOM','PV','','location','northwest','box','off')
+set_current_fig;
+
+
 
 figure(89);clf;
 hold on;
-Violin({all_sil(1,pv)},1,'ViolinColor', {plot_info.colors_celltype(2,:)});Violin({all_sil(1,pv)},2,'ViolinColor', {plot_info.colors_celltype(3,:)});hold off
-ylabel('Silhouettes Scores')
+Violin({all_sil(1,som)},1,'QuartileStyle','none','ShowMedian',logical(0),'ViolinColor', {plot_info.colors_celltype(2,:)});Violin({all_sil(1,pv)},2,'QuartileStyle','none','ShowMedian',logical(0),'ViolinColor', {plot_info.colors_celltype(3,:)});hold off
+ylabel('Silhouette Scores')
 xticks([1,2])
-xticklabels({'PV','SOM'})
+xticklabels({'SOM','PV'})
+box off
+set(gcf,'units','points','position',[100,100,150,150])
+yline(.7,'--','color',[.5 .5 .5])
+set_current_fig;
 
 [red_stats.all] = get_basic_stats(all_sil(1,:));
 [red_stats.som] = get_basic_stats(all_sil(1,som));
@@ -99,6 +109,40 @@ red_stats.som.sem = som_sem;
 
 p_val = ranksum(all_sil(1,som),all_sil(1,pv));
 red_stats.p_val = p_val;
+
+%make box plot of all neurons????
+figure(94);clf;
+for celltype= 1:2
+    current_cells = find(all_sil(2,:)== celltype);
+    hold on
+    %SOM
+    %set line width
+    for c = current_cells
+    jitter = (rand-.5) *.5;
+%     plot(1+jitter, mean(all_silhouettes{m,1})  ,'o','MarkerFaceColor', plot_info.colors_celltype(2,:),0.2);
+    scatter(celltype+jitter,all_sil(1,c), 30, ...
+                        plot_info.colors_celltype(celltype+1,:), 'o', 'filled', ...
+                        'MarkerFaceAlpha', 0.4)
+    end
+%     plot([celltype-.3,celltype+.3],[mean(all_sil(1,current_cells)),mean(all_sil(1,current_cells))],'LineWidth',1.5,'color','k');
+    h = boxplot(all_sil(1,current_cells), 'position', celltype, 'width', .7, 'colors', 'k' ,'symbol', 'o'); %plot_info.colors_celltype(celltype+1,:)
+    out_line = findobj(h, 'Tag', 'Outliers');
+    set(out_line, 'Visible', 'off');
+    hh = findobj('LineStyle','--','LineWidth',1); 
+    set(h(1:6), 'LineStyle','-','LineWidth',1);
+
+    ylim([0 1])
+    yline(.7,'--','color',[.5 .5 .5])
+    
+    hold off
+end
+xlim([0,3])
+xticks([1,2])
+xticklabels({'SOM', 'PV'});
+ylabel('Silhouette Score')
+box off
+set(gcf,'units','points','position',[100,100,150,150])
+set_current_fig;
 
 
 figure(90);clf;
@@ -123,6 +167,7 @@ ylabel('Silhouettes Scores')
 xticks([1,2])
 xticklabels({'SOM','PV'})
 xlim([0 3])
+set(gcf,'units','points','position',[100,100,150,150])
 set_current_fig;
 
 %% make plots divided by datasets
@@ -144,7 +189,8 @@ for celltype= 1:2
                             plot_info.colors_celltype(celltype+1,:), 'o', 'filled', ...
                             'MarkerFaceAlpha', 0.4)
     end
-    ylim([.8 1])
+    ylim([.5 1])
+    yline(.7,'--','color',[.5 .5 .5])
     
     hold off
 end
@@ -185,17 +231,22 @@ if ~isempty(save_data_directory)
     mkdir(save_data_directory)
     cd(save_data_directory)
 
-    image_string = strcat('Silhouettes_scores_',num2str(length(info.mouse_date) - length(missing_data)));
+    image_string = strcat('Silhouettes_scores_',num2str(length(info.mouse_date)));
     saveas(88,[image_string '_datasets.svg']);
     saveas(88,[image_string '_datasets.fig']);
-    saveas(88,[image_string '_datasets.pdf']);
+%     saveas(88,[image_string '_datasets.pdf']);
 
     saveas(90,[image_string '_datasets_scattersem.svg']);
     saveas(90,[image_string '_datasets_scattersem.fig']);
-    saveas(90,[image_string '_datasets_scattersem.pdf']);
+%     saveas(90,[image_string '_datasets_scattersem.pdf']);
 
     exportgraphics(figure(92),strcat('cell_counts_connected_lines_n',num2str(n_mice),'_datasets.pdf'), 'ContentType', 'vector');
     exportgraphics(figure(91),strcat('Silouette_scores_n',num2str(n_mice),'_datasets.pdf'), 'ContentType', 'vector');
+    exportgraphics(figure(88),[image_string '_datasets_histogram.pdf'], 'ContentType', 'vector');
+    exportgraphics(figure(89),[image_string '_datasets_violin.pdf'], 'ContentType', 'vector');
+    exportgraphics(figure(90),[image_string '_datasets_meanscattersem.pdf'], 'ContentType', 'vector');
+    exportgraphics(figure(94),[image_string '_datasets_scatterall_mean.pdf'], 'ContentType', 'vector');
+
 
 
     save('all_sil','all_sil');
