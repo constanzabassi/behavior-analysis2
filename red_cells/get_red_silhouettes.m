@@ -205,6 +205,12 @@ set_current_fig;
 p_val = signrank(cellfun(@nanmean ,{all_silhouettes{:,1}}),cellfun(@nanmean ,{all_silhouettes{:,2}}));
 red_stats.p_val_sign_datasets = p_val;
 
+%get dataset stats!
+for i =1:25; red_stats.dataset{i}.som = get_basic_stats(all_silhouettes{i,1});end
+for i =1:25; red_stats.dataset{i}.pv = get_basic_stats(all_silhouettes{i,2});end
+red_stats.dataset_means.pv = get_basic_stats(cellfun(@mean,{all_silhouettes{:,2}}));
+red_stats.dataset_means.som = get_basic_stats(cellfun(@mean,{all_silhouettes{:,1}}));
+
 figure(92);clf;
 mouse_means = [cellfun(@length ,{all_silhouettes{:,1}});cellfun(@length ,{all_silhouettes{:,2}})];
 for celltype= 1:2
