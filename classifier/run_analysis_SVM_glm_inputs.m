@@ -43,6 +43,11 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
 end
 
 %%
+plot_info.colors = [0.37 0.75 0.49 %light green
+                            0.17 0.35 0.8  %blue
+                            0.82 0.04 0.04 % red  
+                            0.282, 0.239, 0.545]; %dark purple
+
 plot_info.colors = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
 plot_info.minmax = [0.45,.7];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
@@ -52,6 +57,15 @@ savepath = ['V:\Connie\results\SVM\' info.task_event_type '\'];
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     plot_info.labels = {'Active','Passive'};
+    plot_info.colors = [0.16, 0.40, 0.24 %green
+                               0.30 0.58 0.40 
+                               0.13, 0.24, 0.51%blue
+                               0.282, 0.239, 0.545
+                            0.17 0.35 0.8  
+                            0.50, 0.06, 0.10
+                            0.82 0.04 0.04
+                            0.482, 0.408, 0.933];
+
     [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,savepath,{acc_passive,shuff_acc_passive});
 else
     plot_info.labels = {'Active'};
@@ -81,8 +95,19 @@ plot_info.colors_celltype = plot_info.colors;
 mdl_param = all_model_outputs{1,1}{1};
 save_string = info.task_event_type;
 % all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'all_model_outputs');
-plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7]);movegui(gcf,'center')
 
+plot_info.labels = {'Pyr','SOM','PV','All'}; %{'Active'};
+
+%make plot below to compare all cells across active and passive
+%plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7]);movegui(gcf,'center')
+
+if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
+    bins_to_include = 32; %or 
+else
+    bins_to_include = 55;
+end
+plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7],bins_to_include);movegui(gcf,'center');%
+plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,[save_string '_passive'],savepath,[0.45,.7],bins_to_include);movegui(gcf,'center');%
 %% to determine events
 if alignment.active_passive == 2
     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')
