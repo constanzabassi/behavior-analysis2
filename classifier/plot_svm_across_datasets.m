@@ -1,15 +1,15 @@
-function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path,minmax)
+function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path,minmax,bins_to_include)
 overall_mean = [];
 overall_shuff = [];
 
 
 for ce = 1:size(svm_mat,2)
-    mean_across_data = cellfun(@(x) mean(x.accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
+    mean_across_data = cellfun(@(x) mean(x.accuracy(:,1:bins_to_include),1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data = vertcat(mean_across_data{1,:});
     overall_mean(ce,:) = mean(mean_across_data,1);
     mean_data(ce,:,:) = mean_across_data;
 
-    mean_across_data_shuff = cellfun(@(x) mean(x.shuff_accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
+    mean_across_data_shuff = cellfun(@(x) mean(x.shuff_accuracy(:,1:bins_to_include),1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data_shuff = vertcat(mean_across_data_shuff{1,:});
     overall_shuff(ce,:) = mean(mean_across_data_shuff,1);
     mean_data2(ce,:,:) = mean_across_data_shuff;
