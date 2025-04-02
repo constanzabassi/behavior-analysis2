@@ -26,5 +26,5 @@ elseif strcmp(mdl_param.data_type,'deconv')
         X = sum(squeeze(aligned_data(:,cells_ids,event_onset+current_frame:size(aligned_data,3))),3); %sum across frames
     end
 end
-X = normc(X); %normalize columns (features/neurons)
-% X = zscore(X);
+% X = normc(X); %normalize columns (features/neurons)
+X = zscore(X);
