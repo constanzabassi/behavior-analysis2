@@ -56,10 +56,17 @@ hold off
 
 mkdir([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
 cd([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
+
+if nargin > 7
+    string_to_use = varargin{1};
+else
+    string_to_use = '';
+end
+
 % save('roc_mdl','roc_mdl');
-saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.png'));
-saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.svg'));
-exportgraphics(gcf,strcat('SVM_weights_across_cells_bin',num2str(bin_id),'.pdf'), 'ContentType', 'vector');
+saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.png'));
+saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.svg'));
+exportgraphics(gcf,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
 
 % --- NEW FINAL FIGURE FOR AVERAGE ACROSS DATASETS ---
 figure(573); clf;
@@ -121,9 +128,5 @@ for i = 1:num_labels
 end
 set(gca,'fontsize',12);
 set(gcf,'position',[100,100,200,200])
-if nargin > 7
-    string_to_use = varargin{1};
-else
-    string_to_use = '';
-end
+
 exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');

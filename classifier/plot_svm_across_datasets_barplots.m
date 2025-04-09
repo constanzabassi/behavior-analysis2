@@ -120,7 +120,7 @@ if ~isempty(minmax)
 end
 yticks([.4:.1:1])
 yline(.5,'--k');
-ylabel('Decoding Accuracy'); box off
+ylabel('% Accuracy'); box off
 %title('Decoding accuracy across cell types','FontWeight','Normal');
 set_current_fig;
 set(gca,'FontSize',12);

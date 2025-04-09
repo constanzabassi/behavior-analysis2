@@ -123,7 +123,7 @@ plot_info.labels = {'Pyr','SOM','PV','All'}; %{'Active'};
 %plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7]);movegui(gcf,'center')
 
 %plot active
-plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.85],bins_to_include);movegui(gcf,'center');%
+plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
 
 if ~isempty(svm_mat2) %plot passive across cell types
     plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,[save_string '_passive'],savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
