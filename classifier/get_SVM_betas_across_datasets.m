@@ -31,11 +31,12 @@ for d = 1:num_datasets
 end
 
 if nargin > 2
+    
+    beta2 = vertcat(varargin{1,1}{1,1});
     num_datasets = size(beta2, 2);
     num_splits = size(beta2{1}, 1);
     num_iters = size(beta2{1}, 2);
     num_bins = size(beta2{1}, 3);
-    beta2 = vertcat(varargin{1,1}{1,1}{1,m}{1:10,1:50,ce});
     % Initialize new structure
     betas2 = cell(num_splits, num_datasets, num_bins);
     for d = 1:num_datasets

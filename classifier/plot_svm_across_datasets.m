@@ -87,5 +87,6 @@ if ~isempty(save_path)
     cd(save_path)
     saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.svg'));
     saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.png'));
+    exportgraphics(gcf,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.pdf'), 'ContentType', 'vector');
 end
 

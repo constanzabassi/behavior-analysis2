@@ -1,4 +1,4 @@
-function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,data_type,svm_info,celtype)
+function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,data_type,svm_info,celtype,varargin)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 
@@ -121,4 +121,9 @@ for i = 1:num_labels
 end
 set(gca,'fontsize',12);
 set(gcf,'position',[100,100,200,200])
-exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),'.pdf'), 'ContentType', 'vector');
+if nargin > 7
+    string_to_use = varargin{1};
+else
+    string_to_use = '';
+end
+exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');

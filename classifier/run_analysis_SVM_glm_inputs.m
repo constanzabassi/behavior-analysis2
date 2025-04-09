@@ -7,19 +7,15 @@ active_events = [7,39,71,132,146];%
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 %% LOAD THE DATA!
-%choice: [0 1 2 3 4 5 6 7 9 10 12 13 14 15 16 17 18 19 20 21 23 24]+1 %to add 11 
-% sound: [0 1 3 4 5 6 7 9 12 13 14 15 16 17 18 19 20 21 23 24]+1 %to add 2/10/11
-
-% outcome:[0 1 3 4 5 6 9 10 12 13 14 15 16 17 18 23 24]+1 to add 11/19
-%photostim: setdiff(1:25,[11,25]) % to add 6?/11 (25 is control)
-
 % as if 4/9/25 need to update photostim/outcome
 % current_mice = setdiff(1:25,[9,23]);%sounds!! 
-% current_mice = setdiff(1:25,[10,12,6,25]);%%photostim 
-current_mice = setdiff(1:25,[9,23]); %choice
+current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
+% current_mice = setdiff(1:25,[9,23]); %choice
+% current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
+
 
 info.chosen_mice = current_mice;
-info.task_event_type = 'choice'; %'sound_category';
+info.task_event_type = 'photostim'; %'sound_category';
 
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc');
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc');
@@ -78,6 +74,12 @@ else
     plot_info.labels = {'Active'};
     [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,savepath);
 end
+
+if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
+    bins_to_include = 32; %or 
+else
+    bins_to_include = 55;
+end
 %% compare active vs passive using all cells
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     if ~isempty(svm_mat2)
@@ -96,8 +98,11 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
             svm_acc{i, 2}.shuff_accuracy = svm_mat2{i, 4}.shuff_accuracy(:,1:length(all_model_outputs{1,1}{1}.binns)); % Combine row from B
         end
     end
-    plot_info.colors = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
-    
+    if strcmp('sound_category',info.task_event_type)
+        plot_info.colors_celltype = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
+    else
+        plot_info.colors_celltype = [0.545, 0.271, 0.075; 1 0.549 0]
+    end
     plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,[save_string '_active_passive'],savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
 end
 %%
@@ -117,14 +122,8 @@ plot_info.labels = {'Pyr','SOM','PV','All'}; %{'Active'};
 %make plot below to compare all cells across active and passive
 %plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.7]);movegui(gcf,'center')
 
-if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
-    bins_to_include = 32; %or 
-else
-    bins_to_include = 55;
-end
-
 %plot active
-plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
+plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,save_string,savepath,[0.45,.85],bins_to_include);movegui(gcf,'center');%
 
 if ~isempty(svm_mat2) %plot passive across cell types
     plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,[save_string '_passive'],savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
@@ -156,10 +155,17 @@ plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data
 %also plot one bin before the onset
 onset = event_onsets(onset_id)-1;%event_onsets(find(ismember(mdl_param.event_onset,active_events)))-1;
 plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
-%%
-comp_window = 0; %1sec bc bins of 3
-[svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type],savepath,[.4,1]);
 
+if ~isempty(svm_mat2)
+    onset = event_onsets(onset_id);%event_onsets(find(ismember(mdl_param.event_onset,active_events)));
+    plot_dist_weights(onset, beta_mat_pass,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],'_passive');
+end
+%%
+comp_window = 9; %1sec bc bins of 3
+[svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type],savepath,[.4,1]);
+if ~isempty(svm_mat2)
+    [~,~] = plot_svm_across_datasets_barplots(svm_mat2,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type '_passive'],savepath,[.4,1]);
+end
 %%
 % %% to determine events
 % if alignment.active_passive == 2
