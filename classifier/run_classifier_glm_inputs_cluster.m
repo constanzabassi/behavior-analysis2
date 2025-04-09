@@ -283,7 +283,9 @@ end
 
 % mkdir([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 % cd([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
-cd(strcat(base,'/decoding/SVM/'))
+
+mkdir(strcat(base,'/decoding/SVM/'));
+cd(strcat(base,'/decoding/SVM/'));
 
 if mdl_param.field_to_predict == 1
     save_string = 'outcome';
