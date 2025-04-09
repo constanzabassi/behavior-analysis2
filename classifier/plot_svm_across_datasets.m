@@ -28,27 +28,46 @@ for ce = 1:size(svm_mat,2)
         %size(time))
 
     SEM= std(squeeze(mean_data(ce,:,:)))/sqrt(size(mean_data(ce,:,:),2)); %first number is observations (time)/ maybe datasets or subsamples
-    h1 = shadedErrorBar(1:size(overall_mean,2),smooth(overall_mean(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'color', plot_info.colors_celltype(ce,:)});
+    h1 = shadedErrorBar(1:size(overall_mean,2),smooth(overall_mean(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', plot_info.colors_celltype(ce,:)});
     legend_handles(end+1) = h1.mainLine; % Collect the handle of the main line
     legend_labels{end+1} = plot_info.labels{ce}; % Collect the corresponding label
 
 
     SEM= std(squeeze(mean_data2(ce,:,:)))/sqrt(size(mean_data2(ce,:,:),2));
-    shadedErrorBar(1:size(overall_mean,2),smooth(overall_shuff(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'color', [0.2 0.2 0.2]*ce});
+    shadedErrorBar(1:size(overall_mean,2),smooth(overall_shuff(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
 
     for i = 1:length(event_onsets)
-        xline(event_onsets(i),'--k','LineWidth',1.5)
-        if i == 4
-            xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
-        end
+        xline(event_onsets(i),'--k','LineWidth',1.2)
+%         if i == 4
+%             xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
+%         end
     end
 yline(.5,'--k');
 
 end
-% Create the legend using the collected handles and labels
-legend(legend_handles, legend_labels,'location','north','Box', 'off'); 
+% % Create the legend using the collected handles and labels
+% legend(legend_handles, legend_labels,'location','north','Box', 'off'); 
+
+% Get current axis limits
+x_range = xlim;
+y_range = ylim;
+y_offset_base = .1;
+% Calculate base text position
+text_x = x_range(2) -.09 * diff(x_range);
+text_y = y_range(2) - .2 * diff(y_range);
+
+% Auto-calculate evenly spaced y-offsets
+num_labels = size(svm_mat,2);
+y_offsets = linspace(0, 0.1 * (num_labels - 1), num_labels); % Adjusted scaling
+% Place text labels
+for i = 1:num_labels
+    text(text_x, text_y - y_offsets(i) * diff(y_range), legend_labels{i}, ...
+         'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
+end
+
 
 ylabel({'% Accuracy'})
+xlabel('Time (s)')
 xlim([1 size(overall_mean,2)])
 [second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
 xticks([second_ticks]);
@@ -58,7 +77,10 @@ if ~isempty(minmax)
 end
 
 set(gca, 'box', 'off')
-set(gca,'fontsize', 14)
+% set_current_fig;
+set(gca,'FontSize',12);
+set(gcf,'position',[100,100,300,200])
+
 
 if ~isempty(save_path)
     mkdir(save_path )
