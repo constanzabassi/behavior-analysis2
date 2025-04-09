@@ -23,6 +23,7 @@ info.task_event_type = 'choice'; %'sound_category';
 
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc');
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc');
+beta_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'betas');
 
 info.chosen_mice = 2;
 all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
@@ -33,6 +34,7 @@ event_onsets = find(histcounts(active_events,all_model_outputs{1,1}{1}.binns+act
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     acc_passive = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'acc');
     shuff_acc_passive = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'shuff_acc');
+    beta_passive = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'betas');
     info.chosen_mice = 2;
 
 %     all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
@@ -58,6 +60,7 @@ plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
 savepath = ['V:\Connie\results\SVM\updated\' info.task_event_type '\'];
+info.savepath = savepath;
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     plot_info.labels = {'Active','Passive'};
@@ -126,30 +129,62 @@ plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,save
 if ~isempty(svm_mat2) %plot passive across cell types
     plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,[save_string '_passive'],savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
 end
-%% to determine events
-if alignment.active_passive == 2
-    load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')
-    [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30,2);
-    events = determine_onsets(left_padding,right_padding,1:3);
-        alignment.type = 'stimulus';
-    alignment.data_type = 'deconv';
-    [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
-
+%% plot beta weights
+load('V:\Connie\results\opto_2024\context\data_info\all_celltypes.mat');
+all_celltypes_updated = all_celltypes(info.chosen_mice);
+info.savestr = 'betas';
+if ~isempty(svm_mat2)
+    [beta_mat,beta_mat_pass] = get_SVM_betas_across_datasets(info,beta_active,{beta_passive});
 else
-    load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR\imaging.mat')
-    [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30);
-    events = determine_onsets(left_padding,right_padding,1:5);
-    alignment.type = 'pre';
-    alignment.data_type = 'deconv';
-    [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
+    [beta_mat] = get_SVM_betas_across_datasets(info,beta_active);
+end
+onset_id = [];
+if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
+    onset_id = 1;
+elseif strcmp('choice',info.task_event_type)
+    onset_id = 4;
+else
+    onset_id = 5;
 end
 
-mdl_param.event_onset = events(4);
-if alignment.active_passive == 2
- frame_length =  events(3)+right_padding(3)-mdl_param.event_onset;%150 outcome?;%for choice; %used to be 281 with update is 260
-else
-frame_length =  events(5)+right_padding(5)-mdl_param.event_onset;%150 outcome?;%for choice; %used to be 281 with update is 260
-end
+onset = event_onsets(onset_id);%event_onsets(find(ismember(mdl_param.event_onset,active_events)));
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
 
-mdl_param.frames_around = -mdl_param.event_onset+1:frame_length; %-mdl_param.event_onset+1:(frame_length)-mdl_param.event_onset+1;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
-mdl_param.binns = mdl_param.frames_around(1):3:mdl_param.frames_around(end); %bins in terms of event onset
+%also plot one bin after the onset
+onset = event_onsets(onset_id)+1;%event_onsets(find(ismember(mdl_param.event_onset,active_events)))+1;
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+%also plot one bin before the onset
+onset = event_onsets(onset_id)-1;%event_onsets(find(ismember(mdl_param.event_onset,active_events)))-1;
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+%%
+comp_window = 0; %1sec bc bins of 3
+[svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type],savepath,[.4,1]);
+
+%%
+% %% to determine events
+% if alignment.active_passive == 2
+%     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')
+%     [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30,2);
+%     events = determine_onsets(left_padding,right_padding,1:3);
+%         alignment.type = 'stimulus';
+%     alignment.data_type = 'deconv';
+%     [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
+% 
+% else
+%     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\VR\imaging.mat')
+%     [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging,30);
+%     events = determine_onsets(left_padding,right_padding,1:5);
+%     alignment.type = 'pre';
+%     alignment.data_type = 'deconv';
+%     [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging,align_info,alignment_frames,left_padding,right_padding,alignment); % sample_data is n_trials x n_cells x n_frames
+% end
+% 
+% mdl_param.event_onset = events(4);
+% if alignment.active_passive == 2
+%  frame_length =  events(3)+right_padding(3)-mdl_param.event_onset;%150 outcome?;%for choice; %used to be 281 with update is 260
+% else
+% frame_length =  events(5)+right_padding(5)-mdl_param.event_onset;%150 outcome?;%for choice; %used to be 281 with update is 260
+% end
+% 
+% mdl_param.frames_around = -mdl_param.event_onset+1:frame_length; %-mdl_param.event_onset+1:(frame_length)-mdl_param.event_onset+1;%-mdl_param.event_onset+1:mdl_param.event_onset-51 == -140:90; %frames around onset 
+% mdl_param.binns = mdl_param.frames_around(1):3:mdl_param.frames_around(end); %bins in terms of event onset
