@@ -37,7 +37,7 @@ abs_diff = abs(diff(combos, 1, 2));
 [~, idx] = sort(abs_diff, 'ascend');
 sorted_combinations = combos(idx, :);
 
-ts_str = plot_info.labels;
+ts_str = {plot_info.labels{1,:}, 'Shuff'};
 
 figure(101);clf; set(gcf,'color','w'); hold on; yma = -Inf;
 w = 0.1; 
@@ -98,9 +98,9 @@ for t = 1:length(tw)
         plot_data{t,c} = pval;
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
-        if pval < 0.05 && KW_Test.celltypes_p_val < 0.05
+        if pval < 0.05/length(combos)
             sig_ct =sig_ct+1;
-            plot_pval_star(t,1+(sig_ct*.04), pval,x_line_vals,0.01); %yl(2)+3
+            plot_pval_star(t,y_val+(.03*sig_ct), pval,x_line_vals,0.01); %yl(2)+3
         end
 
     end
@@ -123,6 +123,8 @@ yline(.5,'--k');
 ylabel('Decoding Accuracy'); box off
 %title('Decoding accuracy across cell types','FontWeight','Normal');
 set_current_fig;
+set(gca,'FontSize',12);
+set(gcf,'position',[100,100,200,200])
 
 
 if ~isempty(save_path)
@@ -130,5 +132,7 @@ if ~isempty(save_path)
     cd(save_path)
     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.svg'));
     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.png'));
+    exportgraphics(gcf,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.pdf'), 'ContentType', 'vector');
+
 end
 
