@@ -5,7 +5,7 @@ for n = 1:length(info.chosen_mice)
     mm
     ss = info.serverid(info.chosen_mice(n));
     ss = ss {1,1};
-    base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/'));
+    base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/SVM/'));
     filepath = ([base task_event_type '_' svm_result_to_load '.mat']);
     loaded_svm_result{n} = load(filepath).(svm_result_to_load);
 
