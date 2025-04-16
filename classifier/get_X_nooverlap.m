@@ -27,4 +27,4 @@ elseif strcmp(mdl_param.data_type,'deconv')
     end
 end
 % X = normc(X); %normalize columns (features/neurons)
-X = zscore(X);
+% X = zscore(X);

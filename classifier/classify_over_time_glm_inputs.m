@@ -13,6 +13,14 @@ for t = 1:length(mdl_param.binns)%(timepoints)
     X = get_X_nooverlap (aligned_data, mdl_param,selected_frames(t));
     X_test = get_X_nooverlap (test_aligned, mdl_param,selected_frames(t));
 
+    %Z-score the data
+    mu = mean(X);
+    sigma = std(X);
+    sigma(sigma == 0) = 1;
+    
+    X = (X - mu) ./ sigma;
+    X_test = (X_test - mu) ./ sigma;
+
 
     %call classifier model
     [~, accuracy(t),mdl{t}] = traintestClassifier_cb(X, Y,[1;2],'SVM',{X_test,Y_test}); %accuracy(mouse,t)
