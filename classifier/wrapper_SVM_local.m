@@ -76,6 +76,7 @@ else
     mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
 
     load('V:\Connie\results\opto_2024\context\data_info/all_celltypes.mat'); %datasets organized based on info in the same folder!
-    [output] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
+%     [output] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
+    [output,output_shuff] = run_classifier_glm_inputs_local_test(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
 
 end

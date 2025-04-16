@@ -1,5 +1,5 @@
 %% SVM predict choice using cell type activity
-function [acc,shuff_acc] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info)
+function [acc,shuff_acc] = run_classifier_glm_inputs_local_test(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 acc = {};
@@ -89,7 +89,7 @@ end
             
 %             [all_conditions, condition_array_trials] = divide_trials(imaging_train_input); % (ex_imaging); %divide trials into all possible conditions
             %  condition_array_trials (trial_ids, correct or not, left or not, stim or not)
-                        
+                        fieldss = fieldnames(imaging_train_input(1).virmen_trial_info);
             %subsample cells!
             if ce <4
                 num_observations_needed = min(cellfun(@length,struct2cell(all_celltypes{1,m}))); %min number of cells 
@@ -101,59 +101,62 @@ end
             %BALANCE TRIALS!!! THIS IS THE PART THAT MIGHT DIFFER FROM WHAT I HAD BEFORE (COPYING TO GLM DECODER CODE)            
             if count == 1 %keep the trials the same across cell types!
                 %load same trials used in glm!!!
-                if mdl_param.field_to_predict == 1
-                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_outcome.mat'));
-                    selected_trials = decoder_results.aligned.outcome(it).results.alignment.trials_used.train;
-                    selected_trials_test = decoder_results.aligned.outcome(it).results.alignment.trials_used.test;
-                    mdl_param.selected_trials = selected_trials;
-                    mdl_param.selected_trials_test = selected_trials_test;
-                elseif mdl_param.field_to_predict == 2
-                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_choice.mat'));
-                    selected_trials = decoder_results.aligned.choice(it).results.alignment.trials_used.train;
-                    selected_trials_test = decoder_results.aligned.choice(it).results.alignment.trials_used.test;
-                    mdl_param.selected_trials = selected_trials;
-                    mdl_param.selected_trials_test = selected_trials_test;
-                elseif mdl_param.field_to_predict == 3
-                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_sound_category.mat'));
-                    selected_trials = decoder_results.aligned.sound_category(it).results.alignment.trials_used.train;
-                    selected_trials_test = decoder_results.aligned.sound_category(it).results.alignment.trials_used.test;
-                    mdl_param.selected_trials = selected_trials;
-                    mdl_param.selected_trials_test = selected_trials_test;
-                elseif mdl_param.field_to_predict == 4
-                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_photostim.mat'));
-                    selected_trials = decoder_results.aligned.photostim(it).results.alignment.trials_used.train;
-                    selected_trials_test = decoder_results.aligned.photostim(it).results.alignment.trials_used.test;
-                    mdl_param.selected_trials = selected_trials;
-                    mdl_param.selected_trials_test = selected_trials_test;
-                end
+                
+                    load('V:\Connie\results\opto_sound_2025\context\sound_info\active_all_trial_info_sounds.mat');
+                    
+                    % NEW TRAIN/TESTING SETS!
+                    load(strcat(dir_base, '/condition_array_trials.mat'));
+                    
+                    true_ctrl_trials = [all_trial_info_sounds(24).ctrl.trial_id];
+                    true_stim_trials = [all_trial_info_sounds(24).opto.trial_id];
+                    
+                    possible_controls = find(ismember(condition_array_trials(:,1),true_ctrl_trials));
+                    possible_stims = find(condition_array_trials(:,4));
+                    updated_condition_array = condition_array_trials([possible_stims;possible_controls],:,:,:);
 
-            else %MAKE SURE YOU USE THE SAME TRIALS ACROSS CELL TYPES 
-                mdl_param.selected_trials = selected_trials;
-                mdl_param.selected_trials_test = selected_trials_test;
+                    
+                    imaging_spk_updated = make_imaging_from_trials(updated_condition_array, imaging);
+                    
+                    [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging_spk_updated,30);
+                    [aligned_imaging,imaging_array,align_info] = align_behavior_data (imaging_spk_updated,align_info,alignment_frames,left_padding,right_padding,alignment);
+                    [~, condition_array] = divide_trials_updated (imaging_spk_updated,{fieldss{mdl_param.field_to_predict}});
+                    [selected_trials_new, ~, ~, ~] = get_balanced_field_trials(imaging_spk_updated, [3,4],14);
+                    
+                    selected_trials2 = selected_trials_new;
+                    rearraged_trials = selected_trials2(randperm(length(selected_trials2)));
+                    
+                    
+                    mdl_Y = condition_array(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
+                    mdl_X = aligned_imaging(rearraged_trials,:,:);
+                    
+                    mdl_params.selected_trials = rearraged_trials;
+                    
+                    %repeat for test
+                    load(strcat(base_testing, '/condition_array_trials.mat'));
+                    possible_controls = find(ismember(condition_array_trials(:,1),true_ctrl_trials));
+                    possible_stims = find(condition_array_trials(:,4));
+                    updated_condition_array = condition_array_trials([possible_stims;possible_controls],:,:,:);
+                    
+                    imaging_spk_updated_test = make_imaging_from_trials(updated_condition_array, imaging);
+                    
+                    [align_info,alignment_frames,left_padding,right_padding] = find_align_info_updated (imaging_spk_updated_test,30);
+                    [aligned_imaging_test,imaging_array,align_info] = align_behavior_data (imaging_spk_updated_test,align_info,alignment_frames,left_padding,right_padding,alignment);
+                    [~, condition_array_test] = divide_trials_updated (imaging_spk_updated_test,{fieldss{mdl_param.field_to_predict}});
+                    [selected_trials_new_test, ~, ~, ~] = get_balanced_field_trials(imaging_spk_updated_test, [4],6*2);
+                    
+                    
+                    selected_trials_test2 = selected_trials_new_test;
+                    rearraged_trials = selected_trials_test2(randperm(length(selected_trials_test2)));
+                    
+                    mdl_Y_test = condition_array_test(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
+                    mdl_X_test = aligned_imaging_test(rearraged_trials,:,:);
+                    mdl_params.selected_trials_test = rearraged_trials;
+%             else %MAKE SURE YOU USE THE SAME TRIALS ACROSS CELL TYPES 
+%                 mdl_param.selected_trials = selected_trials;
+%                 mdl_param.selected_trials_test = selected_trials_test;
             end
-            mdl_param.selected_trials = selected_trials;
-            mdl_param.selected_trials_test = selected_trials_test;
-    
-            %get X and Y ready for classifier
-            fieldss = fieldnames(imaging_train_input(1).virmen_trial_info);
-%             [~, condition_array] = divide_trials_updated (ex_imaging,{fieldss{mdl_param.field_to_predict}});
-            [~, condition_array] = divide_trials_updated (imaging_train_input,{fieldss{mdl_param.field_to_predict}});
             
-            %shuffle trial order before putting it into the matrix
-            selected_trials = find(mdl_param.selected_trials);
-            rearraged_trials = selected_trials(randperm(length(selected_trials)));
-
-            mdl_Y = condition_array(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
-            mdl_X = aligned_imaging(rearraged_trials,:,:);
-
-            %repeat for test trials!
-            [~, condition_array_test] = divide_trials_updated (imaging_test_input,{fieldss{mdl_param.field_to_predict}});
-            %shuffle trial order before putting it into the matrix
-            selected_trials_test = find(mdl_param.selected_trials_test);
-            rearraged_trials = selected_trials_test(randperm(length(selected_trials_test)));
-
-            mdl_Y_test = condition_array_test(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
-            mdl_X_test = aligned_imaging_test(rearraged_trials,:,:);
+    
             
             fprintf(['split #: ', num2str(splits),' || subsample #: ', num2str(it),' || mouse :' , num2str(info.mouse_date{1,m}), ' ||    celltype :' num2str(ce), ' ||  size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
             output{splits,it,ce} = classify_over_time_glm_inputs(mdl_X,mdl_Y, mdl_param,mdl_X_test,mdl_Y_test);
@@ -183,27 +186,18 @@ end
 % mkdir([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 % cd([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 
-mkdir(strcat(base,'/decoding_test/SVM/'));
-cd(strcat(base,'/decoding_test/SVM/'));
-
-if mdl_param.field_to_predict == 1
-    save_string = 'outcome';
-elseif mdl_param.field_to_predict == 2
-    save_string = 'choice';
-elseif mdl_param.field_to_predict == 3
-    save_string = 'sound_category';
-elseif mdl_param.field_to_predict == 4
-    save_string = 'photostim';
-end
-
-
-svm_info = info;
-% save(strcat(save_string,'_svm_info'),'svm_info','-v7.3');
-% save(strcat(save_string,'_betas'),'betas','-v7.3');
-% save(strcat(save_string,'_all_model_outputs'),'all_model_outputs','-v7.3');
-% save(strcat(save_string,'_acc'),'acc','-v7.3');
-% save(strcat(save_string,'_shuff_acc'),'shuff_acc','-v7.3');
-
-
-%SAVE SVM OUTPUT! TOO LARGE!!!!!!!!!!
-% save(strcat(save_string,'_output'),'output','-v7.3');
+% mkdir(strcat(base,'/decoding_test/SVM/'));
+% cd(strcat(base,'/decoding_test/SVM/'));
+% 
+% if mdl_param.field_to_predict == 1
+%     save_string = 'outcome';
+% elseif mdl_param.field_to_predict == 2
+%     save_string = 'choice';
+% elseif mdl_param.field_to_predict == 3
+%     save_string = 'sound_category';
+% elseif mdl_param.field_to_predict == 4
+%     save_string = 'photostim';
+% end
+% 
+% 
+% svm_info = info;
