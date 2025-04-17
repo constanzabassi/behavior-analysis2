@@ -9,13 +9,13 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 %% LOAD THE DATA!
 % as if 4/9/25 need to update photostim/outcome
 % current_mice = setdiff(1:25,[9,23]);%sounds!! 
-current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
+% current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
 % current_mice = setdiff(1:25,[9,23]); %choice
-% current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
+current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
 
 
 info.chosen_mice = current_mice;
-info.task_event_type = 'photostim'; %'sound_category';
+info.task_event_type = 'choice'; %'sound_category';
 
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc');
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc');
@@ -51,7 +51,7 @@ plot_info.colors = [0.37 0.75 0.49 %light green
                             0.282, 0.239, 0.545]; %dark purple
 
 % plot_info.colors = [0.282, 0.239, 0.545;0.482, 0.408, 0.933];% [0.780, 0.082, 0.522;1.000, 0.412, 0.706]--'mediumvioletred', 'hotpink'; %[0.275,0.510,0.706;0.529,0.808,0.980];-- 'steelblue', 'lightskyblue'   %[0.545, 0.271, 0.075; 1 0.549 0]--brown and orange %[0.282, 0.239, 0.545;0.482, 0.408, 0.933];--'darkslateblue','mediumslateblue'
-plot_info.minmax = [0.45,.7];
+plot_info.minmax = [0.45,.9];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 

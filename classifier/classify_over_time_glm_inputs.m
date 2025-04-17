@@ -26,7 +26,6 @@ for t = 1:length(mdl_param.binns)%(timepoints)
     [~, accuracy(t),mdl{t}] = traintestClassifier_cb(X, Y,[1;2],'SVM',{X_test,Y_test}); %accuracy(mouse,t)
     %repeat but with suffled Y labels
     Y_shuff=Y(randperm(length(Y)));
-%     Y_test_shuff=Y_test(randperm(length(Y_test)));
     [~, shuff_accuracy(t),shuff_mdl{t}] = trainClassifier_cb(X, Y_shuff,[1;2],'SVM',{X_test,Y_test}); 
 
 end
