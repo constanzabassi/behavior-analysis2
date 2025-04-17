@@ -127,9 +127,13 @@ end
                     mdl_param.selected_trials_test = selected_trials_test;
                 end
 
-            else %MAKE SURE YOU USE THE SAME TRIALS ACROSS CELL TYPES 
-                mdl_param.selected_trials = selected_trials;
-                mdl_param.selected_trials_test = selected_trials_test;
+                selected_trials_id = find(mdl_param.selected_trials);
+                rearraged_trials = selected_trials_id(randperm(length(selected_trials_id)));
+
+                selected_trials_test_id = find(mdl_param.selected_trials_test);
+                rearraged_trials_test = selected_trials_test_id(randperm(length(selected_trials_test_id)));
+               
+            
             end
             mdl_param.selected_trials = selected_trials;
             mdl_param.selected_trials_test = selected_trials_test;
@@ -138,22 +142,13 @@ end
             fieldss = fieldnames(imaging_train_input(1).virmen_trial_info);
 %             [~, condition_array] = divide_trials_updated (ex_imaging,{fieldss{mdl_param.field_to_predict}});
             [~, condition_array] = divide_trials_updated (imaging_train_input,{fieldss{mdl_param.field_to_predict}});
-            
-            %shuffle trial order before putting it into the matrix
-            selected_trials = find(mdl_param.selected_trials);
-            rearraged_trials = selected_trials(randperm(length(selected_trials)));
-
             mdl_Y = condition_array(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
             mdl_X = aligned_imaging(rearraged_trials,:,:);
 
             %repeat for test trials!
             [~, condition_array_test] = divide_trials_updated (imaging_test_input,{fieldss{mdl_param.field_to_predict}});
-            %shuffle trial order before putting it into the matrix
-            selected_trials_test = find(mdl_param.selected_trials_test);
-            rearraged_trials = selected_trials_test(randperm(length(selected_trials_test)));
-
-            mdl_Y_test = condition_array_test(rearraged_trials,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
-            mdl_X_test = aligned_imaging_test(rearraged_trials,:,:);
+            mdl_Y_test = condition_array_test(rearraged_trials_test,2);%condition_array_trials_t(find(mdl_param.selected_trials),2); %get trained Y labels
+            mdl_X_test = aligned_imaging_test(rearraged_trials_test,:,:);
             
             fprintf(['split #: ', num2str(splits),' || subsample #: ', num2str(it),' || mouse :' , num2str(info.mouse_date{1,m}), ' ||    celltype :' num2str(ce), ' ||  size Y : ' num2str(size(mdl_Y)) ' || size X : '  num2str(size(mdl_X)) '\n']);
             output{splits,it,ce} = classify_over_time_glm_inputs(mdl_X,mdl_Y, mdl_param,mdl_X_test,mdl_Y_test);

@@ -28,7 +28,7 @@ alignment.single_event = 0;
 mdl_param.bin = 3; %bin size in terms of frames
 % mdl_param.fields_to_balance = [2,3]; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {'is_stim_trial'}=4
 mdl_param.field_to_predict = decoding_type; %{'correct'}=1 {'left_turn'}=2 {'condition'}=3 {'is_stim_trial'}=4
-mdl_param.num_iterations = 50; %number of times to subsample
+mdl_param.num_iterations = 10; %number of times to subsample (normally 50)
 mdl_param.data_type = alignment.data_type;
 
 
@@ -76,7 +76,7 @@ else
     mdl_param.binns = mdl_param.frames_around(1):mdl_param.bin:mdl_param.frames_around(end); %bins in terms of event onset
 
     load('V:\Connie\results\opto_2024\context\data_info/all_celltypes.mat'); %datasets organized based on info in the same folder!
-%     [output] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
-    [output,output_shuff] = run_classifier_glm_inputs_local_test(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
+    [output] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
+%     [output,output_shuff] = run_classifier_glm_inputs_local_test(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info);
 
 end
