@@ -1,4 +1,4 @@
-function [trainedClassifier, validationAccuracy,classification] = traintestClassifier_cb(trainingData, response,class_names,class_type,varargin)
+function [trainedClassifier, validationAccuracy,classification, accuracytraining] = traintestClassifier_cb(trainingData, response,class_names,class_type,varargin)
 %UPDATED JAN 2025- THIS CODE WILL USE INPUTS THE SAME WAY THE GLM MODEL
 %SEPARATED DATA (10 SPLITS EACH WITH 70/30 TRAIN/TEST)
 % ** varargin relates only to using decay  
@@ -54,7 +54,7 @@ if strcmp(class_type,'SVM')
         response, ...
         'KernelFunction', 'linear', ...
         'KernelScale', 'auto', ...
-        'BoxConstraint', 1);%, ...
+        'BoxConstraint', 0.1);%, ...
 %         'ClassNames', class_names);
 elseif strcmp(class_type,'LDA')
     delete_id=[];
@@ -101,6 +101,14 @@ predictedLabels = svmPredictFcn(testingData);
 accuracy = mean(predictedLabels == testingResponse); 
 % Store results for this split 
 validationAccuracy = accuracy;
+
+%training accuracy
+predictedLabelstraining = svmPredictFcn(trainingData); 
+accuracytraining = mean(predictedLabelstraining == response);
+
+
+
+
 % results(i).model = classification; 
 % results(i).predictions = predictedLabels; 
 % results(i).accuracy = accuracy;
