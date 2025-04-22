@@ -1,5 +1,5 @@
 %% SVM predict choice using cell type activity
-function [acc,shuff_acc] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info)
+function [acc,shuff_acc,output] = run_classifier_glm_inputs_local(current_mouse , save_string_glm,all_celltypes,mdl_param, alignment,info)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 acc = {};
@@ -156,13 +156,21 @@ end
             % gete accuracy!
             acc{splits,it,ce} = output{splits,it,ce}.accuracy;
             shuff_acc{splits,it,ce} = output{splits,it,ce}.shuff_accuracy;
+            mdl_results{splits, it, ce}.train_accuracy = output{splits, it, ce}.train_accuracy;
+            mdl_results{splits, it, ce}.shuffled_train_accuracy = output{splits, it, ce}.shuff_train_accuracy;
+            mdl_results{splits, it, ce}.BoxConstraints = output{splits, it, ce}.mdl{1, 1}.BoxConstraints(1);
+
+
             %get betas across all celltypes
             if ce == 4
                 for bin = 1:length(output{splits,it,ce}.mdl)
-                    betas{splits,it,bin} = output{splits,it,ce}.mdl{1,bin}.Beta;     
+                    betas{splits,it,bin} = output{splits,it,ce}.mdl{1,bin}.Beta; 
+                    mdl_results{splits, it, ce}.bin(bin).IsSupportVector = output{splits, it, ce}.mdl{1, bin}.IsSupportVector;
+                    mdl_results{splits, it, ce}.bin(bin).Alpha = output{splits, it, ce}.mdl{1, bin}.Alpha;
+                    mdl_results{splits, it, ce}.bin(bin).Bias = output{splits, it, ce}.mdl{1, bin}.Bias;
                 end
             end
-            clear output
+%             clear output
             all_model_outputs{splits,it,ce} = mdl_param;
         end
     end

@@ -4,6 +4,7 @@ possible_celltypes = fieldnames(all_celltypes{1,1});
 
 acc = {};
 shuff_acc = {};
+mdl_results = {}
 for m = current_mouse
 %     ss = info.server(m);
 %     ss = ss {1,1};
@@ -150,10 +151,17 @@ end
             % gete accuracy!
             acc{splits,it,ce} = output{splits,it,ce}.accuracy;
             shuff_acc{splits,it,ce} = output{splits,it,ce}.shuff_accuracy;
+            mdl_results{splits, it, ce}.train_accuracy = output{splits, it, ce}.train_accuracy;
+            mdl_results{splits, it, ce}.shuffled_train_accuracy = output{splits, it, ce}.shuff_train_accuracy;
+            mdl_results{splits, it, ce}.BoxConstraints = output{splits, it, ce}.mdl{1, 1}.BoxConstraints(1);
+
             %get betas across all celltypes
             if ce == 4
                 for bin = 1:length(output{splits,it,ce}.mdl)
-                    betas{splits,it,bin} = output{splits,it,ce}.mdl{1,bin}.Beta;     
+                    betas{splits,it,bin} = output{splits,it,ce}.mdl{1,bin}.Beta; 
+                    mdl_results{splits, it, ce}.bin(bin).IsSupportVector = output{splits, it, ce}.mdl{1, bin}.IsSupportVector;
+                    mdl_results{splits, it, ce}.bin(bin).Alpha = output{splits, it, ce}.mdl{1, bin}.Alpha;
+                    mdl_results{splits, it, ce}.bin(bin).Bias = output{splits, it, ce}.mdl{1, bin}.Bias;
                 end
             end
             clear output
@@ -172,8 +180,8 @@ end
 % mkdir([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 % cd([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 
-mkdir(strcat(base,'/decoding/SVM/'));
-cd(strcat(base,'/decoding/SVM/'));
+mkdir(strcat(base,'/decoding/SVM_01/'));
+cd(strcat(base,'/decoding/SVM_01/'));
 
 if mdl_param.field_to_predict == 1
     save_string = 'outcome';
@@ -192,6 +200,8 @@ save(strcat(save_string,'_betas'),'betas','-v7.3');
 save(strcat(save_string,'_all_model_outputs'),'all_model_outputs','-v7.3');
 save(strcat(save_string,'_acc'),'acc','-v7.3');
 save(strcat(save_string,'_shuff_acc'),'shuff_acc','-v7.3');
+save(strcat(save_string,'_mdl_results'),'mdl_results','-v7.3');
+
 
 
 %SAVE SVM OUTPUT! TOO LARGE!!!!!!!!!!
