@@ -23,10 +23,10 @@ for t = 1:length(mdl_param.binns)%(timepoints)
 
 
     %call classifier model
-    [~, accuracy(t),mdl{t}] = traintestClassifier_cb(X, Y,[1;2],'SVM',{X_test,Y_test}); %accuracy(mouse,t)
+    [~, accuracy(t),mdl{t},train_accuracy(t)] = traintestClassifier_cb(X, Y,[1;2],'SVM',{X_test,Y_test}); %accuracy(mouse,t)
     %repeat but with suffled Y labels
     Y_shuff=Y(randperm(length(Y)));
-    [~, shuff_accuracy(t),shuff_mdl{t}] = trainClassifier_cb(X, Y_shuff,[1;2],'SVM',{X_test,Y_test}); 
+    [~, shuff_accuracy(t),shuff_mdl{t},shuff_train_accuracy(t)] = traintestClassifier_cb(X, Y_shuff,[1;2],'SVM',{X_test,Y_test}); 
 
 end
 %% STORE VARIABLES 
@@ -36,5 +36,7 @@ output.shuff_accuracy=shuff_accuracy;
 output.mdl = mdl;
 % output.shuff_mdl = shuff_mdl;
 output.mdl_param = mdl_param;
+output.shuff_train_accuracy = shuff_train_accuracy;
+output.train_accuracy = train_accuracy;
 
 
