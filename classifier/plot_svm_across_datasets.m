@@ -37,7 +37,7 @@ for ce = 1:size(svm_mat,2)
     shadedErrorBar(1:size(overall_mean,2),smooth(overall_shuff(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
 
     for i = 1:length(event_onsets)
-        xline(event_onsets(i),'--k','LineWidth',1.2)
+        xline(event_onsets(i),'--k','LineWidth',1)
 %         if i == 4
 %             xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
 %         end
@@ -78,8 +78,8 @@ end
 
 set(gca, 'box', 'off')
 % set_current_fig;
-set(gca,'FontSize',12);
-set(gcf,'position',[100,100,300,200])
+set(gca,'FontSize',10);
+set(gcf,'position',[100,100,225,150])
 
 
 if ~isempty(save_path)

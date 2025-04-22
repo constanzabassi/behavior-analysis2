@@ -60,7 +60,7 @@ for t = 1:length(tw)
 
         %set line width
         hh = findobj('LineStyle','--','LineWidth',0.5); 
-        set(h(1:6), 'LineStyle','-','LineWidth',1.8);
+        set(h(1:6), 'LineStyle','-','LineWidth',1.3);
 
         %set outliers
 %         out_line = findobj(h, 'Tag', 'Outliers');
@@ -84,7 +84,7 @@ for t = 1:length(tw)
 
         %set line width
         hh = findobj('LineStyle','--','LineWidth',0.5); 
-        set(h(1:6), 'LineStyle','-','LineWidth',1.8);
+        set(h(1:6), 'LineStyle','-','LineWidth',1.3);
 
     end
     combos = sorted_combinations ;
@@ -123,8 +123,8 @@ yline(.5,'--k');
 ylabel('% Accuracy'); box off
 %title('Decoding accuracy across cell types','FontWeight','Normal');
 set_current_fig;
-set(gca,'FontSize',12);
-set(gcf,'position',[100,100,200,200])
+set(gca,'FontSize',10);
+set(gcf,'position',[100,100,150,150])
 
 
 if ~isempty(save_path)

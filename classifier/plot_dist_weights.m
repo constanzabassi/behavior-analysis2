@@ -127,6 +127,6 @@ for i = 1:num_labels
          'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
 end
 set(gca,'fontsize',12);
-set(gcf,'position',[100,100,200,200])
+set(gcf,'position',[100,100,150,150])
 
 exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
