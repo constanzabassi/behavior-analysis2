@@ -1,11 +1,15 @@
-function loaded_svm_result = load_SVM_results(info,model_type,task_event_type,svm_result_to_load)
+function loaded_svm_result = load_SVM_results(info,model_type,task_event_type,svm_result_to_load,varargin)
 for n = 1:length(info.chosen_mice)
     mm = info.mouse_date(info.chosen_mice(n));
     mm = mm{1,1};
     mm
     ss = info.serverid(info.chosen_mice(n));
     ss = ss {1,1};
-    base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/SVM/'));
+    if nargin > 4
+        base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/SVM',varargin{1,1}, '/'));
+    else
+        base = (strcat(num2str(ss),'/Connie/ProcessedData/',num2str(mm),'/', model_type, '/decoding/SVM/'));
+    end
     filepath = ([base task_event_type '_' svm_result_to_load '.mat']);
     loaded_svm_result{n} = load(filepath).(svm_result_to_load);
 
