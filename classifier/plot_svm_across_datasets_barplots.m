@@ -100,7 +100,7 @@ for t = 1:length(tw)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
         if pval < 0.05/length(combos)
             sig_ct =sig_ct+1;
-            plot_pval_star(t,y_val+(.03*sig_ct), pval,x_line_vals,0.01); %yl(2)+3
+            plot_pval_star(t,y_val+(.04*sig_ct), pval,x_line_vals,0.01); %yl(2)+3
         end
 
     end

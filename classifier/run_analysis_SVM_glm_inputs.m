@@ -17,9 +17,9 @@ current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
 info.chosen_mice = current_mice;
 info.task_event_type = 'outcome'; %'sound_category';
 
-acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc','_001');
-shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc','_001');
-beta_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'betas','_001');
+acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc','_1');
+shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc','_1');
+beta_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'betas','_1');
 
 info.chosen_mice = 2;
 all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
@@ -55,7 +55,7 @@ plot_info.minmax = [0.45,.9];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
-savepath = ['V:\Connie\results\SVM\updated_001\' info.task_event_type '\'];
+savepath = ['V:\Connie\results\SVM\updated_1\' info.task_event_type '\'];
 info.savepath = savepath;
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
@@ -160,13 +160,21 @@ if ~isempty(svm_mat2)
     onset = event_onsets(onset_id);%event_onsets(find(ismember(mdl_param.event_onset,active_events)));
     plot_dist_weights(onset, beta_mat_pass,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],'_passive');
 end
-%%
-comp_window = 6; %1sec bc bins of 3
-[svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type],savepath,[.4,1]);
+%% PLOT BOX PLOTS OF OVERALL ACCURACY ACROSS CELL TYPES
+[acc_peaks,acc_peaks_shuff,acc_peaks_stats] = find_decoding_acc_peaks(svm_mat,1: bins_to_include);
+save('acc_peaks_results','acc_peaks','acc_peaks_shuff','acc_peaks_stats')
+comp_window = 0; %1sec bc bins of 3
+%acc_peaks(4,1) is the peak using 'all' cells
+[svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,acc_peaks(4,1),comp_window,[mdl_param.data_type],savepath,[.4,1]);
 if ~isempty(svm_mat2)
     [~,~] = plot_svm_across_datasets_barplots(svm_mat2,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type '_passive'],savepath,[.4,1]);
 end
-%%
+
+% svm_box.p_vals{2,:} are p vals relative to shuffled
+%% PLOT WEIGHT EVOLUTION OVER TIME?
+info.savestr = 'betas';
+plot_weights_over_time([1:bins_to_include], event_onsets(onset_id), beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+
 % %% to determine events
 % if alignment.active_passive == 2
 %     load('V:\Connie\ProcessedData\HA11-1R\2023-05-05\passive\imaging.mat')

@@ -6,7 +6,7 @@ figure(572);clf;
 [rows,columns] = determine_num_tiles(size(betas,2)); %uses length of input
 tiledlayout(rows,columns);
 
-edges = -1:0.1:1; %bin edges can be changed
+edges = -.2:0.1:.2; %bin edges can be changed
 
 for m = 1:size(betas,2) %per mouse
 
