@@ -49,7 +49,7 @@ for t = 1:length(tw)
     end
 end
 set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
-xlim([0.5 length(tw)+0.5]); ylim([0 60]);
+xlim([0.5 length(tw)+0.5]); ylim([0 40]);
 ylabel('Percentage'); box off
 title('Responsive cells','FontWeight','Normal');
 set_current_fig;

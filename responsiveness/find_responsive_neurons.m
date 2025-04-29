@@ -1,4 +1,4 @@
-function [responsive_neuron,responsive_neuron_prctile] = find_responsive_neurons(task_period,current_aligned_dataset,params)
+function [responsive_neuron,responsive_neuron_prctile,neuron_zscores] = find_responsive_neurons(task_period,current_aligned_dataset,params)
 num_shuff = params.num_shuff;
 p_thr = params.p_thr ;
 responsive_neuron = cell(1,size(task_period,1));
@@ -28,5 +28,13 @@ for neuron = 1:size(current_aligned_dataset,2) %number of neurons
         if nanmean(v) > prctile(v0,95)
             responsive_neuron_prctile{task_epoch}(end+1) = neuron;
         end
+
+        mu_v = nanmean(v);
+        mu_v0 = nanmean(v0);
+        std_v0 = nanstd(v0);
+
+        % Compute z-score or d-prime
+        zscore_val = (mu_v - mu_v0) / std_v0;
+        neuron_zscores{task_epoch}(neuron) = zscore_val;
     end
 end
