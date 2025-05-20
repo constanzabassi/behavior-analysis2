@@ -6,7 +6,7 @@ behav_param.fields_to_balance = [3,4];%{'correct'}=1 {'left_turn'}=2 {'condition
 alignment.data_type = 'dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 chosen_mice = [1:25];
-save_path = 'V:/Connie/results/opto_sound_2025/';
+save_path = 'W:/Connie/results/Bassi2025/';
 
 performance = get_opto_performance_simple(imaging_st,behav_param,alignment);
 plot_performance_all(performance(1,chosen_mice),[save_path '/performance_analysis'],[params.info.mouseid{chosen_mice}]);

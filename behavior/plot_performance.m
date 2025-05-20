@@ -24,6 +24,15 @@ for m = 1:n_mice
     sec_to_turn_per_mouse_ctrl = [sec_to_turn_per_mouse_ctrl,mean([performance(d).turn_onset_ctrl])];
     
 end
+
+sig_test.correct_opto = utils.get_basic_stats(correct_per_mouse_opto);
+sig_test.left_per_mouse_opto = utils.get_basic_stats(left_per_mouse_opto);
+sig_test.sec_to_turn_opto = utils.get_basic_stats(sec_to_turn_per_mouse_opto);
+sig_test.correct_ctrl = utils.get_basic_stats(correct_per_mouse_ctrl);
+sig_test.left_per_mouse_ctrl = utils.get_basic_stats(left_per_mouse_ctrl);
+sig_test.sec_to_turn_ctrl = utils.get_basic_stats(sec_to_turn_per_mouse_ctrl);
+
+
 %% % CORRECT
 subplot(1,3,1)
 hold on
@@ -39,9 +48,9 @@ xticklabels({'Opto','Ctrl'})
 ylabel('% correct')
 
 [sig_test.p_correct, h1] = signrank([correct_per_mouse_opto],[correct_per_mouse_ctrl]);
-plot_pval_star(0,max([correct_per_mouse_opto])*100, sig_test.p_correct,[1 2],.15); %yl(2)+3
+utils.plot_pval_star(0,max([correct_per_mouse_opto])*100, sig_test.p_correct,[1 2],.15); %yl(2)+3
 
-set_current_fig;
+utils.set_current_fig;
 set(gca,'FontSize',12);
 %% % LEFT TURNS
 subplot(1,3,2)
@@ -61,9 +70,9 @@ ylabel('% left')
 ylim([0 75])
 
 [sig_test.p_left, h1] = signrank([left_per_mouse_opto],[left_per_mouse_ctrl]);
-plot_pval_star(0,max([left_per_mouse_opto])*100, sig_test.p_left,[1 2],.15); %yl(2)+3
+utils.plot_pval_star(0,max([left_per_mouse_opto])*100, sig_test.p_left,[1 2],.15); %yl(2)+3
 
-set_current_fig;
+utils.set_current_fig;
 set(gca,'FontSize',12);
 %% TIME TO COMPLETE TURN
 subplot(1,3,3)
@@ -83,24 +92,24 @@ xticklabels({'Opto','Ctrl'})
 ylabel({'seconds to'; 'turn onset'})
 
 [sig_test.p_turn_onset, h1] = signrank(sec_to_turn_per_mouse_opto,sec_to_turn_per_mouse_ctrl);
-% plot_pval_star(0,max(cellfun(@mean,{performance.turn_onset_opto})), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
-plot_pval_star(0,max([sec_to_turn_per_mouse_opto]), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
+% utils.plot_pval_star(0,max(cellfun(@mean,{performance.turn_onset_opto})), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
+utils.plot_pval_star(0,max([sec_to_turn_per_mouse_opto]), sig_test.p_turn_onset,[1 2],.15); %yl(2)+3
 
-set_current_fig;
+utils.set_current_fig;
 set(gca,'FontSize',12);
 % %% perform statistical analysis
 % [sig_test.p_correct, h1] = signrank([performance.correct_opto],[performance.correct_ctrl]);
 % [sig_test.p_left, h1] = signrank([performance.left_opto],[performance.left_ctrl]);
 % [sig_test.p_turn_onset, h1] = signrank(temp(:,1),temp(:,2));
-
+sig_test.test = 'signrank';
 %% save figures
 
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
-    cd(save_data_directory)
+%     cd(save_data_directory)
 
     image_string = strcat('paired_opto_ctrl_performance_dots_',num2str(size(performance,2)));
-    saveas(5555,[image_string '_datasets.svg']);
-    saveas(5555,[image_string '_datasets.fig']);
-    exportgraphics(figure(5555),[image_string '_datasets.pdf'], 'ContentType', 'vector');
+    saveas(5555,fullfile([save_data_directory image_string '_datasets.svg']));
+    saveas(5555,fullfile([save_data_directory image_string '_datasets.fig']));
+    exportgraphics(figure(5555),fullfile([save_data_directory image_string '_datasets.pdf']), 'ContentType', 'vector');
 end
