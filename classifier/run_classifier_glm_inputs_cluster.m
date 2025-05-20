@@ -4,7 +4,7 @@ possible_celltypes = fieldnames(all_celltypes{1,1});
 
 acc = {};
 shuff_acc = {};
-mdl_results = {}
+mdl_results = {};
 for m = current_mouse
 %     ss = info.server(m);
 %     ss = ss {1,1};
@@ -111,7 +111,7 @@ end
                     mdl_param.selected_trials = selected_trials;
                     mdl_param.selected_trials_test = selected_trials_test;
                 elseif mdl_param.field_to_predict == 4
-                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_photostim.mat'));
+                    load(strcat(base,'/decoding/',num2str(splits),'_1/decoder_results_regular_photostim_updated.mat'));
                     selected_trials = decoder_results.aligned.photostim(it).results.alignment.trials_used.train;
                     selected_trials_test = decoder_results.aligned.photostim(it).results.alignment.trials_used.test;
                     mdl_param.selected_trials = selected_trials;
@@ -180,8 +180,8 @@ end
 % mkdir([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 % cd([info.savepath '/SVM_' alignment.data_type '_' info.savestr])
 
-mkdir(strcat(base,'/decoding/SVM_01/'));
-cd(strcat(base,'/decoding/SVM_01/'));
+mkdir(strcat(base,'/decoding/SVM_1/'));
+cd(strcat(base,'/decoding/SVM_1/'));
 
 if mdl_param.field_to_predict == 1
     save_string = 'outcome';
@@ -190,7 +190,7 @@ elseif mdl_param.field_to_predict == 2
 elseif mdl_param.field_to_predict == 3
     save_string = 'sound_category';
 elseif mdl_param.field_to_predict == 4
-    save_string = 'photostim';
+    save_string = 'photostim_updated';
 end
 
 
