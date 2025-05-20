@@ -58,7 +58,7 @@ heatmaps_across_mice (imaging_st,plot_info,alignment,[]);
 
 figure(90);clf;
 colormap viridis
-alignment.conditions = [5];
+alignment.conditions = [1:8];
 alignment.data_type = 'z_dff';% 'dff', 'z_dff', else it's deconvolved
 alignment.type = 'all'; %'reward','turn','stimulus','ITI'
 plot_info.min_max = [-0.25 1.5];

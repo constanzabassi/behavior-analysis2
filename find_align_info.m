@@ -169,6 +169,40 @@ elseif varargin{1,1} == 2 %do alternative alignment! for task
     left_padding(event) = 60;
     right_padding(event) = 60;
 
+elseif varargin{1,1} == 3 %do alternative alignment! for task
+    event = 1;
+    alignment_frames = cellfun(@(x) x(event),stimulus_repeats_onsets);
+    left_padding(event) = 60;%min_length_stim; %smallest # frames in front
+    right_padding(event) = 30;
+    
+    event = 2;
+    alignment_frames(event,:) = cellfun(@(x) x(event),stimulus_repeats_onsets);
+    left_padding(event) = 1;
+    right_padding(event) = 30;
+    
+    event = 3;
+    alignment_frames(event,:) = cellfun(@(x) x(event),stimulus_repeats_onsets);
+    left_padding(event) = 1;
+    right_padding(event) = 30;
+    
+    % IMPORTANT!! PUTTING SOUND ONSETS FOR TURN/REWARD FOR PASSIVE!! JUST
+    % TO HAVE A NUMBER - DO NOT USE EVENT 4 OR 5!!!
+    %--------------------------------------------------------------------
+    event = 4;
+    alignment_frames(event,:) = cellfun(@(x) x(3),stimulus_repeats_onsets);
+    left_padding(event) = 30;
+    right_padding(event) = 30; %used to be 30
+    
+    event = 5; 
+    alignment_frames(event,:) = cellfun(@(x) x(3),stimulus_repeats_onsets);
+    left_padding(event) = 1;%used to be 4%min_length_reward; %smallest # frames in front during reward period
+    right_padding(event) = 23;%max_length_reward-min_length_reward; %larger # frames after reward during reward period
+    
+    event = 6; %ITI time
+    alignment_frames(event,:) = cellfun(@(x) x(3)+31,stimulus_repeats_onsets);
+    left_padding(event) = 1;
+    right_padding(event) = 60;
+
 end
 
 
