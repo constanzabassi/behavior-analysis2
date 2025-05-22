@@ -96,6 +96,7 @@ for t = 1:length(tw)
 
         pval = ranksum(data(1,:), data(2,:));
         plot_data{t,c} = pval;
+        plot_data{length(tw)+2,c} = combos(c,:);
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
         if pval < 0.05/length(combos)

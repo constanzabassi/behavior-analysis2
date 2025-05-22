@@ -1,6 +1,7 @@
 function [output_mat, output_mat2] = get_SVM_across_datasets(info,acc,shuff_acc,plot_info,savepath,varargin)
 output_mat = [];
 output_mat2 = [];
+num_nans = 1;
 for m = 1:length(info.chosen_mice)
     
 figure(m);clf;
@@ -23,13 +24,26 @@ for ce = 1:total_celltypes
     
     output_mat{m,ce}.accuracy = folds_mean; %gives mean across folds x timepoints
     output_mat{m,ce}.shuff_accuracy = folds_mean_shuff;
+
+    %insert nans
+    if length(mean(output_mat{m,ce}.accuracy,1)) > 33
+        nan_insert_positions = 34; %[find(histcounts(101,dynamics_info.binss))];
+        data_to_plot = include_nans(mean(output_mat{m,ce}.accuracy,1),num_nans, nan_insert_positions);
+    else
+        data_to_plot = mean(output_mat{m,ce}.accuracy,1);
+    end
     
     % find squared error from the mean
     SEM= std(output_mat{m,ce}.accuracy)/sqrt(size(output_mat{m,ce}.accuracy,1));
-    h1(1) = shadedErrorBar(1:size(output_mat{m,ce}.accuracy,2),mean(output_mat{m,ce}.accuracy,1), SEM, 'lineProps',{'color', plot_info.colors(ce,:)});
+    h1(1) = shadedErrorBar(1:size(output_mat{m,ce}.accuracy,2),data_to_plot, SEM, 'lineProps',{'color', plot_info.colors(ce,:)});
 
+    if length(mean(output_mat{m,ce}.accuracy,1)) > 33
+        data_to_plot = include_nans(mean(output_mat{m,ce}.shuff_accuracy,1),num_nans, nan_insert_positions);
+    else
+        data_to_plot = mean(output_mat{m,ce}.shuff_accuracy,1);
+    end
     SEM2= std(output_mat{m,ce}.shuff_accuracy)/sqrt(size(output_mat{m,ce}.shuff_accuracy,1));
-    shadedErrorBar(1:size(output_mat{m,ce}.shuff_accuracy,2),mean(output_mat{m,ce}.shuff_accuracy,1), SEM2, 'lineProps',{'color', [0.2 0.2 0.2]*ce});
+    shadedErrorBar(1:size(output_mat{m,ce}.shuff_accuracy,2),data_to_plot, SEM2, 'lineProps',{'color', [0.2 0.2 0.2]*ce});
 
     if nargin > 5
 
@@ -52,6 +66,7 @@ for ce = 1:total_celltypes
         SEM2= std(output_mat2{m,ce}.shuff_accuracy)/sqrt(size(output_mat2{m,ce}.shuff_accuracy,1));
         shadedErrorBar(1:size(output_mat2{m,ce}.shuff_accuracy,2),mean(output_mat2{m,ce}.shuff_accuracy,1), SEM2, 'lineProps',{'color', [0.2 0.2 0.2]*ce});
 
+        
     end
 
 

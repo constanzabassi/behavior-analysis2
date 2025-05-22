@@ -1,7 +1,8 @@
 function plot_svm_across_datasets(svm_mat,plot_info,event_onsets,mdl_param,save_str,save_path,minmax,bins_to_include)
 overall_mean = [];
 overall_shuff = [];
-
+num_nans = 1;
+smoothing_factor = 1;
 
 for ce = 1:size(svm_mat,2)
     mean_across_data = cellfun(@(x) mean(x.accuracy(:,1:bins_to_include),1),{svm_mat{:,ce}},'UniformOutput',false);
@@ -28,13 +29,27 @@ for ce = 1:size(svm_mat,2)
         %size(time))
 
     SEM= std(squeeze(mean_data(ce,:,:)))/sqrt(size(mean_data(ce,:,:),2)); %first number is observations (time)/ maybe datasets or subsamples
-    h1 = shadedErrorBar(1:size(overall_mean,2),smooth(overall_mean(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', plot_info.colors_celltype(ce,:)});
+    %insert nans
+    if size(overall_mean,2) > 33
+        nan_insert_positions = 34; %[find(histcounts(101,dynamics_info.binss))];
+        data_to_plot = include_nans(smooth(overall_mean(ce,:),smoothing_factor , 'boxcar'),num_nans, nan_insert_positions);
+    else
+        data_to_plot = smooth(overall_mean(ce,:),smoothing_factor , 'boxcar');
+    end
+    h1 = shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', plot_info.colors_celltype(ce,:)});
     legend_handles(end+1) = h1.mainLine; % Collect the handle of the main line
     legend_labels{end+1} = plot_info.labels{ce}; % Collect the corresponding label
 
 
     SEM= std(squeeze(mean_data2(ce,:,:)))/sqrt(size(mean_data2(ce,:,:),2));
-    shadedErrorBar(1:size(overall_mean,2),smooth(overall_shuff(ce,:),3, 'boxcar'), smooth(SEM,3, 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
+     %insert nans
+    if size(overall_mean,2) > 33
+        nan_insert_positions = 34; %[find(histcounts(101,dynamics_info.binss))];
+        data_to_plot = include_nans(smooth(overall_shuff(ce,:),smoothing_factor , 'boxcar'),num_nans, nan_insert_positions);
+    else
+        data_to_plot = smooth(overall_shuff(ce,:),smoothing_factor , 'boxcar');
+    end
+    shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
 
     for i = 1:length(event_onsets)
         xline(event_onsets(i),'--k','LineWidth',1)
@@ -54,6 +69,9 @@ y_range = ylim;
 y_offset_base = .1;
 % Calculate base text position
 text_x = x_range(2) -.09 * diff(x_range);
+if ~isempty(minmax)
+    y_range(2) = minmax(2);
+end
 text_y = y_range(2) - .2 * diff(y_range);
 
 % Auto-calculate evenly spaced y-offsets

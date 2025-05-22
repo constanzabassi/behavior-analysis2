@@ -8,16 +8,16 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 %% LOAD THE DATA!
 % as if 4/9/25 need to update photostim/outcome
-% current_mice = setdiff(1:25,[9,23]);%sounds!! 
+current_mice = setdiff(1:25,[9,23]);%sounds!! 
 % current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
 % current_mice = setdiff(1:25,[9,23]); %choice
-current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
+% current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
 
 
 info.chosen_mice = current_mice;
-info.task_event_type = 'outcome'; %'sound_category';
+info.task_event_type = 'sound_category'; %'sound_category';
 
-acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc','_1');
+acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc','_1'); %_1
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc','_1');
 beta_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'betas','_1');
 
@@ -55,7 +55,7 @@ plot_info.minmax = [0.45,.9];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
-savepath = ['V:\Connie\results\SVM\updated_1\' info.task_event_type '\'];
+savepath = ['V:\Connie\results\SVM_1\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
 info.savepath = savepath;
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)

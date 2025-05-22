@@ -1,6 +1,6 @@
 %% set current figure
 set(gca,'FontName','Arial');
-set(gca,'FontSize',14);
+set(gca,'FontSize',10);
 set(gcf,'Color','w')
 set(gca,'FontName','Arial')
 %set(gca,'Color','k'b)
