@@ -126,7 +126,91 @@ for i = 1:num_labels
     text(text_x, text_y - y_offsets(i) * diff(y_range), plot_info.labels{i}, ...
          'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
 end
-set(gca,'fontsize',12);
+set(gca,'fontsize',10);
 set(gcf,'position',[100,100,150,150])
 
 exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
+
+
+% --- CUMULATIVE SUM / LORENZ CURVE OF ABSOLUTE CLASSIFIER WEIGHTS ---
+figure(574); clf;
+hold on;
+% title('Cumulative Sum of Absolute Beta Weights');
+xlabel('Fraction of Neurons');
+ylabel('Cumulative |β|');
+set(gca,'fontsize',12);
+
+for ce = celtype
+    cum_weights_all = [];
+
+    for m = 1:size(betas,2)
+        if isempty(betas{1,m,bin_id})
+            continue;
+        end
+
+        all_data = [betas{:,m,bin_id}]; % neurons x iterations
+        cell_inds = all_celltypes{1,m}.(possible_celltypes{ce});
+        if isempty(cell_inds)
+            continue;
+        end
+
+        % Mean beta per neuron (average over iterations)
+        mean_data = mean(all_data(cell_inds,:), 2);
+
+        % Sort by |B| and compute cumulative sum
+        abs_betas = abs(mean_data);
+        sorted_betas = sort(abs_betas, 'ascend');
+        cum_sum = cumsum(sorted_betas);
+        cum_sum = cum_sum / max(cum_sum); % Normalize to 1
+        frac_neurons = linspace(0, 1, length(cum_sum));
+
+        % Store for averaging
+        cum_weights_all = pad_and_stack(cum_weights_all, cum_sum);
+    end
+
+    if ~isempty(cum_weights_all)
+        mean_cum = nanmean(cum_weights_all, 1);
+        sem_cum = nanstd(cum_weights_all, 0, 1) / sqrt(size(cum_weights_all,1));
+        frac_x = linspace(0, 1, size(cum_weights_all,2));
+
+        shadedErrorBar(frac_x, mean_cum, sem_cum, ...
+            'lineProps', {'color', plot_info.colors_celltype(ce,:), 'LineWidth', 2});
+    end
+end
+set(gca,'fontsize',10);
+
+% legend(plot_info.labels(celtype), 'Box', 'off', 'Location', 'southeast');
+% Get current axis limits
+x_range = xlim;
+y_range = ylim;
+y_offset_base = .2;
+% Calculate base text position
+text_x = x_range(2) - y_offset_base * diff(x_range);
+text_y = y_range(2) - .5 * diff(y_range);
+
+% Auto-calculate evenly spaced y-offsets
+num_labels = length(celtype);
+y_offsets = linspace(0, 0.1 * (num_labels - 1), num_labels); % Adjusted scaling
+
+% Place text labels
+for i = 1:num_labels
+    text(text_x, text_y - y_offsets(i) * diff(y_range), plot_info.labels{i}, ...
+         'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
+end
+grid on
+set(gcf,'position',[100,100,150,150])
+exportgraphics(gcf, strcat('CUMSUM_BetaWeights_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
+end
+function stacked = pad_and_stack(existing, new_row)
+    max_len = max([size(existing, 2), length(new_row)]);
+    if isempty(existing)
+        stacked = nan(1, max_len);
+        stacked(1:length(new_row)) = new_row;
+    else
+        padded = nan(1, max_len);
+        padded(1:length(new_row)) = new_row;
+        existing_padded = nan(size(existing,1), max_len);
+        existing_padded(:,1:size(existing,2)) = existing;
+        stacked = [existing_padded; padded];
+    end
+end

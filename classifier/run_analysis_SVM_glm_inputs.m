@@ -8,9 +8,9 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 
 %% LOAD THE DATA!
 % as if 4/9/25 need to update photostim/outcome
-current_mice = setdiff(1:25,[9,23]);%sounds!! 
+% current_mice = setdiff(1:25,[9,23]);%sounds!! 
 % current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
-% current_mice = setdiff(1:25,[9,23]); %choice
+current_mice = setdiff(1:25,[9,23]); %choice
 % current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
 
 
