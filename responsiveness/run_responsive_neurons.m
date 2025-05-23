@@ -18,12 +18,15 @@ all_aligned = organize_aligned_datasets(aligned_data_all,params);
 task_period = define_trial_task_periods(alignment);
 
 %% responsive neurons- compares activity within and outside task period (same number of frames)
-params.num_shuff = 100;
+params.num_shuff = 1000;
 params.p_thr = 0.05; 
 for m = 1:length(all_aligned)
     m
     current_aligned_dataset = all_aligned{1,m};
-    [responsive_neuron{m},responsive_neuron2{m},neuron_zscores{m}] = find_responsive_neurons(task_period,current_aligned_dataset,params);
+    [responsive_neuron{m},responsive_neuron2{m}] = find_responsive_neurons(task_period,current_aligned_dataset,params);
+     % --- Get z-scored responsive fractions for this dataset ---
+    zscore_struct{m} = zscore_responsive_fraction(responsive_neuron{m}, all_celltypes{m},size(current_aligned_dataset,2), params.num_shuff);
+
 end
 %% unpack responsive and put into cell type categories
 num_responsive = unpack_responsive(responsive_neuron2, all_celltypes); %datasets,task_periods,celltypes
@@ -33,6 +36,8 @@ cd([info.savepath '/responsive'])
 save('num_responsive','num_responsive');
 save('responsive_neuron2','responsive_neuron2');
 
+%%
+boxplot_zscore_responsive_from_raw(all_celltypes, aligned_data_all,neuron_zscores, plot_info, info, 0);
 %% testing other methods
 params.num_shuff = 1000;
 params.num_boot = 1000;
