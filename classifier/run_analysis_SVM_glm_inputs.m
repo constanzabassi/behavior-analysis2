@@ -55,7 +55,7 @@ plot_info.minmax = [0.45,.9];
 plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)]; %32 or 55
 plot_info.event_onsets = event_onsets;
 
-savepath = ['V:\Connie\results\SVM_1\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
+savepath = ['V:\Connie\results\SVM_1updated\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
 info.savepath = savepath;
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
@@ -69,10 +69,10 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
                             0.82 0.04 0.04
                             0.482, 0.408, 0.933];
 
-    [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,savepath,{acc_passive,shuff_acc_passive});
+    [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,savepath,1,{acc_passive,shuff_acc_passive});
 else
     plot_info.labels = {'Active'};
-    [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,savepath);
+    [svm_mat, svm_mat2] = get_SVM_across_datasets(info,acc_active,shuff_acc_active,plot_info,1,savepath);
 end
 
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
@@ -81,6 +81,9 @@ else
     bins_to_include = 55;
 end
 %% compare active vs passive using all cells
+mdl_param = all_model_outputs{1,1}{1};
+save_string = info.task_event_type;
+
 if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task_event_type)
     if ~isempty(svm_mat2)
         svm_acc= cell(length(svm_mat), 2);
@@ -103,7 +106,7 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
     else
         plot_info.colors_celltype = [0.545, 0.271, 0.075; 1 0.549 0]
     end
-    plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,[save_string '_active_passive'],savepath,[0.45,.8],bins_to_include);movegui(gcf,'center');%
+    plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,[save_string '_active_passive'],savepath,[0.48,.65],bins_to_include);movegui(gcf,'center');%
 end
 %%
 plot_info.colors = [0.37 0.75 0.49 %light green

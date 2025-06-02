@@ -52,7 +52,7 @@ for ce = 1:size(svm_mat,2)
     shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
 
     for i = 1:length(event_onsets)
-        xline(event_onsets(i),'--k','LineWidth',1)
+        xline(event_onsets(i),'--k','LineWidth',.7)
 %         if i == 4
 %             xline(event_onsets(i),'--k',{'turn onset'},'LineWidth',1.5)
 %         end
@@ -85,7 +85,7 @@ end
 
 
 ylabel({'% Accuracy'})
-xlabel('Time (s)')
+% xlabel('Time (s)')
 xlim([1 size(overall_mean,2)])
 [second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
 xticks([second_ticks]);
@@ -93,11 +93,22 @@ xticklabels(second_labels);
 if ~isempty(minmax)
     ylim([minmax(1) minmax(2)])
 end
+ax = gca;  % Get current axes
+yticks = ax.YTick;  % Get current y-tick values
+ax.YTickLabel = yticks * 100;  % Multiply by 100 and assign back
 
-set(gca, 'box', 'off')
+set(gca, 'box', 'off','xtick',[])
+
+% legend([a(1).mainLine a(2).mainLine a(3).mainLine],'PYR','SOM','PV','Location','southeast','box','off');
+
+set(gca,'xtick',event_onsets,'xticklabel',{'S1','S2','S3','T','R'},'xticklabelrotation',45);
+
 % set_current_fig;
 set(gca,'FontSize',10);
-set(gcf,'position',[100,100,225,150])
+% set(gcf,'position',[100,100,225,150])
+set(gca, 'OuterPosition', [0,0,1,1]);
+
+set(gcf,'position',[100,100,185,135])
 
 
 if ~isempty(save_path)
