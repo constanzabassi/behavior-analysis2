@@ -187,7 +187,7 @@ end
 % svm_box.p_vals{2,:} are p vals relative to shuffled
 %% PLOT WEIGHT EVOLUTION OVER TIME?
 info.savestr = 'betas';
-plot_weights_over_time([1:bins_to_include], event_onsets(onset_id), beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+plot_weights_over_time([1:bins_to_include], event_onsets(onset_id), beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],mdl_param);
 
 % %% to determine events
 % if alignment.active_passive == 2

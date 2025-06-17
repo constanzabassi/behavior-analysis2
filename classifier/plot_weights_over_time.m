@@ -1,4 +1,4 @@
-function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, plot_info, data_type, svm_info, celtype, varargin)
+function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, plot_info, data_type, svm_info, celtype,mdl_param, varargin)
 % bin_ids = array of bins you want to plot (e.g., [1,2,3,4,5])
 
 possible_celltypes = fieldnames(all_celltypes{1,1});
@@ -45,20 +45,29 @@ for m = 1:size(betas,2) % loop over mice
             'lineProps', {'Color', plot_info.colors_celltype(ce,:), 'LineWidth', 2});
     end
 
-    ylabel('|Classifier Weight|');
+    ylabel('|Beta|');
     title(svm_info.mouse_date(m));
-    set(gca,'fontsize',12);
+    set(gca,'fontsize',8);
     xline(event_onset,'--k')
-    second_frames = find(rem(bin_ids-event_onset,30) == 0);
-    second_ticks = find(histcounts(second_frames,bin_ids));
-    
-    % 2) get labels for the seconds!
-    frame_around = bin_ids - event_onset;
-    second_labels = frame_around(second_frames)/30;
+%     second_frames = find(rem(bin_ids-event_onset,30) == 0);
+%     second_ticks = find(histcounts(second_frames,bin_ids));
+%     
+%     % 2) get labels for the seconds!
+%     frame_around = bin_ids - event_onset;
+%     second_labels = frame_around(second_frames)/30;
+% 
+%     xticks([second_ticks]);
+%     xticklabels(second_labels);
+%     xlabel('Time (s)');
 
-    xticks([second_ticks]);
-    xticklabels(second_labels);
-    xlabel('Time (s)');
+xlim([1 bin_ids(end)])
+[second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
+xticks([second_ticks]);
+xticklabels(second_labels);
+ax = gca;  % Get current axes
+set(gca,'xtick',plot_info.event_onsets,'xticklabel',{'S1','S2','S3','T','R'},'xticklabelrotation',45);
+
+
 
 end
 
@@ -67,7 +76,7 @@ hold off;
 mkdir(fullfile(svm_info.savepath, ['SVM_' data_type '_' svm_info.savestr]));
 cd(fullfile(svm_info.savepath, ['SVM_' data_type '_' svm_info.savestr]));
 
-if nargin > 8
+if nargin > 9
     string_to_use = varargin{1};
 else
     string_to_use = '';
@@ -122,18 +131,24 @@ for ce = celtype
 end
 
 % xlabel('Time Bin');
-ylabel('|Classifier Weight|');
-second_frames = find(rem(bin_ids-event_onset,30) == 0);
-second_ticks = find(histcounts(second_frames,bin_ids));
-
-% 2) get labels for the seconds!
-frame_around = bin_ids - event_onset;
-second_labels = frame_around(second_frames)/30;
-
+ylabel('|Beta|');
+% second_frames = find(rem(bin_ids-event_onset,30) == 0);
+% second_ticks = find(histcounts(second_frames,bin_ids));
+% 
+% % 2) get labels for the seconds!
+% frame_around = bin_ids - event_onset;
+% second_labels = frame_around(second_frames)/30;
+% 
+% xticks([second_ticks]);
+% xticklabels(second_labels);
+% xlabel('Time (s)');
+xline(event_onset,'--k')
+xlim([1 bin_ids(end)])
+[second_ticks,second_labels] = x_axis_sec_onset(mdl_param);
 xticks([second_ticks]);
 xticklabels(second_labels);
-xlabel('Time (s)');
-xline(event_onset,'--k')
+ax = gca;  % Get current axes
+set(gca,'xtick',plot_info.event_onsets,'xticklabel',{'S1','S2','S3','T','R'},'xticklabelrotation',45);
 
 
 % legend(plot_info.labels(celtype), 'Box', 'off', 'Location', 'best');
@@ -154,7 +169,7 @@ for i = 1:num_labels
          'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
 end
 
-set(gca,'fontsize',12);
+set(gca,'fontsize',8);
 set(gcf,'position',[100,100,150,150]);
 
 exportgraphics(gcf, strcat('AVG_SVM_weights_over_time_', string_to_use, '.pdf'), 'ContentType', 'vector');
