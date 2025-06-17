@@ -1,4 +1,4 @@
-function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, plot_info, data_type, svm_info, celtype,mdl_param, varargin)
+function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, plot_info, data_type, svm_info, celtype,mdl_param,savepath, varargin)
 % bin_ids = array of bins you want to plot (e.g., [1,2,3,4,5])
 
 possible_celltypes = fieldnames(all_celltypes{1,1});
@@ -73,19 +73,20 @@ end
 
 hold off;
 
-mkdir(fullfile(svm_info.savepath, ['SVM_' data_type '_' svm_info.savestr]));
-cd(fullfile(svm_info.savepath, ['SVM_' data_type '_' svm_info.savestr]));
-
-if nargin > 9
-    string_to_use = varargin{1};
-else
-    string_to_use = '';
+if ~isempty(savepath)
+    mkdir(fullfile(savepath, ['SVM_' data_type '_' svm_info.savestr]));
+    cd(fullfile(savepath, ['SVM_' data_type '_' svm_info.savestr]));
+    
+    if nargin > 10
+        string_to_use = varargin{1};
+    else
+        string_to_use = '';
+    end
+    
+    saveas(572, strcat('SVM_weights_over_time_', string_to_use, '.png'));
+    saveas(572, strcat('SVM_weights_over_time_', string_to_use, '.fig'));
+    exportgraphics(gcf, strcat('SVM_weights_over_time_', string_to_use, '.pdf'), 'ContentType', 'vector');
 end
-
-saveas(572, strcat('SVM_weights_over_time_', string_to_use, '.png'));
-saveas(572, strcat('SVM_weights_over_time_', string_to_use, '.fig'));
-exportgraphics(gcf, strcat('SVM_weights_over_time_', string_to_use, '.pdf'), 'ContentType', 'vector');
-
 
 
 % --- FINAL SUMMARY FIGURE ACROSS MICE ---
@@ -172,7 +173,9 @@ end
 set(gca,'fontsize',8);
 set(gcf,'position',[100,100,150,150]);
 
-exportgraphics(gcf, strcat('AVG_SVM_weights_over_time_', string_to_use, '.pdf'), 'ContentType', 'vector');
+if ~isempty(savepath)
+    exportgraphics(gcf, strcat('AVG_SVM_weights_over_time_', string_to_use, '.pdf'), 'ContentType', 'vector');
+end
 
 end
 

@@ -161,18 +161,18 @@ else
 end
 
 onset = event_onsets(onset_id);%event_onsets(find(ismember(mdl_param.event_onset,active_events)));
-plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],savepath);
 
 %also plot one bin after the onset
 onset = event_onsets(onset_id)+1;%event_onsets(find(ismember(mdl_param.event_onset,active_events)))+1;
-plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],savepath);
 %also plot one bin before the onset
 onset = event_onsets(onset_id)-1;%event_onsets(find(ismember(mdl_param.event_onset,active_events)))-1;
-plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3]);
+plot_dist_weights(onset, beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],savepath);
 
 if ~isempty(svm_mat2)
     onset = event_onsets(onset_id);%event_onsets(find(ismember(mdl_param.event_onset,active_events)));
-    plot_dist_weights(onset, beta_mat_pass,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],'_passive');
+    plot_dist_weights(onset, beta_mat_pass,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],savepath,'_passive');
 end
 %% PLOT BOX PLOTS OF OVERALL ACCURACY ACROSS CELL TYPES
 [acc_peaks,acc_peaks_shuff,acc_peaks_stats] = find_decoding_acc_peaks(svm_mat,1: bins_to_include);

@@ -1,4 +1,4 @@
-function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,data_type,svm_info,celtype,varargin)
+function plot_dist_weights(bin_id, betas,all_celltypes,plot_info,data_type,svm_info,celtype, savepath, varargin)
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 
@@ -53,21 +53,21 @@ for m = 1:size(betas,2) %per mouse
     end
 end
 hold off
-
-mkdir([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
-cd([svm_info.savepath '\SVM_' data_type '_' svm_info.savestr]);
-
-if nargin > 7
-    string_to_use = varargin{1};
-else
-    string_to_use = '';
+if ~isempty(savepath)
+    mkdir([savepath '\SVM_' data_type '_' svm_info.savestr]);
+    cd([savepath '\SVM_' data_type '_' svm_info.savestr]);
+    
+    if nargin > 8
+        string_to_use = varargin{1};
+    else
+        string_to_use = '';
+    end
+    
+    % save('roc_mdl','roc_mdl');
+    saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.png'));
+    saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.svg'));
+    exportgraphics(gcf,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
 end
-
-% save('roc_mdl','roc_mdl');
-saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.png'));
-saveas(572,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.svg'));
-exportgraphics(gcf,strcat('SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
-
 % --- NEW FINAL FIGURE FOR AVERAGE ACROSS DATASETS ---
 figure(573); clf;
 
@@ -129,8 +129,9 @@ end
 set(gca,'fontsize',10);
 set(gcf,'position',[100,100,150,150])
 
-exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
-
+if ~isempty(savepath)
+    exportgraphics(gcf,strcat('AVG_SVM_weights_across_cells_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
+end
 
 % --- CUMULATIVE SUM / LORENZ CURVE OF ABSOLUTE CLASSIFIER WEIGHTS ---
 
@@ -225,7 +226,9 @@ for i = 1:num_labels
 end
 grid on
 set(gcf,'position',[100,100,150,150])
-exportgraphics(gcf, strcat('CUMSUM_BetaWeights_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
+if ~isempty(savepath)
+    exportgraphics(gcf, strcat('CUMSUM_BetaWeights_bin',num2str(bin_id),string_to_use,'.pdf'), 'ContentType', 'vector');
+end
 end
 function stacked = pad_and_stack(existing, new_row)
     max_len = max([size(existing, 2), length(new_row)]);
