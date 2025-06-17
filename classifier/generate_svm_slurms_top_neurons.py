@@ -63,7 +63,7 @@ matlab -nodisplay -r "addpath(genpath('/ihome/crunyan/cdb66/Code/SVM')); wrapper
     # Create directories if they don't exist
     save_path = 'V:/Connie/results/SVM' #os.path.join(save_string_glm, experiment, date)
     os.makedirs(save_path, exist_ok=True)
-    script_file = os.path.join(save_path, f'glm_SVMdecoder_{save_string_imaging}_{decoder_str_joined}.slurm')
+    script_file = os.path.join(save_path, f'glm_SVMdecoder_top_{save_string_imaging}_{decoder_str_joined}.slurm')
     print(save_path)
     with open(script_file, 'w') as file:
         file.write(script_content)
@@ -111,5 +111,5 @@ if __name__ == "__main__":
         print(array_range)
         generate_batch_script_top_neurons(array_range , args.begin,  args.save_string_glm, args.save_string_imaging, args.decoder_type, args.dataset_index)
         
-        saved_slurm = os.path.join(save_string, f'glm_SVMdecoder_{args.save_string_imaging}_{decoder_str_joined}.slurm')
+        saved_slurm = os.path.join(save_string, f'glm_SVMdecoder_top_{args.save_string_imaging}_{decoder_str_joined}.slurm')
         convert_to_unix_line_endings(saved_slurm)

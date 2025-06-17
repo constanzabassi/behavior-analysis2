@@ -65,7 +65,7 @@ else
 end
 
 %load informative cells
-data = load(strcat('V:\Connie\ProcessedData\top_informative/sorted_peaks_',field_string,'.mat')); %putting it here so I dont have to do it per dataset 
+data = load(strcat('/ix/crunyan/cdb66/Data/top_informative/sorted_peaks_',field_string,'.mat')); %putting it here so I dont have to do it per dataset 
 celltypes_to_do = 1; %just doing pyr for right now
 curr_mouse = strrep(info.mouse_date{1,m}, '/', '_');
 curr_mouse = strrep(curr_mouse, '-', '_');
@@ -177,7 +177,7 @@ curr_mouse = [curr_mouse '_pyr'];
             mdl_results{splits, it, ce}.BoxConstraints = output{splits, it, ce}.mdl{1, 1}.BoxConstraints(1);
 
             %get betas across all celltypes
-            if ce == 4
+            if ce == 1
                 for bin = 1:length(output{splits,it,ce}.mdl)
                     betas{splits,it,bin} = output{splits,it,ce}.mdl{1,bin}.Beta; 
                     mdl_results{splits, it, ce}.bin(bin).IsSupportVector = output{splits, it, ce}.mdl{1, bin}.IsSupportVector;

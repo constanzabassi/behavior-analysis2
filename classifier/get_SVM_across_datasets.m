@@ -1,10 +1,4 @@
-function [output_mat, output_mat2] = get_SVM_across_datasets(info, acc, shuff_acc, plot_info, savepath, varargin)
-
-% Optional plotting flag
-doplot = true;
-if nargin > 5
-    doplot = varargin{1};
-end
+function [output_mat, output_mat2] = get_SVM_across_datasets(info, acc, shuff_acc, plot_info, savepath,doplot, varargin)
 
 output_mat = [];
 output_mat2 = [];
@@ -17,7 +11,7 @@ for m = 1:length(info.chosen_mice)
     end
 
     if length(plot_info.colors) > 2
-        total_celltypes = 4;
+        total_celltypes = size(acc{1,1},3);
     end
 
     for ce = 1:total_celltypes
@@ -59,7 +53,7 @@ for m = 1:length(info.chosen_mice)
         end
 
         % Passive condition (if available)
-        if nargin > 6
+        if nargin > 7
             temp3 = vertcat(varargin{1,2}{1,1}{1,m}{1:10,1:50,ce});
             temp4 = vertcat(varargin{1,2}{1,2}{1,m}{1:10,1:50,ce});
 
