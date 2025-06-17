@@ -5,7 +5,7 @@ function [current_mice,onset_id, active_events, passive_events] = default_data_i
 
     % Default current_mice based on task_event_type
     switch lower(task_event_type)
-        case 'sound'
+        case 'sound_category'
             current_mice = setdiff(1:25, [9, 23]);
             onset_id = 1;
         case 'choice'

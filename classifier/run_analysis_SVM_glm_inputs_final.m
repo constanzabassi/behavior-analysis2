@@ -3,7 +3,7 @@ addpath(genpath('C:\Code\Github\behavior-analysis2'))
 
 
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
-info.task_event_type = 'outcome';
+info.task_event_type = 'sound_category';
 %code below to find these numbers although should be the same each time!
 [current_mice,onset_id, active_events, passive_events] = default_data_info(info.task_event_type);
 
@@ -23,16 +23,14 @@ info.chosen_mice = current_mice;
 event_onsets = find(histcounts(active_events,all_model_outputs{1,1}{1}.binns+active_events(1)));%find(histcounts(all_model_outputs{1,1}{1}.event_onset,all_model_outputs{1,1}{1}.binns+mdl_param.event_onset(1)));
 
 %% plot individual datasets and find means across shuffles
-doplot = 1;
+doplot = 0;
 
-savepath = [];%['V:\Connie\results\SVM_1_wtop\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
+savepath = ['V:\Connie\results\SVM_1_wtop\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
 info.savepath = savepath;
 
 [svm_mat, svm_mat2] = wrapper_plot_svm_acc_trace_individual_datasets(info, acc_active, shuff_acc_active, acc_passive, shuff_acc_passive, all_model_outputs, savepath, doplot, event_onsets);
 
 %% plot all datasets together
-plot_info.colors_celltype = plot_info.colors;
-
 %use passive because shorter
 if do_passive == 1
     all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive',info.task_event_type,'all_model_outputs');
