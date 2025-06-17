@@ -136,7 +136,8 @@ ylabel('% Accuracy'); box off
 set_current_fig;
 set(gca,'FontSize',8);
 set(gcf,'position',[100,100,150,150])
-
+svm_box_stats.p_vals = plot_data;
+svm_box_stats.combos = sorted_combinations;
 
 if ~isempty(save_path)
     mkdir(save_path )
@@ -144,6 +145,7 @@ if ~isempty(save_path)
     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.svg'));
     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.png'));
     exportgraphics(gcf,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.pdf'), 'ContentType', 'vector');
-
+    string_to_save = strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.mat');
+    save(string_to_save,"svm_box_stats");
 end
 
