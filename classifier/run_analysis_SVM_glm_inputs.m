@@ -10,12 +10,12 @@ load('V:\Connie\results\opto_2024\context\data_info\info.mat');
 % as if 4/9/25 need to update photostim/outcome
 % current_mice = setdiff(1:25,[9,23]);%sounds!! 
 % current_mice = setdiff(1:25,[10,12,6,25]);%%photostim to add 10,12,6
-current_mice = setdiff(1:25,[9,23]); %choice
-% current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
+% current_mice = setdiff(1:25,[9,23]); %choice
+current_mice = setdiff(1:25,[3,8,9,21,22,23]); %outcome
 
 
 info.chosen_mice = current_mice;
-info.task_event_type = 'choice'; %'sound_category';
+info.task_event_type = 'outcome'; %'sound_category';
 
 acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'acc','_1'); %_1
 shuff_acc_active = load_SVM_results(info,'GLM_3nmf_pre',info.task_event_type,'shuff_acc','_1');

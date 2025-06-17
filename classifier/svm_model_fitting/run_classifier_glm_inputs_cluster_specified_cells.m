@@ -11,7 +11,7 @@ if mdl_param.field_to_predict == 1
 elseif mdl_param.field_to_predict == 2
     field_string = 'choice_14to169';
 elseif mdl_param.field_to_predict == 3
-    field_string = 'sound_category_14to100'; %# are frames used to define peaks
+    field_string = 'sound_category_14to169'; %# are frames used to define peaks
 elseif mdl_param.field_to_predict == 4
     field_string = 'photostim';
 end
@@ -210,6 +210,9 @@ elseif mdl_param.field_to_predict == 2
     save_string = 'choice_top';
 elseif mdl_param.field_to_predict == 3
     save_string = 'sound_category_top';
+    if contains(field_string,'169')
+        save_string = 'sound_category_topmoreframes';
+    end
 elseif mdl_param.field_to_predict == 4
     save_string = 'photostim_top';
 end
