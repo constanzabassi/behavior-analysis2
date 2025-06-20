@@ -44,6 +44,7 @@ sorted_combinations = combos(idx, :);
 ts_str = {plot_info.labels{1,:}, 'Shuff'};
 
 figure(101);clf; set(gcf,'color','w'); hold on; yma = -Inf;
+% set(gca,'Position', [100,100,150,170],'FontSize',8);
 
 if total_celltypes > 5
     ratio = [0.6,.3];
@@ -134,8 +135,26 @@ yline(.5*100,'--k');
 ylabel('% Accuracy'); box off
 %title('Decoding accuracy across cell types','FontWeight','Normal');
 set_current_fig;
-set(gca,'FontSize',8);
 set(gcf,'position',[100,100,150,150])
+set(gca,'FontSize',8);
+ylim([minmax(1)*100, minmax(2)*100 + 15]);  % Add space above 100%
+
+yticks = get(gca, 'YTick');
+yticklabels = get(gca, 'YTickLabel');
+
+% Hide any tick labels above 100%
+for i = 1:length(yticks)
+    if yticks(i) > minmax(2)*100
+        yticklabels{i} = '';
+    end
+end
+
+set(gca, 'YTick', yticks, 'YTickLabel', yticklabels);
+% 3. Cover y-axis line above 100% (draw a white line over it)
+yl = ylim;
+xl = xlim;
+line([xl(1), xl(1)], [minmax(2)*100, yl(2)], 'Color', 'w', 'LineWidth', 2);
+
 svm_box_stats.p_vals = plot_data;
 svm_box_stats.combos = sorted_combinations;
 

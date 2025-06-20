@@ -1,5 +1,10 @@
-function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, plot_info, data_type, svm_info, celtype,mdl_param,savepath, varargin)
+function plot_weights_over_time(bin_ids,event_onset, betas, all_celltypes, event_onsets, data_type, svm_info, celtype,mdl_param,savepath, varargin)
 % bin_ids = array of bins you want to plot (e.g., [1,2,3,4,5])
+input_param{1,1}{1} = mdl_param;
+plot_info = default_plot_info(input_param);
+plot_info.event_onsets =  event_onsets;
+plot_info.labels = {'Pyr','SOM','PV','All','Top Pyr'}; %{'Active'};
+
 
 possible_celltypes = fieldnames(all_celltypes{1,1});
 

@@ -3,11 +3,11 @@ function [acc,shuff_acc,output] = run_classifier_glm_inputs_local_specified_cell
 possible_celltypes = fieldnames(all_celltypes{1,1});
 
 if mdl_param.field_to_predict == 1
-    field_string = 'outcome';
+    field_string = 'outcome_14to169';
 elseif mdl_param.field_to_predict == 2
-    field_string = 'choice';
+    field_string = 'choice_14to169';
 elseif mdl_param.field_to_predict == 3
-    field_string = 'sound_category';
+    field_string = 'sound_category_14to100'; %# are frames used to define peaks
 elseif mdl_param.field_to_predict == 4
     field_string = 'photostim';
 end

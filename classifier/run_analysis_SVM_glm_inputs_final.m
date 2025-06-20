@@ -39,8 +39,10 @@ end
 mdl_param = all_model_outputs{1,1}{1};
 save_string = info.task_event_type;
 
-wrapper_plot_svm_acc_trace_all_datasets(svm_mat, mdl_param, save_string, savepath, [.45,.8],svm_mat2,event_onsets);
-
+wrapper_plot_svm_acc_trace_all_datasets(svm_mat, mdl_param, save_string, savepath, [.45,.85],svm_mat2,event_onsets);
+%% Boxplot of mean across datasets
+celltype_peak_comparison = 4; %which celltype max peak location to use (1 = pyr, 2 = som, 3 = pv, 4 = all, 5 = top pyr)
+wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepath, event_onsets(onset_id),55,celltype_peak_comparison, [.45,1]);
 %% PLOT BETA WEIGHTS
 load('V:\Connie\results\opto_2024\context\data_info\all_celltypes.mat');
 all_celltypes_updated = all_celltypes(info.chosen_mice);
@@ -50,11 +52,11 @@ info.event_onsets = event_onsets;
 
 %
 bin_id = event_onsets(onset_id); %time when to get betas from
-wrapper_plot_betas_distributions(info,bin_id, beta_mat, all_celltypes_updated, plot_info, mdl_param, onset_id, [],[]);
+wrapper_plot_betas_distributions(info,bin_id, beta_mat, all_celltypes_updated,  mdl_param, onset_id, [],[]);
 
 % PLOT WEIGHT EVOLUTION OVER TIME
 info.savestr = 'betas';
-plot_weights_over_time([1:55], event_onsets(onset_id), beta_mat,all_celltypes_updated,plot_info,mdl_param.data_type,info,[1:3],mdl_param);
+plot_weights_over_time([1:55], event_onsets(onset_id), beta_mat,all_celltypes_updated,event_onsets,mdl_param.data_type,info,[1:3],mdl_param,savepath);
 
 
 

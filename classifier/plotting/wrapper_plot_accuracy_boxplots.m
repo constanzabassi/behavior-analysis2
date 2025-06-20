@@ -1,5 +1,11 @@
-function wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2, plot_info, mdl_param, savepath, onset_id, bins_to_include,celltype_peak_comparison, ylims)
-    [acc_peaks,acc_peaks_shuff,acc_peaks_stats] = find_decoding_acc_peaks(svm_mat, 1:bins_to_include);
+function wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2, event_onsets,mdl_param, savepath, onset_id, bins_to_include,celltype_peak_comparison, ylims)
+    input_param{1,1}{1} = mdl_param;
+plot_info = default_plot_info(input_param);
+plot_info.event_onsets =  event_onsets;
+
+plot_info.labels = {'Pyr','SOM','PV','All','Top Pyr'}; %{'Active'};
+
+[acc_peaks,acc_peaks_shuff,acc_peaks_stats] = find_decoding_acc_peaks(svm_mat, 1:bins_to_include);
     save('acc_peaks_results','acc_peaks','acc_peaks_shuff','acc_peaks_stats');
 
     comp_window = 0; 
