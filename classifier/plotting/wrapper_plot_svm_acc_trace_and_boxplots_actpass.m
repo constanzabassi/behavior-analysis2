@@ -27,7 +27,7 @@ plot_info.colors_celltype = [active_colors; passive_colors];
 % 1) plot trace across active and passive
 bins_to_include = 32;
 plot_info.xlims = [1,bins_to_include];
-plot_svm_across_datasets(concatenated_svm_mat,plot_info,plot_info.event_onsets,mdl_param,[save_string '_concat'],savepath,ylims,bins_to_include);
+plot_svm_across_datasets(concatenated_svm_mat,plot_info,plot_info.event_onsets,mdl_param,[save_string '_concat_celltypes' num2str(celltypes_to_comp)],savepath,ylims,bins_to_include);
 movegui(gcf,'center');%
 
 %2) plot boxplot across contexts
@@ -35,6 +35,6 @@ movegui(gcf,'center');%
 
 comp_window = 0; 
 plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info, acc_peaks(celltype_peak_comparison,1), comp_window, ...
-    [mdl_param.data_type '_concat'], savepath, ylims,[1:bins_to_include]);
+    [mdl_param.data_type '_concat_celltypes' num2str(celltypes_to_comp)], savepath, ylims,[1:bins_to_include]);
 
 

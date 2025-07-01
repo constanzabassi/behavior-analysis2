@@ -49,7 +49,7 @@ wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepa
 
 %% trace and boxplot comparing active and passive
 celltypes_to_comp = [4,5]; %(1 = pyr, 2 = som, 3 = pv, 4 = all, 5 = top pyr)
-celltype_peak_comparison = celltypes_to_comp(1);
+celltype_peak_comparison = 2;
 acc_peaks_stats = wrapper_plot_svm_acc_trace_and_boxplots_actpass(svm_mat, mdl_param, save_string,savepath, [.45,.85],svm_mat2,event_onsets, celltypes_to_comp,celltype_peak_comparison);
 %% PLOT BETA WEIGHTS
 load('V:\Connie\results\opto_2024\context\data_info\all_celltypes.mat');
