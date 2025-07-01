@@ -11,6 +11,9 @@ plot_info.labels = {'Pyr','SOM','PV','All','Top Pyr'}; %{'Active'};
         plot_info.xlims = [1,bins_to_include];
         plot_svm_across_datasets(svm_mat2,plot_info,plot_info.event_onsets,mdl_param,[save_string '_passive'],savepath,ylims,bins_to_include);
         movegui(gcf,'center');%
+
+        plot_svm_across_datasets(svm_mat,plot_info,plot_info.event_onsets,mdl_param,[save_string],savepath,ylims,bins_to_include);
+        movegui(gcf,'center');%
     else
         bins_to_include = 55;
         plot_info.xlims = [1,bins_to_include];

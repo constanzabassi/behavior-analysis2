@@ -12,6 +12,9 @@ elseif mdl_param.field_to_predict == 2
     field_string = 'choice_14to169';
 elseif mdl_param.field_to_predict == 3
     field_string = 'sound_category_14to169'; %# are frames used to define peaks
+    if contains(save_string_glm,'passive')
+        field_string = 'passive_sound_category_14to100'; %# are frames used to define peaks
+    end
 elseif mdl_param.field_to_predict == 4
     field_string = 'photostim';
 end
@@ -59,7 +62,7 @@ if contains(dir_base, 'passive')
     % Replace "passive" with "pre"
     newDir = strrep(dir_base, 'passive', 'pre');
     load(strcat(newDir,'/photostim_trials.mat'));
-    load(strcat(newDir,'/informative_cells.mat'));
+%     load(strcat(newDir,'/informative_cells.mat'));
 else
     load(strcat(dir_base,'/photostim_trials.mat'));
 end
@@ -213,6 +216,9 @@ elseif mdl_param.field_to_predict == 3
     if contains(field_string,'169')
         save_string = 'sound_category_topmoreframes';
     end
+%     if contains(save_string_glm,'passive')
+%         field_string = 'passive_sound_category_14to100'; %# are frames used to define peaks
+%     end
 elseif mdl_param.field_to_predict == 4
     save_string = 'photostim_top';
 end

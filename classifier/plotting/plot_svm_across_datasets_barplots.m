@@ -1,4 +1,4 @@
-function [plot_data,sorted_combinations, KW_Test] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,comp_window,save_str,save_path,minmax)
+function [plot_data,sorted_combinations, KW_Test] = plot_svm_across_datasets_barplots(svm_mat,plot_info,event_onsets,comp_window,save_str,save_path,minmax,varargin)
 overall_mean = [];
 overall_shuff = [];
 total_celltypes = size(svm_mat,2);
@@ -6,11 +6,19 @@ total_celltypes = size(svm_mat,2);
 for ce = 1:total_celltypes
     mean_across_data = cellfun(@(x) mean(x.accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data = vertcat(mean_across_data{1,:})*100;
+    if nargin > 7
+        temp_mean = mean_across_data(:,varargin{1,1});
+        mean_across_data = temp_mean;
+    end
     overall_mean(ce,:) = mean(mean_across_data,1,'omitnan');
     mean_data(ce,:,:) = mean_across_data;
 
     mean_across_data_shuff = cellfun(@(x) mean(x.shuff_accuracy,1),{svm_mat{:,ce}},'UniformOutput',false);
     mean_across_data_shuff = vertcat(mean_across_data_shuff{1,:})*100;
+    if nargin > 7
+        temp_mean = mean_across_data_shuff(:,varargin{1,1});
+        mean_across_data_shuff = temp_mean;
+    end
     overall_shuff(ce,:) = mean(mean_across_data_shuff,1,'omitnan');
     mean_data2(ce,:,:) = mean_across_data_shuff;
 

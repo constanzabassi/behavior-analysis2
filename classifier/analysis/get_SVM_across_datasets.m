@@ -53,9 +53,9 @@ for m = 1:length(info.chosen_mice)
         end
 
         % Passive condition (if available)
-        if nargin > 7
-            temp3 = vertcat(varargin{1,2}{1,1}{1,m}{1:10,1:50,ce});
-            temp4 = vertcat(varargin{1,2}{1,2}{1,m}{1:10,1:50,ce});
+        if nargin > 6
+            temp3 = vertcat(varargin{1,1}{1,1}{1,m}{1:10,1:50,ce});
+            temp4 = vertcat(varargin{1,1}{1,2}{1,m}{1:10,1:50,ce});
 
             folds_mean_passive = [];
             folds_mean_shuff_passive = [];

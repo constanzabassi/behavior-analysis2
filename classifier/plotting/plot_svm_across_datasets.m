@@ -68,7 +68,11 @@ x_range = xlim;
 y_range = ylim;
 y_offset_base = .1;
 % Calculate base text position
-text_x = x_range(2) -.09 * diff(x_range);
+if length(plot_info.labels{1}) > 7
+    text_x = x_range(2) -.45 * diff(x_range);
+else
+    text_x = x_range(2) -.09 * diff(x_range);
+end
 if ~isempty(minmax)
     y_range(2) = minmax(2);
 end
