@@ -113,7 +113,8 @@ for t = 1:length(tw)
         data = [squeeze(specified_mean_all(combos(c,:),:))]; %specified_mean(ce,:)
         y_val =  max(max([squeeze(specified_mean_all(:,:))]));
 
-        pval = ranksum(data(1,:), data(2,:));
+%         pval = ranksum(data(1,:), data(2,:));
+        [pval, observeddifference, effectsize] = permutationTest(data(1,:), data(2,:), 10000)
         plot_data{t,c} = pval;
         plot_data{length(tw)+2,c} = combos(c,:);
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
@@ -134,7 +135,7 @@ end
 set(gca,'xtick',x_seq(1:total_celltypes)+1,'xticklabel',ts_str,'xticklabelrotation',45);
 %set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
 %xlim([0.5 length(tw)+0.5]); ylim([.4 1]);
-xlim([1+x_seq(1)-.1 1+x_seq(end)+.1]);
+xlim([1+x_seq(1)-.1 1+x_seq(end)]);
 if ~isempty(minmax)
     ylim([minmax(1) minmax(2)]*100)
 end

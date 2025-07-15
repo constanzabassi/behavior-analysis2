@@ -1,4 +1,4 @@
-function acc_peaks_stats = wrapper_plot_svm_acc_trace_and_boxplots_actpass(svm_mat, mdl_param, save_string,savepath, ylims,svm_mat2,event_onsets, celltypes_to_comp,celltype_peak_comparison)
+function acc_peaks_stats = wrapper_plot_svm_acc_trace_and_boxplots_actpass(svm_mat, mdl_param, save_string,savepath, ylims,svm_mat2,event_onsets, celltypes_to_comp,celltype_peak_comparison,varargin)
 %wrapper to plot active and passive together!!
 %create time series plots of svm accuracy across celltypes    
 input_param{1,1}{1} = mdl_param;
@@ -15,6 +15,11 @@ concatenated_svm_mat = [updated_svm_mat_active,updated_svm_mat_passive];
 % Generate labels for plotting
 active_labels = cellfun(@(x) sprintf('Active %s', x), mapped_labels(celltypes_to_comp), 'UniformOutput', false);
 passive_labels = cellfun(@(x) sprintf('Passive %s', x), mapped_labels(celltypes_to_comp), 'UniformOutput', false);
+
+if nargin > 9
+    active_labels = cellfun(@(x) sprintf(strcat(varargin{1,1}{1},' %s'), x), mapped_labels(celltypes_to_comp), 'UniformOutput', false);
+    passive_labels = cellfun(@(x) sprintf(strcat(varargin{1,1}{2},' %s'), x), mapped_labels(celltypes_to_comp), 'UniformOutput', false);
+end
 plot_info.labels = [active_labels, passive_labels];  % Combine into single cell array
 % adjust colors (make passive colors lighter)
 % Get selected colors
@@ -35,6 +40,8 @@ movegui(gcf,'center');%
 
 comp_window = 0; 
 plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info, acc_peaks(celltype_peak_comparison,1), comp_window, ...
-    [mdl_param.data_type '_concat_celltypes' num2str(celltypes_to_comp)], savepath, ylims,[1:bins_to_include]);
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp)], savepath, ylims,[1:bins_to_include]);
 
+plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,7, comp_window, ...
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp)], savepath, ylims,[1:bins_to_include]);
 

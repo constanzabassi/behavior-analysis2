@@ -100,11 +100,22 @@ trainedClassifier.Classification = classification;
 % model.
 %% Convert input to table
  % * GO HERE FOR TRAINING ON OTHER CLASSIFIERS 
-% Perform cross-validation
-partitionedModel = crossval(trainedClassifier.Classification,'Leaveout','on');
 
-% Compute validation predictions
-[validationPredictions, validationScores] = kfoldPredict(partitionedModel);
 
-% Compute validation accuracy
-validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');
+cv = cvpartition(response, 'KFold', 4);  % Stratified if response is categorical
+for i = 1:cv.NumTestSets
+    train_idx = training(cv, i);
+    test_idx = test(cv, i);
+    model = fitcsvm(trainingData(train_idx,:), response(train_idx));
+    preds = predict(model, trainingData(test_idx,:));
+    acc(i) = mean(preds == response(test_idx));
+end
+validationAccuracy = mean(acc);
+
+% % Perform cross-validation
+% partitionedModel = crossval(trainedClassifier.Classification, 'KFold', 4);
+% % Compute validation predictions
+% [validationPredictions, validationScores] = kfoldPredict(partitionedModel);
+% 
+% % Compute validation accuracy
+% validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError');

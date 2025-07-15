@@ -1,5 +1,5 @@
-function [selected_trials,lc_selected,rc_selected,smallest_set_size] = get_balanced_field_trials(imaging,selected_field_num,varargin)
-lc_selected =[]; rc_selected = [];
+function [selected_trials,lc_selected,rc_selected,smallest_set_size,lc,li,rc,ri] = get_balanced_field_trials(imaging,selected_field_num,varargin)
+lc_selected =[]; rc_selected = []; lc=[];li=[];rc=[];ri=[];
 fieldss = fieldnames(imaging(1).virmen_trial_info);
 empty_trials = find(cellfun(@isempty,{imaging.good_trial}));
 good_trials =  setdiff(1:length(imaging),empty_trials); %only trials with all imaging data considered!
