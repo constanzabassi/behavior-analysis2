@@ -7,7 +7,7 @@ info.task_event_type = 'sound_category';
 %code below to find these numbers although should be the same each time!
 [current_mice,onset_id, active_events, passive_events] = default_data_info(info.task_event_type);
 
-do_passive = 1;
+do_passive = 0;
 if do_passive == 0
     acc_passive = [];
     shuff_acc_passive = [];
@@ -32,7 +32,7 @@ event_onsets = find(histcounts(active_events,all_model_outputs{1,1}{1}.binns+act
 %% plot individual datasets and find means across shuffles
 doplot = 0;
 
-savepath = ['V:\Connie\results\SVM_1_wtop\active_passive\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
+savepath = ['W:\Connie\results\Bassi2025\fig2\SVM_1\' info.task_event_type '\']; %['V:\Connie\results\SVM_1_wtop\active_passive\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
 info.savepath = savepath;
 
 [svm_mat, svm_mat2] = wrapper_plot_svm_acc_trace_individual_datasets(info, acc_active, shuff_acc_active, acc_passive, shuff_acc_passive, all_model_outputs, savepath, doplot, event_onsets);

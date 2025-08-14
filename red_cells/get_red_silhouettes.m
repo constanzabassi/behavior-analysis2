@@ -82,7 +82,7 @@ xlabel('Silhouette Scores')
 % ylabel('Proportion')
 xline(.7,'--','color',[.5 .5 .5]) %exclusion criteria line
 legend('SOM','PV','','location','northwest','box','off')
-set_current_fig;
+utils.set_current_fig;
 
 
 
@@ -95,7 +95,7 @@ xticklabels({'SOM','PV'})
 box off
 set(gcf,'units','points','position',[100,100,150,150])
 yline(.7,'--','color',[.5 .5 .5])
-set_current_fig;
+utils.set_current_fig;
 
 [red_stats.all] = get_basic_stats(all_sil(1,:));
 [red_stats.som] = get_basic_stats(all_sil(1,som));
@@ -142,7 +142,7 @@ xticklabels({'SOM', 'PV'});
 ylabel('Silhouette Score')
 box off
 set(gcf,'units','points','position',[100,100,150,150])
-set_current_fig;
+utils.set_current_fig;
 
 
 figure(90);clf;
@@ -168,7 +168,7 @@ xticks([1,2])
 xticklabels({'SOM','PV'})
 xlim([0 3])
 set(gcf,'units','points','position',[100,100,150,150])
-set_current_fig;
+utils.set_current_fig;
 
 %% make plots divided by datasets
 n_mice = length(all_silhouettes);
@@ -200,7 +200,7 @@ xticklabels({'SOM', 'PV'});
 ylabel('Silhouette Score')
 box off
 set(gcf,'units','points','position',[100,100,150,150])
-set_current_fig;
+utils.set_current_fig;
 
 p_val = signrank(cellfun(@nanmean ,{all_silhouettes{:,1}}),cellfun(@nanmean ,{all_silhouettes{:,2}}));
 red_stats.p_val_sign_datasets = p_val;
@@ -231,7 +231,7 @@ xticklabels({'SOM', 'PV'});
 box off
 set(gcf,'units','points','position',[100,100,150,150])
 ylabel('Cell Counts')
-set_current_fig;
+utils.set_current_fig;
 
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)

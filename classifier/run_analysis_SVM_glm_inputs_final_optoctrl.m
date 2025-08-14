@@ -31,7 +31,7 @@ event_onsets = find(histcounts(active_events,all_model_outputs{1,1,1}.binns+acti
 %% plot individual datasets and find means across shuffles
 doplot = 0;
 
-savepath = 'W:\Connie\results\SVM\opto_ctrl'; % ['V:\Connie\results\SVM_1_wtop\active_passive\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
+savepath = 'W:\Connie\results\Bassi2025\fig2\SVM_1\opto_ctrl'; %W:\Connie\results\SVM\opto_ctrl'; % ['V:\Connie\results\SVM_1_wtop\active_passive\' info.task_event_type '\'];%['V:\Connie\results\SVM_1\' info.task_event_type '\'];
 info.savepath = savepath;
 %% plot all datasets together
 
