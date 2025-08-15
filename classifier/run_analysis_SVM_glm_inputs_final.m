@@ -3,7 +3,7 @@ addpath(genpath('C:\Code\Github\behavior-analysis2'))
 
 
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
-info.task_event_type = 'sound_category';
+info.task_event_type = 'choice';
 %code below to find these numbers although should be the same each time!
 [current_mice,onset_id, active_events, passive_events] = default_data_info(info.task_event_type);
 
@@ -18,7 +18,7 @@ info.chosen_mice = current_mice;
 [acc_active, shuff_acc_active, beta_active, acc_active_top, shuff_acc_active_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_pre', info.task_event_type, '_top', '_1');
 
 info.chosen_mice = 2;
-all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs');
+all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs','_1');
 if do_passive == 1
     [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_top', '_1')
     all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive','sound_category','all_model_outputs');

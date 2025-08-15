@@ -5,5 +5,8 @@ function [acc, shuff_acc, beta, acc_top, shuff_acc_top] = load_svm_data(info, mo
     if ~isempty(top_suffix)
         acc_top = load_SVM_results(info, model_str, [event_type top_suffix], 'acc', suffix);
         shuff_acc_top = load_SVM_results(info, model_str, [event_type top_suffix], 'shuff_acc', suffix);
+    else
+        acc_top = [];
+        shuff_acc_top = [];
     end
 end

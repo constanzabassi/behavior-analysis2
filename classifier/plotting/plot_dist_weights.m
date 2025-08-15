@@ -124,7 +124,7 @@ y_offsets = linspace(0, 0.1 * (num_labels - 1), num_labels); % Adjusted scaling
 % Place text labels
 for i = 1:num_labels
     text(text_x, text_y - y_offsets(i) * diff(y_range), plot_info.labels{i}, ...
-         'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
+         'Color', plot_info.colors_celltype(i,:), 'FontSize', 7);
 end
 set(gca,'fontsize',10);
 set(gcf,'position',[100,100,150,150])
@@ -222,7 +222,7 @@ y_offsets = linspace(0, 0.1 * (num_labels - 1), num_labels); % Adjusted scaling
 % Place text labels
 for i = 1:num_labels
     text(text_x, text_y - y_offsets(i) * diff(y_range), plot_info.labels{i}, ...
-         'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
+         'Color', plot_info.colors_celltype(i,:), 'FontSize', 7);
 end
 grid on
 set(gcf,'position',[100,100,150,150])

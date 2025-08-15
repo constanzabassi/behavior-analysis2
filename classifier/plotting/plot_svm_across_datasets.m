@@ -84,7 +84,7 @@ y_offsets = linspace(0, 0.1 * (num_labels - 1), num_labels); % Adjusted scaling
 % Place text labels
 for i = 1:num_labels
     text(text_x, text_y - y_offsets(i) * diff(y_range), legend_labels{i}, ...
-         'Color', plot_info.colors_celltype(i,:), 'FontSize', 8);
+         'Color', plot_info.colors_celltype(i,:), 'FontSize', 7);
 end
 
 
@@ -108,7 +108,7 @@ set(gca, 'box', 'off','xtick',[])
 set(gca,'xtick',event_onsets,'xticklabel',{'S1','S2','S3','T','R'},'xticklabelrotation',45);
 
 % set_current_fig;
-set(gca,'FontSize',8);
+set(gca,'FontSize',7);
 % set(gcf,'position',[100,100,225,150])
 set(gca, 'OuterPosition', [0,0,1,1]);
 
