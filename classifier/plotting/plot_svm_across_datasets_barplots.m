@@ -144,7 +144,7 @@ yline(.5*100,'--k');
 ylabel('% Accuracy'); box off
 %title('Decoding accuracy across cell types','FontWeight','Normal');
 set_current_fig;
-set(gcf,'position',[100,100,150,150])
+set(gcf,'position',[100,100,140,140])
 set(gca,'FontSize',7);
 ylim([minmax(1)*100, minmax(2)*100 + 15]);  % Add space above 100%
 

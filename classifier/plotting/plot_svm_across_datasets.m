@@ -49,7 +49,10 @@ for ce = 1:size(svm_mat,2)
     else
         data_to_plot = smooth(overall_shuff(ce,:),smoothing_factor , 'boxcar');
     end
-    shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
+    
+    if size(svm_mat,2) >=4 && ce == 4
+        shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
+    end
 
     for i = 1:length(event_onsets)
         xline(event_onsets(i),'--k','LineWidth',.7)
@@ -71,7 +74,7 @@ y_offset_base = .1;
 if length(plot_info.labels{1}) > 7
     text_x = x_range(2) -.45 * diff(x_range);
 else
-    text_x = x_range(2) -.09 * diff(x_range);
+    text_x = x_range(2) -.10 * diff(x_range);
 end
 if ~isempty(minmax)
     y_range(2) = minmax(2);
@@ -112,7 +115,7 @@ set(gca,'FontSize',7);
 % set(gcf,'position',[100,100,225,150])
 set(gca, 'OuterPosition', [0,0,1,1]);
 
-set(gcf,'position',[100,100,185,135])
+set(gcf,'position',[100,100,175,120])
 
 
 if ~isempty(save_path)

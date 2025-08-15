@@ -3,7 +3,7 @@ addpath(genpath('C:\Code\Github\behavior-analysis2'))
 
 
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
-info.task_event_type = 'choice';
+info.task_event_type = 'sound_category';
 %code below to find these numbers although should be the same each time!
 [current_mice,onset_id, active_events, passive_events] = default_data_info(info.task_event_type);
 

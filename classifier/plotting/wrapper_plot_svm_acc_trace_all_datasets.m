@@ -4,7 +4,7 @@ input_param{1,1}{1} = mdl_param;
 plot_info = default_plot_info(input_param);
 plot_info.event_onsets =  event_onsets;
 
-plot_info.labels = {'Pyr','SOM','PV','All','Top Pyr'}; %{'Active'};
+plot_info.labels = {'Pyr','SOM','PV','All','Top'}; %{'Active'};
 
     if ~isempty(svm_mat2)
         bins_to_include = 32;
