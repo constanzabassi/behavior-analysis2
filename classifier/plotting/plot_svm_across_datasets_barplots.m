@@ -52,8 +52,34 @@ abs_diff = abs(diff(combos, 1, 2));
 % Sort combinations based on absolute difference, in descending order
 [~, idx] = sort(abs_diff, 'ascend');
 sorted_combinations = combos(idx, :);
-
+plot_info.labels = {plot_info.labels{1,1:total_celltypes-1}};
 ts_str = {plot_info.labels{1,:}, 'Shuff'};
+
+% ---- largest non-outlier across cell types for this time window ----
+nonoutlier_max_per_ce = nan(total_celltypes,1);
+d_outliers = [];
+for ce2 = 1:total_celltypes
+    d = specified_mean_all(ce2,:);
+    d = d(~isnan(d) & ~isinf(d));     % be safe with NaNs/Infs
+    if isempty(d), continue; end
+
+    % Outliers by Tukey's rule (same as boxplot): beyond 1.5*IQR
+    o = isoutlier(d,'quartiles');
+
+    if all(o)               % rare edge case: everything flagged
+        d_no = d;           % fall back to all points
+    else
+        d_no = d(~o);
+    end
+    nonoutlier_max_per_ce(ce2) = max(d_no);
+    d_outliers = [d_outliers,d(o)];
+end
+
+% Biggest *non-outlier* value across cell types at this t
+y_val = max(nonoutlier_max_per_ce,[],'omitnan');
+if y_val/100 > minmax(2)
+    minmax(2) = 1.15;
+end
 
 figure(101);clf; set(gcf,'color','w'); hold on; yma = -Inf;
 % set(gca,'Position', [100,100,150,170],'FontSize',8);
@@ -115,7 +141,7 @@ for t = 1:length(tw)
 
     for c = 1:size(combos,1)
         data = [squeeze(specified_mean_all(combos(c,:),:))]; %specified_mean(ce,:)
-        y_val =  max(max([squeeze(specified_mean_all(:,:))]));
+%         y_val =  max(max([squeeze(specified_mean_all(:,:))]));
 
 %         pval = ranksum(data(1,:), data(2,:));
         [pval, observeddifference, effectsize] = permutationTest(data(1,:), data(2,:), 10000)
@@ -137,20 +163,19 @@ for c = 1:total_celltypes-1
     plot_data{2,c} = pval;
 end
 set(gca,'xtick',x_seq(1:total_celltypes)+1,'xticklabel',ts_str,'xticklabelrotation',45);
-%set(gca,'xtick',1:length(tw),'xticklabel',ts_str(tw),'xticklabelrotation',45);
-%xlim([0.5 length(tw)+0.5]); ylim([.4 1]);
 xlim([1+x_seq(1)-.1 1+x_seq(end)]);
 if ~isempty(minmax)
     ylim([minmax(1) minmax(2)]*100)
 end
-% yticks([.4:.1:1])
 yline(.5*100,'--k');
 ylabel('% Accuracy'); box off
-%title('Decoding accuracy across cell types','FontWeight','Normal');
-set_current_fig;
-set(gcf,'position',[100,100,140,140])
+% set_current_fig;
+if total_celltypes > 4
+    set(gcf,'position',[100,100,140,140]);
+else
+    set(gcf,'position',[100,100,120,120]);
+end
 set(gca,'FontSize',7);
-ylim([minmax(1)*100, minmax(2)*100 + 15]);  % Add space above 100%
 
 yticks = get(gca, 'YTick');
 yticklabels = get(gca, 'YTickLabel');
@@ -164,9 +189,19 @@ end
 
 set(gca, 'YTick', yticks, 'YTickLabel', yticklabels);
 % 3. Cover y-axis line above 100% (draw a white line over it)
-yl = ylim;
-xl = xlim;
-line([xl(1), xl(1)], [minmax(2)*100, yl(2)], 'Color', 'w', 'LineWidth', 2);
+if 100 <= y_val
+    ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
+    yl = ylim;
+    xl = xlim;
+
+    line([xl(1), xl(1)], [y_val, yl(2)], 'Color', 'w', 'LineWidth', 2);
+else
+    ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
+    yl = ylim;
+    xl = xlim;
+
+    line([xl(1), xl(1)], [100, yl(2)], 'Color', 'w', 'LineWidth', 2);
+end
 
 svm_box_stats.p_vals = plot_data;
 svm_box_stats.combos = sorted_combinations;
