@@ -33,7 +33,11 @@ for ce = 1:total_celltypes
 end 
 
 %concatenate shuffled all
-specified_mean_all = vertcat(specified_mean,specified_mean_shuff(4,:)); %concatenate the all cells shuffled probably doesnt matter
+if total_celltypes > 4
+    specified_mean_all = vertcat(specified_mean,specified_mean_shuff(4,:)); %concatenate the all cells shuffled probably doesnt matter
+else
+    specified_mean_all = vertcat(specified_mean,specified_mean_shuff(1,:)); %concatenate the all cells shuffled probably doesnt matter
+end
 total_celltypes = size(specified_mean_all,1);
 plot_info.colors_celltype(total_celltypes,:) = [0.5,0.5,0.5];
 

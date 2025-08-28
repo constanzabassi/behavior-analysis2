@@ -51,7 +51,9 @@ for ce = 1:size(svm_mat,2)
     end
     
     if size(svm_mat,2) >=4 && ce == 4
-        shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.2 0.2 0.2]*ce});
+        shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.5 0.5 0.5]});
+    elseif size(svm_mat,2) <4 && ce == size(svm_mat,2)
+        shadedErrorBar(1:size(overall_mean,2),data_to_plot, smooth(SEM,smoothing_factor , 'boxcar'), 'lineProps',{'LineWidth',1.2,'color', [0.5 0.5 0.5]});
     end
 
     for i = 1:length(event_onsets)
