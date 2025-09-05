@@ -1,8 +1,13 @@
 %% analysis of running trajectories/view angle changes based on Green et al 2023
+load('V:\Connie\results\behavior_updated\data_info\info.mat')
+load('V:\Connie\results\behavior_updated\data_info\all_frames.mat');
+% for m = 1:25
+%     [all_frames2{m},~,~] = frames_relative2general_pupil_cb(info.mouse_date{m},info.server{m},imaging_st{m})
+% end
 vel_ball = get_ball_velocity(info,all_frames); %to get yaw
 %%
 %get data for each mouse
-savepath = [info.savepath '\navigation_correction'];
+savepath = ['V:/Connie/results\navigation_correction'];
 save_str = ['ex_plots_viewangle_roll_SOM_dataset_maze_reward_frames'];
 num_bins = 25;
 for m = 1:length(imaging_st)
@@ -29,7 +34,7 @@ figure(1);clf
 for p = 1:36
     
     subplot(6,6,p);
-    p = p+10;
+    p = p;
     frames_to_include = [imaging_array(p).maze_frames,imaging_array(p).reward_frames];
     hold on;
     title(num2str(good_trials(p)))
