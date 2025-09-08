@@ -20,6 +20,9 @@ for cond = 1:2
     end
     [~, sort_idx] = sort(usable_lengths);
     num_sel = max(1, ceil(0.25 * numel(cond_trials)));
+    if nargin > 6
+        num_sel = max(1, ceil(varargin{1,1} * numel(cond_trials)));
+    end
     selected_trials = cond_trials(sort_idx(1:num_sel));
     % --- Build coarse trajectory (15 bins in log-distance) ---
     all_logd = []; all_pos = []; all_ang = [];
@@ -71,7 +74,7 @@ for cond = 1:2
 %         continue;
     end
     
-    if nargin>6 %perform optional correction (make sure if mouse is facing away from reward at the end it is assinged to the last bin
+%     if nargin>6 %perform optional correction (make sure if mouse is facing away from reward at the end it is assinged to the last bin
         % ---- Optional correction: prevent backwards-facing trajectory at end ----
         % We'll assume "facing toward reward zone" = facing roughly forward from prior heading
         % This is subjective and might depend on maze geometry — but we’ll use continuity:
@@ -97,7 +100,7 @@ for cond = 1:2
         end
         % Replace original bin_heading with corrected (wrapped) version
         bin_heading = wrapToPi_local(bin_heading_unw);
-    end
+%     end
 
     % Sort
     [bin_pos, sort_idx] = sort(bin_pos);

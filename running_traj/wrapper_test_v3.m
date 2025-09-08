@@ -23,13 +23,14 @@ PEAK_PROMINENCE = .1;
 turning_threshold = .1;
 
 % ---------- paper’s stats windows ----------
-BASE_WIN   = [-1.0, 0.0];    % seconds
+BASE_WIN   = [-1.0, 0];    % seconds paper [-1,0]
 RESP_WIN   = [ 0.5, 2];    % seconds (paper:  [ 0.5, 2.5]; )
 
 % ---------- collectors across sessions (for the final CI plot) ----------
 panel_names = {'g','h_low','h_high','i_low','i_high','j_low','j_high'};
 % store per-session deltas, one number per session (average across events in that session)
 group_SOM   = struct(); group_NON = struct(); group_EVENTS_N= struct(); group_EVENTS= struct(); 
+
 for k = 1:numel(panel_names)
     group_SOM.(panel_names{k}) = [];  % append one value per session
     group_NON.(panel_names{k}) = [];
@@ -41,10 +42,13 @@ for k = 1:numel(panel_names)
     group_EVENTS.(nm).heading_dev = [];
     group_EVENTS.(nm).tv = [];
     group_EVENTS.(nm).ta = [];
+    group_events_SOM.(nm) = [];
+
 end
 session_rows = [];  % to build per-session table at the end
 all_sessions = 1:25;
 weird_sessions = [5,14,18,19]; %mice turning their view angle too early which is hard to detect
+group_EVENTS_avg_by_session = {};
 for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
     fprintf('\n==== Dataset %d/%d ====\n', m, length(imaging_st));
     % --- Grab dataset-specific things ---
@@ -68,15 +72,19 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
     % --- Compute heading deviation per trial (returns a cell array) ---
     dx = 1; %linear interpolation in terms of virmen units (1 unit= 0.63cm I think)
     [heading_deviation,hd_trials] = compute_heading_deviation_interpolated( ...
-        imaging_array, imaging_trial_info, reward_distance, log_distance, num_bins, dx,1);
+        imaging_array, imaging_trial_info, reward_distance, log_distance, num_bins, dx,.25);
+
+%     [heading_deviation,~, course_correction_struc] = compute_heading_deviation_interpolated_updated( ...
+%     imaging_array, imaging_trial_info, reward_distance, log_distance, num_bins, dx, 1);
 
     % --- Containers for stacking traces and stats ---
     stack     = struct('g', [], 'h_low', [], 'h_high', [], 'i_low', [], 'i_high', [], 'j_low', [], 'j_high', []);
+    stack_all_som     = struct('g', [], 'h_low', [], 'h_high', [], 'i_low', [], 'i_high', [], 'j_low', [], 'j_high', []);
     count     = struct('g', 0, 'h_low', 0, 'h_high', 0, 'i_low', 0, 'i_high', 0, 'j_low', 0, 'j_high', 0);
     sess_SOM  = struct('g', [], 'h_low', [], 'h_high', [], 'i_low', [], 'i_high', [], 'j_low', [], 'j_high', []);
     sess_NON  = struct('g', [], 'h_low', [], 'h_high', [], 'i_low', [], 'i_high', [], 'j_low', [], 'j_high', []);
 
-    for p = 1:length(good_trials)
+        for p = 1:length(good_trials)
         t_idx  = p;
         frames = imaging_array(t_idx).maze_frames;
         T      = numel(frames);
@@ -98,6 +106,9 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         tv = K.turn_vel(frames);
         ta = K.turn_acc(frames);
 
+%         tv = course_correction_struc(p).turn_vel;%course_correction_struc(p).turn_vel_corr;
+%         ta = course_correction_struc(p).turn_acc;%course_correction_struc(p).turn_acc_corr;
+
         % distance-to-reward (for defining “enter T”); resize if needed
         if ~isempty(vel_ball{m,1}{p,2})
             dist = vel_ball{m,1}{p,2}(:)'; %this gets the yaw value (2nd index)
@@ -117,6 +128,7 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         % traces to collect around triggers
         traces = struct('nonsst',nonsst_mean,'som',som_mean, ...
                         'heading_dev',hd,'turn_vel',tv,'turn_acc',ta);
+        all_som_traces = struct('som',dff(som_cells,:));
 
         % triggers (turning onset)
         turn_frame = find(abs (imaging_array(p).x_position(2:end)) >= turning_threshold,1,'first');
@@ -138,7 +150,7 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         % Only update if there's a crossing within a reasonable window
         if any(delta_frames < 200)
             [~, idx] = min(delta_frames);  % find the closest crossing before turn_frame
-            updated_turn_frame = cross_frames(idx);
+            updated_turn_frame = turn_frame; %cross_frames(idx);
         else
             updated_turn_frame = turn_frame;
         end
@@ -150,7 +162,8 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
 
         % g) trigger on entering T  (one event per trial if present)
         if ~isempty(tj)
-            ETA = collect_eta_local(tj, WIN_S, Fs, traces);
+            ETA = collect_eta_local(tj, WIN_S, Fs, traces); %average across cells
+            ETA_som = collect_eta_local_som(tj, WIN_S, Fs,all_som_traces); %get traces for individual cells
             if ~isempty(ETA.keep)
                 % stack for the multi-panel trace plot
                 dev_sign = sign(ETA.heading_dev);  % vector of sign per timepoint
@@ -161,7 +174,7 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
 
 %                 block = [ETA.nonsst; ETA.som; ETA.heading_dev; ETA.turn_vel; ETA.turn_acc];
                 stack.g = cat(1, stack.g, block); count.g = count.g + 1;
-
+                stack_all_som.g = cat(1,stack_all_som.g,ETA_som.som);
                 % paper-style per-event Δ (resp 0.5–2.5 s vs base −1–0 s) for SOM & Non-Sst
                 som_d = event_deltas(ETA.som_per_event, ETA.t,BASE_WIN,RESP_WIN);
                 non_d = event_deltas(ETA.nonsst_per_event, ETA.t,BASE_WIN,RESP_WIN);
@@ -173,6 +186,8 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         % h) trigger on T; split by deviation at +1.5 s
         if ~isempty(tj)
             ETA = collect_eta_local(tj, WIN_S, Fs, traces);
+            ETA_som = collect_eta_local_som(tj, WIN_S, Fs,all_som_traces); %get traces for individual cells
+
             if ~isempty(ETA.keep)
                 evaluation_timepoint = dsearchn(ETA.t', SPLIT_T_S);
                 med_abs_dev = median(abs(ETA.heading_dev_per_event(:,evaluation_timepoint)), 'omitnan');
@@ -188,10 +203,12 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
 
                 if abs(ETA.heading_dev(evaluation_timepoint)) <  DEV_SMALL %med_abs_dev
                     stack.h_low  = cat(1, stack.h_low,  block); count.h_low  = count.h_low+1;
+                    stack_all_som.h_low = cat(1,stack_all_som.h_low,ETA_som.som);
                     sess_SOM.h_low = [sess_SOM.h_low; som_d]; 
                     sess_NON.h_low = [sess_NON.h_low; non_d]; 
                 elseif abs(ETA.heading_dev(evaluation_timepoint)) > DEV_LARGE
                     stack.h_high = cat(1, stack.h_high, block); count.h_high = count.h_high+1;
+                    stack_all_som.h_high = cat(1,stack_all_som.h_high,ETA_som.som);
                     sess_SOM.h_high = [sess_SOM.h_high; som_d]; 
                     sess_NON.h_high = [sess_NON.h_high; non_d];
                 end
@@ -201,6 +218,8 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         % i) trigger on T; split by accel at +1.5 s
         if ~isempty(tj)
             ETA = collect_eta_local(tj, WIN_S, Fs, traces);
+            ETA_som = collect_eta_local_som(tj, WIN_S, Fs,all_som_traces); %get traces for individual cells
+
             if ~isempty(ETA.keep)
                 evaluation_timepoint = dsearchn(ETA.t', SPLIT_T_S); %
                 med_abs_acc = median(abs(ETA.turn_acc_per_event(:,evaluation_timepoint)), 'omitnan');
@@ -221,10 +240,12 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
                     acc_aligned = -dev_sign * ETA.turn_acc(evaluation_timepoint);
                     if acc_aligned <  ACC_WEAK%med_abs_acc
                         stack.i_low  = cat(1, stack.i_low,  block); count.i_low  = count.i_low+1;
+                        stack_all_som.i_low = cat(1,stack_all_som.i_low,ETA_som.som);
                         sess_SOM.i_low = [sess_SOM.i_low; som_d]; 
                         sess_NON.i_low = [sess_NON.i_low; non_d]; 
                     elseif acc_aligned > ACC_STRONG
                         stack.i_high = cat(1, stack.i_high, block); count.i_high = count.i_high+1;
+                        stack_all_som.i_high = cat(1,stack_all_som.i_high,ETA_som.som);
                         sess_SOM.i_high = [sess_SOM.i_high; som_d]; 
                         sess_NON.i_high = [sess_NON.i_high; non_d]; 
                     end
@@ -252,6 +273,8 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
                 end
 
                 ETA = collect_eta_local(keep, WIN_S, Fs, traces);
+                ETA_som = collect_eta_local_som(keep, WIN_S, Fs,all_som_traces); %get traces for individual cells
+
                 if ~isempty(ETA.keep)
                     % split by heading deviation at time 0 (NOT +1.5 s)
                     t0 = dsearchn(ETA.t', 0);
@@ -270,11 +293,13 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
                     if dev0 < DEV_SMALL
                         % low deviation (< pi/12)
                         stack.j_low   = cat(1, stack.j_low,  block); count.j_low  = count.j_low + 1;
+                        stack_all_som.j_low = cat(1,stack_all_som.j_low,ETA_som.som);
                         sess_SOM.j_low = [sess_SOM.j_low; som_d];
                         sess_NON.j_low = [sess_NON.j_low; non_d];
                     elseif dev0 > DEV_LARGE
                         % high deviation (> pi/6)
                         stack.j_high  = cat(1, stack.j_high, block); count.j_high = count.j_high + 1;
+                        stack_all_som.j_high = cat(1,stack_all_som.j_high,ETA_som.som);
                         sess_SOM.j_high = [sess_SOM.j_high; som_d];
                         sess_NON.j_high = [sess_NON.j_high; non_d];
                     else
@@ -342,6 +367,21 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
         % Pool event counts (number of trials used in that condition)
         group_EVENTS_N.(nm) = [group_EVENTS_N.(nm), sess_summary.(['nEvents_' nm])(1)];
 
+        %compute trial average for each som neuron
+        data = stack_all_som.(nm);
+        nFrames = size(data, 2);
+        nNeurons = length(som_cells);
+        nTotalTrials = size(data, 1);
+        nTrialsPerNeuron = nTotalTrials / nNeurons;
+        
+        % Reshape into [nNeurons x nTrialsPerNeuron x nFrames]
+        reshaped = reshape(data, [nTrialsPerNeuron, nNeurons, nFrames]);
+        reshaped = permute(reshaped, [2, 3, 1]);  % [nNeurons x nFrames x nTrialsPerNeuron]
+        
+        % Now average across trials
+        neuronAvg = mean(reshaped, 3, 'omitnan');  % [nNeurons x nFrames]
+        group_events_SOM.(nm) = [group_events_SOM.(nm); neuronAvg];
+
         trials  = stack.(nm); 
         n_trials = size(trials, 1) / 5;
         % Pool full traces if you want to do population stats or averaging later
@@ -362,6 +402,33 @@ for m = setdiff(all_sessions,weird_sessions); %1:length(imaging_st)
             group_EVENTS.(nm).tv          = [group_EVENTS.(nm).tv;          trials(row_base + 4, :)];
             group_EVENTS.(nm).ta          = [group_EVENTS.(nm).ta;          trials(row_base + 5, :)];
         end
+
+        %COMPUTE AVERAGE PER SESSION!
+        % === Compute per-session mean trace across trials ===
+        if ~isfield(group_EVENTS_avg_by_session, nm)
+            group_EVENTS_avg_by_session.(nm).non = [];
+            group_EVENTS_avg_by_session.(nm).som = [];
+            group_EVENTS_avg_by_session.(nm).heading_dev = [];
+            group_EVENTS_avg_by_session.(nm).tv = [];
+            group_EVENTS_avg_by_session.(nm).ta = [];
+        end
+        
+        % Compute and store mean traces for this session (across trials)
+        group_EVENTS_avg_by_session.(nm).non = [group_EVENTS_avg_by_session.(nm).non; ...
+            mean(trials(1:5:end, :), 1, 'omitnan')];  % non = row 1 in group of 5
+        
+        group_EVENTS_avg_by_session.(nm).som = [group_EVENTS_avg_by_session.(nm).som; ...
+            mean(trials(2:5:end, :), 1, 'omitnan')];  % som = row 2
+        
+        group_EVENTS_avg_by_session.(nm).heading_dev = [group_EVENTS_avg_by_session.(nm).heading_dev; ...
+            mean(trials(3:5:end, :), 1, 'omitnan')];  % heading deviation = row 3
+        
+        group_EVENTS_avg_by_session.(nm).tv = [group_EVENTS_avg_by_session.(nm).tv; ...
+            mean(trials(4:5:end, :), 1, 'omitnan')];  % turning velocity = row 4
+        
+        group_EVENTS_avg_by_session.(nm).ta = [group_EVENTS_avg_by_session.(nm).ta; ...
+            mean(trials(5:5:end, :), 1, 'omitnan')];  % turning acceleration = row 5
+
 
     end
 
@@ -535,112 +602,11 @@ for c = 1:cols
     xlabel('Time (s)'); set(gca,'FontSize',7)
     xline(0,'k:');
 end
-
-
-%%
-% Settings
-conds = {'h_low', 'h_high', 'i_low', 'i_high', 'j_low', 'j_high'};
-n_conds = numel(conds);
-t = linspace(-2, 2, size(group_EVENTS.h_low.tv, 2));
-
-% Set up tiled layout
-rows = 5; cols = n_conds;
-figure('Units', 'inches', 'Position', [1, 1, 6, 6])
-tiledlayout(rows, cols, 'TileSpacing', 'compact', 'Padding', 'compact')
-
-% Store axes for each row to link y-axes
-ax_rows = cell(rows, 1);
-
-for c = 1:n_conds
-    cond = conds{c};
-
-    % Extract pooled data
-    non = group_EVENTS.(cond).non;
-    som = group_EVENTS.(cond).som;
-    hd  = group_EVENTS.(cond).heading_dev;
-    tv  = group_EVENTS.(cond).tv;
-    ta  = group_EVENTS.(cond).ta;
-
-    % Row 1: Non-SOM
-    ax = nexttile(0 * cols + c);
-    plotWithSEM(t, non, [0.5 0.5 0.5]); hold on
-    xline(0, '--k', 'LineWidth', 0.75)
-    if c == 1, ylabel('Non-SOM'); end
-    title(sprintf('%s\nn = %d', strrep(cond, '_', ' '), size(hd,1)), ...
-        'FontWeight','normal', 'FontSize', 7)
-    ax_rows{1}(end+1) = ax;
-
-    % Row 2: SOM
-    ax = nexttile(1 * cols + c);
-    plotWithSEM(t, som, [0.13, 0.24, 0.51]); hold on
-    xline(0, '--k', 'LineWidth', 0.75)
-    if c == 1, ylabel('SOM'); end
-    ax_rows{2}(end+1) = ax;
-
-    % Row 3: Heading dev
-    ax = nexttile(2 * cols + c);
-    plotWithSEM(t, hd, [0 0 0]); hold on
-    xline(0, '--k', 'LineWidth', 0.75)
-    if c == 1, ylabel('Heading dev (rad)'); end
-    ax_rows{3}(end+1) = ax;
-
-    % Row 4: Turning velocity
-    ax = nexttile(3 * cols + c);
-    plotWithSEM(t, tv, [0 0 0]); hold on
-    xline(0, '--k', 'LineWidth', 0.75)
-    if c == 1, ylabel('Turning vel (rad/s)'); end
-    ax_rows{4}(end+1) = ax;
-
-    % Row 5: Turning acceleration
-    ax = nexttile(4 * cols + c);
-    plotWithSEM(t, ta, [0 0 0]); hold on
-    xline(0, '--k', 'LineWidth', 0.75)
-    if c == 1, ylabel('Turning accel (rad/s^2)'); end
-    xlabel('Time (s)')
-    ax_rows{5}(end+1) = ax;
-end
-
-% Style and link axes
-for r = 1:rows
-    linkaxes(ax_rows{r}, 'y')
-    for ax = ax_rows{r}
-        set(ax, 'FontSize', 7, 'Box', 'off', 'TickDir', 'out')
-        if r < rows
-            ax.XTickLabel = [];
-        end
-    end
-end
-
-%%
-panel_names = fieldnames(group_EVENTS);
-timevec = linspace(-2, 2, size(group_EVENTS.(panel_names{1}), 2));  % adjust if needed
-
-figure;
-for i = 1:numel(panel_names)
-    nm = panel_names{i};
-    data = group_EVENTS.(nm);  % nTrials × nTimepoints
-
-    mean_trace = mean(data, 1, 'omitnan');
-    sem_trace  = std(data, 0, 1, 'omitnan') ./ sqrt(sum(~isnan(data), 1));
-
-    % Optional 95% CI (for large samples, Z ≈ 1.96)
-    ci95_upper = mean_trace + 1.96 * sem_trace;
-    ci95_lower = mean_trace - 1.96 * sem_trace;
-
-    % Plot with shaded area for SEM or CI
-    subplot(ceil(numel(panel_names)/3), 3, i);
-    hold on;
-    fill([timevec, fliplr(timevec)], ...
-         [mean_trace + sem_trace, fliplr(mean_trace - sem_trace)], ...
-         [0.7 0.7 1], 'EdgeColor', 'none', 'FaceAlpha', 0.4);
-    plot(timevec, mean_trace, 'b', 'LineWidth', 1.5);
-    title(nm, 'Interpreter', 'none');
-    xlabel('Time (s)');
-    ylabel('Activity');
-    ylim padded;
-end
-
-sgtitle('Pooled Event Traces with SEM');
+set(gcf,'Units', 'inches', 'Position', [1,1,4,5]);
+% savepath = 'W:\Connie\results\Bassi2025\fig2\supplement\heading_deviation\';
+% mkdir(savepath)
+% saveas(gcf, fullfile(savepath, 'heading_deviation_pooled_plots_3_subplots_21sessions.fig'));
+% exportgraphics(gcf,fullfile(savepath, 'heading_deviation_pooled_plots3_subplots_21sessions.pdf'), 'ContentType', 'vector');
 
 %% -------- final plot: mean ± 95% bootstrapped CI across SESSIONS --------
 
@@ -661,7 +627,7 @@ for k = 1:numel(panel_names)
     [muN(k), loN(k), hiN(k), semN(k), nN(k)] = mean_ci_sem(group_NON.(panel_names{k}));
 
     stats_rows(end+1,:) = {panel_names{k}, 'SOM',    muS(k), loS(k), hiS(k), semS(k), nS(k)}; 
-    stats_rows(end+1,:) = {panel_names{k}, 'NonSst', muN(k), loN(k), hiN(k), semN(k), nN(k)}; 
+    stats_rows(end+1,:) = {panel_names{k}, 'Non-SOM', muN(k), loN(k), hiN(k), semN(k), nN(k)}; 
 end
 
 % make the final figure (two rows: SOM & NonSst; error bars = bootstrapped CI)
@@ -692,11 +658,190 @@ if exist('savepath','var') && ~isempty(savepath)
     writetable(T_grp, fullfile(savepath, 'group_summary_stats.csv'));
 
     % save the final CI figure
-    saveas(12345, fullfile(savepath, 'final_session_mean_CI.png'));
-    saveas(12345, fullfile(savepath, 'final_session_mean_CI.svg'));
+%     saveas(12345, fullfile(savepath, 'final_session_mean_CI.png'));
+%     saveas(12345, fullfile(savepath, 'final_session_mean_CI.svg'));
 end
 
 
+%% plot individual som neurons
+conds = {'h_low', 'h_high', 'i_low', 'i_high', 'j_low', 'j_high'};
+n_conds = numel(conds);
+t = linspace(-2, 2, size(group_EVENTS.h_low.tv, 2));  % Adjust as needed
+rows = 6;  % now 6 rows total
+
+% Trial types mapping to descriptive titles from Green et al. (2023)
+titles = {
+    'T-junction\newlineLow dev.', ...
+    'T-junction\newlineHigh dev.', ...
+    'Turning acc.\newlineLow', ...
+    'Turning acc.\newlineHigh', ...
+    'High acc.\newlineLow dev.', ...
+    'High acc.\newlineHigh dev.'
+};
+
+for c = 1:n_conds
+    cond = conds{c};
+
+    % Extract pooled data (rows = trials, cols = frames)
+    non = group_EVENTS.(cond).non;   % ΔF/F for Non-Sst trials
+    som = group_EVENTS.(cond).som;   % ΔF/F for Sst trials
+    hd  = group_EVENTS.(cond).heading_dev;
+    tv  = group_EVENTS.(cond).tv;
+    ta  = group_EVENTS.(cond).ta;
+
+    % Row 1: Non-Sst ΔF/F
+    subplot(rows, n_conds, c)
+    plotWithSEM(t, non, [0.5 0.5 0.5])
+    ylim([-.1,.2])
+    if c == 1, ylabel('Non-SOM'), end
+    title(sprintf('%s\nn = %d', titles{c}, size(hd,1)), 'FontWeight','normal', 'FontSize', 8)
+    box off
+    set(gca,'Fontsize',7)
+
+    % Row 2: SOM ΔF/F
+    subplot(rows, n_conds, n_conds + c)
+    plotWithSEM(t, som, [0.13, 0.24, 0.51])
+    ylim([-.1,.2])
+    if c == 1, ylabel('SOM'), end
+    box off
+    set(gca,'Fontsize',7)
+
+    % Row 3: Heading deviation
+    subplot(rows, n_conds, 2*n_conds + c)
+    plotWithSEM(t, hd, [0 0 0])
+    ylim([-1,1])
+    if c == 1, ylabel({'Heading dev';'(rad)'}), end
+    box off
+    set(gca,'Fontsize',7)
+
+    % Row 4: Turning velocity
+    subplot(rows, n_conds, 3*n_conds + c)
+    plotWithSEM(t, tv, [0 0 0])
+    ylim([-1,1])
+    if c == 1, ylabel({'Turning vel';'(rad/s)'}), end
+    box off
+    set(gca,'Fontsize',7)
+
+    % Row 5: Turning acceleration
+    subplot(rows, n_conds, 4*n_conds + c)
+    plotWithSEM(t, ta, [0 0 0])
+    ylim([-1,1])
+    if c == 1, ylabel({'Turning accel';'(rad/s^2)'}), end
+    box off
+    xlabel('Time (s)')
+    set(gca,'Fontsize',7)
+
+    % Row 6: Heatmap of SOM activity per neuron (neurons x frames)
+    subplot(rows, n_conds, 5*n_conds + c)
+    sommat = group_events_SOM.(cond);  % [neurons x frames]
+    imagesc(t, 1:size(sommat,1), sommat)
+    colormap(gca, 'viridis')
+    caxis([-.15 .7])  % adjust based on signal range
+    if c == 1, ylabel('Neuron'), end
+    if c == n_conds, colorbar; end
+    xlabel('Time (s)')
+    title('SOM avg','FontWeight','normal')
+    set(gca,'Fontsize',7)
+end
+
+set(gcf,'Units', 'inches', 'Position', [1,1,6,7]);  % Taller figure
+%%
+% ===== settings =====
+pairs   = {{'h_low','h_high'}, {'i_low','i_high'}, {'j_low','j_high'}};  % 3 columns
+titles3 = {'T-junction', 'Turning acc.', 'High acc.'};
+rows = 7; cols = numel(pairs);
+
+% timebase (use any condition once; assumes same #frames across all)
+t = linspace(-2, 2, size(group_EVENTS.h_low.tv, 2));
+
+% colors (high = darker, low = lighter)
+col_non_hi = [0.40 0.40 0.40]; col_non_lo = 0.75*[1 1 1];
+col_som_hi = [0.13 0.24 0.51]; col_som_lo = 0.60*[1 1 1] + 0.40*col_som_hi;
+col_beh_hi = [0 0 0];          col_beh_lo = 0.65*[1 1 1];
+
+figure; set(gcf,'Units','inches','Position',[1,1,6,5]);
+
+for c = 1:cols
+    low_name  = pairs{c}{1};
+    high_name = pairs{c}{2};
+
+    % pull data
+    non_lo = group_EVENTS_avg_by_session.(low_name).non;    non_hi = group_EVENTS_avg_by_session.(high_name).non;
+    som_lo = group_EVENTS_avg_by_session.(low_name).som;    som_hi = group_EVENTS_avg_by_session.(high_name).som;
+    hd_lo  = group_EVENTS_avg_by_session.(low_name).heading_dev;  hd_hi  = group_EVENTS_avg_by_session.(high_name).heading_dev;
+    tv_lo  = group_EVENTS_avg_by_session.(low_name).tv;     tv_hi  = group_EVENTS_avg_by_session.(high_name).tv;
+    ta_lo  = group_EVENTS_avg_by_session.(low_name).ta;     ta_hi  = group_EVENTS_avg_by_session.(high_name).ta;
+
+    n_lo = size(hd_lo,1); n_hi = size(hd_hi,1);
+
+    % ---------- Row 1: Non-SOM ----------
+    ax = subplot(rows, cols, c); hold(ax, 'on');
+    plotWithSEM(t, non_lo, col_non_lo);
+    plotWithSEM(t, non_hi, col_non_hi);
+    ylim([-.1 .2]); box off; set(gca,'FontSize',7)
+    if c==1, ylabel('Non-SOM'); end
+    title(sprintf('%s\nn_{low}=%d  n_{high}=%d', titles3{c}, n_lo, n_hi), ...
+          'FontWeight','normal','FontSize',8)
+    xline(0,'k:');
+
+    % ---------- Row 2: SOM ----------
+    ax = subplot(rows, cols, cols + c); hold(ax, 'on');
+    plotWithSEM(t, som_lo, col_som_lo);
+    plotWithSEM(t, som_hi, col_som_hi);
+    ylim([-.1 .2]); box off; set(gca,'FontSize',7)
+    if c==1, ylabel('SOM'); end
+    xline(0,'k:');
+
+    % ---------- Row 3: Heading deviation ----------
+    ax = subplot(rows, cols, 2*cols + c); hold(ax, 'on');
+    plotWithSEM(t, hd_lo, col_beh_lo);
+    plotWithSEM(t, hd_hi, col_beh_hi);
+    ylim([-1 1]); box off; set(gca,'FontSize',7)
+    if c==1, ylabel({'Heading dev','(rad)'}); end
+    xline(0,'k:');
+
+    % ---------- Row 4: Turning velocity ----------
+    ax = subplot(rows, cols, 3*cols + c); hold(ax, 'on');
+    plotWithSEM(t, tv_lo, col_beh_lo);
+    plotWithSEM(t, tv_hi, col_beh_hi);
+    ylim([-1 1]); box off; set(gca,'FontSize',7)
+    if c==1, ylabel({'Turning vel','(rad/s)'}); end
+    xline(0,'k:');
+
+    % ---------- Row 5: Turning acceleration ----------
+    ax = subplot(rows, cols, 4*cols + c); hold(ax, 'on');
+    plotWithSEM(t, ta_lo, col_beh_lo);
+    plotWithSEM(t, ta_hi, col_beh_hi);
+    ylim([-1 1]); box off; set(gca,'FontSize',7)
+    if c==1, ylabel({'Turning accel','(rad/s^2)'}); end
+    xlabel('Time (s)'); set(gca,'FontSize',7)
+    xline(0,'k:');
+
+    % Row 6: Heatmap of SOM activity per neuron (neurons x frames)
+    subplot(rows, cols, 5*cols + c)
+    sommat = som_lo;  % [neurons x frames]
+    imagesc(t, 1:size(sommat,1), sommat)
+    colormap(gca, 'viridis')
+    caxis([-.15 .7])  % adjust based on signal range
+    if c == 1, ylabel('Session ID'), end
+    if c == n_conds, colorbar; end
+    xlabel('Time (s)')
+    title('SOM avg low','FontWeight','normal')
+    set(gca,'Fontsize',7)
+
+    % Row 6: Heatmap of SOM activity per neuron (neurons x frames)
+    subplot(rows, cols, 6*cols + c)
+    sommat = som_hi;  % [neurons x frames]
+    imagesc(t, 1:size(sommat,1), sommat)
+    colormap(gca, 'viridis')
+    caxis([-.15 .7])  % adjust based on signal range
+    if c == 1, ylabel('Session ID'), end
+    if c == n_conds, colorbar; end
+    xlabel('Time (s)')
+    title('SOM avg high','FontWeight','normal')
+    set(gca,'Fontsize',7)
+end
+set(gcf,'Units', 'inches', 'Position', [1,1,4,8]);
 %% ===== local helpers used above (do NOT modify your existing funcs) =====
 function a = wrapToPi_local(a), a = mod(a+pi, 2*pi) - pi; end
 function K = kinematics_from_heading_local(theta, Fs, SMOOTHING_PARAM)
@@ -707,10 +852,54 @@ function K = kinematics_from_heading_local(theta, Fs, SMOOTHING_PARAM)
     K.turn_vel = turn_vel;
     K.turn_acc = da .* Fs;
 end
+function ETA = collect_eta_local_som(trig_idx, win_s, Fs, traces)
+% COLLECT_ETA_LOCAL_SOM
+%   Extracts per-event aligned SOM activity across cells.
+%
+% Inputs:
+%   trig_idx : event trigger frame indices
+%   win_s    : [pre post] window in seconds
+%   Fs       : sampling rate (Hz)
+%   traces.som : [nCells × nFrames] matrix of SOM activity
+%
+% Outputs:
+%   ETA.t               : time vector (s)
+%   ETA.keep            : kept trigger indices (within window bounds)
+%   ETA.som_per_event   : [nCells × time × nEvents] aligned data
+%   ETA.som             : [nCells × time] mean across events
+%   ETA.som_mean        : [1 × time] population average across cells
+%
+
+    pre  = round(win_s(1)*Fs);
+    post = round(win_s(2)*Fs);
+    w    = -pre:post;
+    ETA.t = w / Fs;
+
+    [nCells, T] = size(traces.som);
+    keep = trig_idx(trig_idx + min(w) > 0 & trig_idx + max(w) <= T);
+    ETA.keep = keep;
+    if isempty(keep), return; end
+
+    nEvents = numel(keep);
+    fns = fieldnames(traces);
+
+    for k = 1:numel(fns)
+        fn = fns{k};
+        v = traces.(fn);  % Should be [nCells × nFrames]
+        M = nan(nCells, numel(w), nEvents);
+        for i = 1:nEvents
+            M(:,:,i) = v(:, keep(i)+w);
+        end
+        ETA.([fn '_per_event']) = M;                    % [nCells × time × events]
+        ETA.(fn) = mean(M, 3, 'omitnan');               % [nCells × time] mean across events
+        ETA.([fn '_mean']) = mean(ETA.(fn), 1, 'omitnan'); % [1 × time] population average
+    end
+end
+
 
 function ETA = collect_eta_local(trig_idx, win_s, Fs, traces)
     pre = round(win_s(1)*Fs); post = round(win_s(2)*Fs);
-    T = numel(traces.heading_dev); w = -pre:post;
+    T = numel(traces.som); w = -pre:post;
     keep = trig_idx(trig_idx+min(w) > 0 & trig_idx+max(w) <= T);
     ETA.t = w / Fs; ETA.keep = keep; if isempty(keep), return; end
     fns = fieldnames(traces);
