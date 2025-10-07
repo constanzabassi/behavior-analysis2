@@ -17,15 +17,16 @@ end
 info.chosen_mice = current_mice;
 [acc_active, shuff_acc_active, beta_active, acc_active_top, shuff_acc_active_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_pre', info.task_event_type, '_top', '_1');
 
-info.chosen_mice = 2;
-all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs','_1');
 if do_passive == 1
+    info.chosen_mice = current_mice;
     [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_top', '_1')
     all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive','sound_category','all_model_outputs');
     bins_to_include = 32;
 else
     bins_to_include = 55;
 end
+info.chosen_mice = 2;
+all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs','_1');
 info.chosen_mice = current_mice;
 event_onsets = find(histcounts(active_events,all_model_outputs{1,1}{1}.binns+active_events(1)));%find(histcounts(all_model_outputs{1,1}{1}.event_onset,all_model_outputs{1,1}{1}.binns+mdl_param.event_onset(1)));
 
@@ -48,9 +49,9 @@ celltype_peak_comparison = 4; %which celltype max peak location to use (1 = pyr,
 wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepath, event_onsets(onset_id),bins_to_include,celltype_peak_comparison, [.45,1]);
 
 %% trace and boxplot comparing active and passive
-celltypes_to_comp = [4,5]; %(1 = pyr, 2 = som, 3 = pv, 4 = all, 5 = top pyr)
-celltype_peak_comparison = 2;
-acc_peaks_stats = wrapper_plot_svm_acc_trace_and_boxplots_actpass(svm_mat, mdl_param, save_string,savepath, [.45,.85],svm_mat2,event_onsets, celltypes_to_comp,celltype_peak_comparison);
+celltypes_to_comp = [4]; %(1 = pyr, 2 = som, 3 = pv, 4 = all, 5 = top pyr)
+celltype_peak_comparison = 1;
+acc_peaks_stats = wrapper_plot_svm_acc_trace_and_boxplots_actpass(svm_mat, mdl_param, [save_string '_active_passive'],savepath, [.45,.85],svm_mat2,event_onsets, celltypes_to_comp,celltype_peak_comparison);
 %% PLOT BETA WEIGHTS
 load('V:\Connie\results\opto_2024\context\data_info\all_celltypes.mat');
 all_celltypes_updated = all_celltypes(info.chosen_mice);

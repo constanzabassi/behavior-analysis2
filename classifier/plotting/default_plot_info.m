@@ -22,6 +22,6 @@ function plot_info = default_plot_info(all_model_outputs)
 
 
     plot_info.minmax = [0.45,.9];
-    plot_info.xlims = [1,length(all_model_outputs{1,1}{1}.binns)];
+    plot_info.xlims = [1,32]; %[1,length(all_model_outputs{1,1}{1}.binns)];
 
 end

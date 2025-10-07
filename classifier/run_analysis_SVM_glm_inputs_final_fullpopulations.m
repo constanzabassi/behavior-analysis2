@@ -3,7 +3,7 @@ addpath(genpath('C:\Code\Github\behavior-analysis2'))
 
 
 load('V:\Connie\results\opto_2024\context\data_info\info.mat');
-info.task_event_type = 'sound_category';
+info.task_event_type = 'outcome';
 %code below to find these numbers although should be the same each time!
 [current_mice,onset_id, active_events, passive_events] = default_data_info(info.task_event_type);
 
@@ -22,7 +22,7 @@ celltype_to_delete = 4; %all
 info.chosen_mice = 2;
 all_model_outputs = load_SVM_results(info,'GLM_3nmf_pre','sound_category','all_model_outputs','_1');
 if do_passive == 1
-    [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_top', '_1')
+    [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_all', '_1')
     all_model_outputs = load_SVM_results(info,'GLM_3nmf_passive','sound_category','all_model_outputs');
     bins_to_include = 32;
 else
@@ -47,7 +47,7 @@ save_string = info.task_event_type;
 wrapper_plot_svm_acc_trace_all_datasets(svm_mat, mdl_param, save_string, savepath, [.45,.85],svm_mat2,event_onsets);
 %% Boxplot of mean across datasets
 celltype_peak_comparison = 1; %which celltype max peak location to use (1 = pyr, 2 = som, 3 = pv, 4 = all, 5 = top pyr)
-wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepath, event_onsets(onset_id),bins_to_include,celltype_peak_comparison, [.45,1]);
+wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepath, event_onsets(onset_id),bins_to_include,celltype_peak_comparison, [.45,.90]);
 
 %% PLOT BETA WEIGHTS
 load('V:\Connie\results\opto_2024\context\data_info\all_celltypes.mat');

@@ -44,9 +44,20 @@ plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info, acc_peaks(cel
 
 comp_window = 9; %13 frames total for sound
 plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,3, comp_window, ...
-    [mdl_param.data_type save_string '_concat_celltypes_1sec_window'], savepath, ylims,[1:bins_to_include]);
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp) '_1sec_window'], savepath, ylims,[1:bins_to_include]);
 
 comp_window = 4; %13 frames total for sound
 plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,3, comp_window, ...
-    [mdl_param.data_type save_string '_concat_celltypes_1sec_window'], savepath, ylims,[1:bins_to_include]);
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp) '_500ms_window'], savepath, ylims,[1:bins_to_include]);
+
+%second sound
+comp_window = 4; %13 frames total for sound
+plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,event_onsets(2), comp_window, ...
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp) '_500ms_window'], savepath, ylims,[1:bins_to_include]);
+
+%second sound
+comp_window = 4; %13 frames total for sound
+plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,event_onsets(3), comp_window, ...
+    [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp) '_500ms_window'], savepath, ylims,[1:bins_to_include]);
+
 

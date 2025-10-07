@@ -94,6 +94,7 @@ end
 x_val_dif = ratio(1)/(total_comparisons);%.6/(total_comparisons-1);
 x_seq = [-ratio(2):x_val_dif:ratio(2)];
 sig_ct = 0;
+max_sig_y = -inf;
 for t = 1:length(tw)
     for ce = 1:total_celltypes %compare across celltypes!
         
@@ -151,7 +152,9 @@ for t = 1:length(tw)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
         if pval < 0.05/length(combos)
             sig_ct =sig_ct+1;
-            plot_pval_star(t,y_val+(.04*sig_ct)*100, pval,x_line_vals,0.01); %yl(2)+3
+            sig_y = y_val + (.04*sig_ct)*100;
+            plot_pval_star(t,sig_y, pval,x_line_vals,0.01); %yl(2)+3
+            max_sig_y = max(max_sig_y,sig_y);
         end
 
     end
@@ -165,7 +168,10 @@ end
 set(gca,'xtick',x_seq(1:total_celltypes)+1,'xticklabel',ts_str,'xticklabelrotation',45);
 xlim([1+x_seq(1)-.1 1+x_seq(end)]);
 if ~isempty(minmax)
-    ylim([minmax(1) minmax(2)]*100)
+%     ylim([minmax(1) minmax(2)]*100)
+    ylower = minmax(1)*100;
+yupper = max(minmax(2)*100,max_sig_y+5);
+ylim([ylower,yupper]);
 end
 yline(.5*100,'--k');
 ylabel('% Accuracy'); box off
@@ -188,20 +194,22 @@ for i = 1:length(yticks)
 end
 
 set(gca, 'YTick', yticks, 'YTickLabel', yticklabels);
-% 3. Cover y-axis line above 100% (draw a white line over it)
-if 100 <= y_val
-    ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
-    yl = ylim;
-    xl = xlim;
 
-    line([xl(1), xl(1)], [y_val, yl(2)], 'Color', 'w', 'LineWidth', 2);
-else
-    ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
-    yl = ylim;
-    xl = xlim;
 
-    line([xl(1), xl(1)], [100, yl(2)], 'Color', 'w', 'LineWidth', 2);
-end
+% % 3. Cover y-axis line above 100% (draw a white line over it)
+% if 100 <= y_val
+%     ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
+%     yl = ylim;
+%     xl = xlim;
+% 
+%     line([xl(1), xl(1)], [y_val, yl(2)], 'Color', 'w', 'LineWidth', 2);
+% else
+%     ylim([minmax(1)*100, minmax(2)*100]);  % Add space above 100%
+%     yl = ylim;
+%     xl = xlim;
+% 
+%     line([xl(1), xl(1)], [100, yl(2)], 'Color', 'w', 'LineWidth', 2);
+% end
 
 svm_box_stats.p_vals = plot_data;
 svm_box_stats.combos = sorted_combinations;
@@ -209,7 +217,7 @@ svm_box_stats.combos = sorted_combinations;
 if ~isempty(save_path)
     mkdir(save_path )
     cd(save_path)
-    saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.svg'));
+%     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.svg'));
     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.png'));
     exportgraphics(gcf,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.pdf'), 'ContentType', 'vector');
     string_to_save = strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.mat');
