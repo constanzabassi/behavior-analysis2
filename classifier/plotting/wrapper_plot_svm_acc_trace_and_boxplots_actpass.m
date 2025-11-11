@@ -60,4 +60,8 @@ comp_window = 4; %13 frames total for sound
 plot_svm_across_datasets_barplots(concatenated_svm_mat, plot_info,event_onsets(3), comp_window, ...
     [mdl_param.data_type save_string '_concat_celltypes' num2str(celltypes_to_comp) '_500ms_window'], savepath, ylims,[1:bins_to_include]);
 
+%replot because the y axis gets buggy sometimes and doesnt display the
+%right thing
+pause(1)
+plot_svm_across_datasets(concatenated_svm_mat,plot_info,plot_info.event_onsets,mdl_param,[save_string '_concat_celltypes' num2str(celltypes_to_comp)],savepath,ylims,bins_to_include);
 

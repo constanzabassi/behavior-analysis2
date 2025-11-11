@@ -1,6 +1,8 @@
-function mouse_data_conditions = heatmaps_avg_combined_all_celltypes (imaging_st,plot_info,alignment,sorting_id,save_data_directory,bin_size)
+function mouse_data_conditions = heatmaps_avg_combined_all_celltypes_separate_plots (imaging_st,plot_info,alignment,sorting_id,save_data_directory,bin_size)
 % Create a tiled layout
-tiledlayout(4, 1,"TileSpacing","tight");
+figure (90);clf;
+colormap(viridis)
+tiledlayout(3, 1,"TileSpacing","tight");
 
 for ce = 1:3
 %Initialize variables
@@ -44,8 +46,8 @@ if length(alignment.conditions) >= 1
             make_heatmap_sorted(data_to_plot,plot_info,sorting_id,alignment_event_onset);
         end
         set(gca, 'box', 'off', 'xtick', [])
-        set(gca,'fontsize', 12,'FontName','Arial')
-        ylabel({alignment.title{ce};'Neurons'})
+        set(gca,'fontsize', 7,'FontName','Arial')
+        ylabel({alignment.title{ce}})
         hold off
     %end
 else
@@ -78,8 +80,8 @@ else
             make_heatmap_sorted(data_to_plot,plot_info,sorting_id,alignment_event_onset);
         end
         set(gca, 'box', 'off', 'xtick', [])
-        set(gca,'fontsize', 12,'FontName','Arial')
-        ylabel({alignment.title{ce};'Neurons'})
+        set(gca,'fontsize', 7,'FontName','Arial')
+        ylabel({alignment.title{ce}})
         
 end
 end
@@ -90,6 +92,8 @@ binss = 1:bin_size:size(aligned_imaging,3)-bin_size;
 %find event onsets if using bins
 event_onsets = determine_onsets(left_padding,right_padding,alignment.number);
 new_onsets = find(histcounts(event_onsets,binss));
+
+set(gca,'xtick',new_onsets,'xticklabel',plot_info.xlabel_events,'xticklabelrotation',45);
 
 %find the mean across datasets for each celltype!
 
@@ -118,7 +122,7 @@ end
 
 %make avg plot!
 
-nexttile
+figure(91);clf;
 hold on
 for ce = 1:3
 
@@ -129,27 +133,36 @@ for ce = 1:3
 %     plot(squeeze(mean(binned_data_all(:,ce,:),1)),'LineWidth',1.5,'color',plot_info.colors_celltype(ce,:));
 
     for i = 1:length(new_onsets)
-        xline(new_onsets(i),'--k','LineWidth',1.5)
+        xline(new_onsets(i),'--k','LineWidth',0.5)
     end
-    ylabel({'Mean dF/F'})
+    ylabel({'Mean Activity'})
     xlim([1 length(binss)])
     set(gca, 'box', 'off', 'xtick', [])
 %     set(gcf,'Position',[23 453 683 133])
-    set(gca,'fontsize', 12,'FontName','Arial')
+    set(gca,'fontsize', 7,'FontName','Arial')
     
 end
 hold off
 
 
 set(gca,'xtick',new_onsets,'xticklabel',plot_info.xlabel_events,'xticklabelrotation',45);
-
+set(gca, 'FontSize', 7, 'Units', 'inches', 'Position', [1,1,1.25,1.2]);
 if ~isempty(save_data_directory)
     mkdir(save_data_directory)
     cd(save_data_directory)
 
-    image_string = strcat('heatmaps_avgtrace_condition_',num2str(alignment.conditions,3));
+    image_string = strcat('heatmaps_condition_',num2str(alignment.conditions,3));
     saveas(90,[image_string '_datasets.svg']);
     saveas(90,[image_string '_datasets.fig']);
-    exportgraphics(gcf,[image_string '_datasets.pdf'], 'ContentType', 'vector')
+    exportgraphics(figure(90),[image_string '_datasets.pdf'], 'ContentType', 'vector')
+
+
+    image_string = strcat('avg_trace_condition_',num2str(alignment.conditions,3));
+    saveas(91,[image_string '_datasets.svg']);
+    saveas(91,[image_string '_datasets.fig']);
+    saveas(91,[image_string '_datasets.pdf']);
+    exportgraphics(figure(91),[image_string '_datasets.pdf'], 'ContentType', 'vector')
+
+
 end
 

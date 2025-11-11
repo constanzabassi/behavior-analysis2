@@ -116,7 +116,6 @@ if strcmp('sound_category',info.task_event_type) || strcmp('photostim',info.task
     else
         plot_info.colors_celltype = [0.545, 0.271, 0.075; 1 0.549 0]
     end
-    plot_svm_across_datasets(svm_acc,plot_info,plot_info.event_onsets,mdl_param,[save_string '_active_passive'],savepath,[0.48,.65],bins_to_include);movegui(gcf,'center');%
 end
 %%
 plot_info.colors = [0.37 0.75 0.49 %light green
@@ -180,6 +179,9 @@ save('acc_peaks_results','acc_peaks','acc_peaks_shuff','acc_peaks_stats')
 comp_window = 0; %1sec bc bins of 3
 %acc_peaks(4,1) is the peak using 'all' cells
 [svm_box.p_vals,svm_box.combos] = plot_svm_across_datasets_barplots(svm_mat,plot_info,acc_peaks(4,1),comp_window,[mdl_param.data_type],savepath,[.4,1]);
+
+wrapper_plot_accuracy_boxplots(svm_mat, svm_mat2,event_onsets, mdl_param, savepath, event_onsets(onset_id),bins_to_include,1, [.45,1]);
+
 if ~isempty(svm_mat2)
     [~,~] = plot_svm_across_datasets_barplots(svm_mat2,plot_info,event_onsets(onset_id),comp_window,[mdl_param.data_type '_passive'],savepath,[.4,1]);
 end

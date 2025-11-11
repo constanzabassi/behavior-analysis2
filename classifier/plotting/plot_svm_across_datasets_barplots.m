@@ -27,9 +27,17 @@ end
 %find average across specified time window
 specified_window = event_onsets:event_onsets+comp_window; %1 sec %event_onsets:event_onsets+5;%
 specified_mean = []; specified_mean_shuff =[];
+ts_str = {plot_info.labels{1,:}, 'Shuff'};
+
 for ce = 1:total_celltypes
     specified_mean(ce,:) = mean(mean_data(ce,:,specified_window),3,'omitnan'); %[max(squeeze(mean_data(ce,:,specified_window)),[],2)]
     specified_mean_shuff(ce,:) = mean(mean_data2(ce,:,specified_window),3,'omitnan');
+    field_name = ts_str{ce};
+    field_name = strrep(field_name, ' ', '_');
+    field_name = strrep(field_name, '(', '');
+    field_name = strrep(field_name, ')', '');
+    svm_box_stats.(field_name) = get_basic_stats(specified_mean(ce,:));
+    svm_box_stats.([field_name '_shuff']) = get_basic_stats(specified_mean_shuff(ce,:));
 end 
 
 %concatenate shuffled all
@@ -53,7 +61,6 @@ abs_diff = abs(diff(combos, 1, 2));
 [~, idx] = sort(abs_diff, 'ascend');
 sorted_combinations = combos(idx, :);
 plot_info.labels = {plot_info.labels{1,1:total_celltypes-1}};
-ts_str = {plot_info.labels{1,:}, 'Shuff'};
 
 % ---- largest non-outlier across cell types for this time window ----
 nonoutlier_max_per_ce = nan(total_celltypes,1);
@@ -138,7 +145,7 @@ for t = 1:length(tw)
 % 
 %     end
     combos = sorted_combinations ;
-    [KW_Test.celltypes_p_val,KW_Test.stimcontext_tbl, KW_Test.stimcontext_stats_cell] = kruskalwallis(specified_mean_all',[1:total_celltypes],'off');
+    [KW_Test.celltypes_p_val,KW_Test.tbl, KW_Test.stats] = kruskalwallis(specified_mean_all(1:size(svm_mat,2),:)',[1:size(svm_mat,2)],'off');
 
     for c = 1:size(combos,1)
         data = [squeeze(specified_mean_all(combos(c,:),:))]; %specified_mean(ce,:)
@@ -148,6 +155,10 @@ for t = 1:length(tw)
         [pval, observeddifference, effectsize] = permutationTest(data(1,:), data(2,:), 10000)
         plot_data{t,c} = pval;
         plot_data{length(tw)+2,c} = combos(c,:);
+        svm_box_stats.observeddifference{t,c} = observeddifference;
+        svm_box_stats.effectsize{t,c} = effectsize;
+        svm_box_stats.pval{t,c} = pval;
+        svm_box_stats.combo{c} = combos(c,:);
         x_line_vals = x_seq(combos(c,:));%relative to t+x_seq(ce)
         x_line_vals = [x_line_vals(1), x_line_vals(2)];
         if pval < 0.05/length(combos)
@@ -182,6 +193,9 @@ else
     set(gcf,'position',[100,100,120,120]);
 end
 set(gca,'FontSize',7);
+ax = gca;
+ax.XLabel.FontSize = ax.FontSize;
+ax.YLabel.FontSize = ax.FontSize;
 
 yticks = get(gca, 'YTick');
 yticklabels = get(gca, 'YTickLabel');
@@ -213,14 +227,20 @@ set(gca, 'YTick', yticks, 'YTickLabel', yticklabels);
 
 svm_box_stats.p_vals = plot_data;
 svm_box_stats.combos = sorted_combinations;
+svm_box_stats.KW = KW_Test;
 
 if ~isempty(save_path)
     mkdir(save_path )
     cd(save_path)
-%     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.svg'));
-    saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.png'));
-    exportgraphics(gcf,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.pdf'), 'ContentType', 'vector');
+% %     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.svg'));
+%     saveas(101,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.png'));
+%     exportgraphics(gcf,strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.pdf'), 'ContentType', 'vector');
     string_to_save = strcat('boxplot_svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'_bins',num2str(specified_window),'.mat');
     save(string_to_save,"svm_box_stats");
+
+    table_fig2 = struct2table_recursive(unwrap_cells_in_struct(svm_box_stats),'',{'bootstat'});
+    save(fullfile(save_path, strcat('table_fig2_bins',num2str(specified_window),'.mat')), 'table_fig2');
+    
+    writetable(table_fig2, fullfile(save_path, strcat('table_fig2_bins',num2str(specified_window),'.csv')));
 end
 

@@ -114,6 +114,9 @@ set(gca,'xtick',event_onsets,'xticklabel',{'S1','S2','S3','T','R'},'xticklabelro
 
 % set_current_fig;
 set(gca,'FontSize',7);
+ax = gca;
+ax.XLabel.FontSize = ax.FontSize;
+ax.YLabel.FontSize = ax.FontSize;
 % set(gcf,'position',[100,100,225,150])
 set(gca, 'OuterPosition', [0,0,1,1]);
 
@@ -124,7 +127,7 @@ if ~isempty(save_path)
     mkdir(save_path )
     cd(save_path)
 %     saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.svg'));
-    saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.png'));
+%     saveas(100,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.png'));
     exportgraphics(gcf,strcat('svm_alldatasets_',num2str(size(svm_mat,1)),save_str,'.pdf'), 'ContentType', 'vector');
 end
 
