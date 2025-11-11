@@ -46,7 +46,7 @@ end
 
     %% --- 2) Load full model outputs (for active) ---
     info.chosen_mice = 2;
-    all_model_outputs = load_SVM_results(info, 'GLM_3nmf_pre', 'sound_category', 'all_model_outputs', '_1');
+    all_model_outputs = load_SVM_results(info, 'GLM_3nmf_pre',info.task_event_type, 'all_model_outputs', '_1');
 
     %% --- 3) Passive data (optional) ---
     info.chosen_mice = current_mice;
@@ -58,7 +58,7 @@ end
             [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_top', '_1');
         end
         info.chosen_mice = 2;
-        all_model_outputs = load_SVM_results(info, 'GLM_3nmf_passive', 'sound_category', 'all_model_outputs');
+        all_model_outputs = load_SVM_results(info, 'GLM_3nmf_passive', info.task_event_type, 'all_model_outputs');
         bins_to_include = 32;
     else
         acc_passive = [];
