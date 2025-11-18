@@ -37,28 +37,30 @@ end
         % Remove unwanted celltype (4 = all?)
         celltype_to_delete = 4;
         [acc_active, shuff_acc_active] = remove_specific_celltype(acc_active, shuff_acc_active, celltype_to_delete);
+            % --- 2) Load full model outputs (for active) ---
+
     elseif strcmp(version,'stimctrl')
             [svm_mat, svm_mat2,svm_mat_pass, svm_mat_pass_ctrl] = load_SVM_output_datasets('W:\Connie\results\SVM\',plot_info, [],0, do_passive);
     else
         [acc_active, shuff_acc_active, beta_active, acc_active_top, shuff_acc_active_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_pre', info.task_event_type, '_top', '_1');
 
     end
-
     %% --- 2) Load full model outputs (for active) ---
-    info.chosen_mice = 2;
-    all_model_outputs = load_SVM_results(info, 'GLM_3nmf_pre',info.task_event_type, 'all_model_outputs', '_1');
+        info.chosen_mice = 2;
+        all_model_outputs = load_SVM_results(info, 'GLM_3nmf_pre','sound_category', 'all_model_outputs', '_1');
+
 
     %% --- 3) Passive data (optional) ---
     info.chosen_mice = current_mice;
     if do_passive == 1
         if strcmp(version,'full')
             [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = ...
-                wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_all', '_1');
+                wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', 'sound_category', '_all', '_1');
         else
             [acc_passive, shuff_acc_passive, beta_passive, acc_passive_top, shuff_acc_passive_top] = wrapper_load_all_svm_data(info, 'GLM_3nmf_passive', info.task_event_type, '_top', '_1');
         end
         info.chosen_mice = 2;
-        all_model_outputs = load_SVM_results(info, 'GLM_3nmf_passive', info.task_event_type, 'all_model_outputs');
+        all_model_outputs = load_SVM_results(info, 'GLM_3nmf_passive','sound_category', 'all_model_outputs');
         bins_to_include = 32;
     else
         acc_passive = [];
@@ -78,6 +80,8 @@ end
 
     if isfield(all_model_outputs{1,1}{1}, 'mdl_param')
         mdl_param = all_model_outputs{1,1}{1}.mdl_param;
+    elseif strcmp(version,'full') 
+        mdl_param = all_model_outputs{1,1,1}{1};
     else
         all_model_outputs = load('W:\Connie\results\SVM\sound_category_passive_opto0all_model_outputs.mat').all_model_outputs;
         mdl_param = all_model_outputs{1,1,1};
@@ -87,7 +91,7 @@ end
     if ~exist(savepath, 'dir')
         mkdir(savepath);
     end
-    info.savepath = savepath;
+    info.savepath = savepath
     info.chosen_mice = current_mice;
 
     if strcmp(version,'full') || strcmp(version,'nmatch')
